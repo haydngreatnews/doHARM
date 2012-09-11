@@ -7,12 +7,12 @@ import javax.swing.JComponent;
 
 import doharm.rendering.WorldRenderer;
 
-public class Canvas extends JComponent
+public class WorldCanvas extends JComponent
 {
 	private static final long serialVersionUID = 1L;
 	private WorldRenderer renderer;
 	
-	public Canvas(WorldRenderer renderer)
+	public WorldCanvas(WorldRenderer renderer)
 	{
 		this.renderer = renderer;
 		

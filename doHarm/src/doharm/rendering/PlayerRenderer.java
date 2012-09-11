@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 
-import doharm.logic.Camera;
 import doharm.logic.Game;
 import doharm.logic.gameobjects.entities.players.Player;
 import doharm.logic.physics.Vector;
@@ -34,7 +33,7 @@ public class PlayerRenderer {
 		Vector position = player.getPosition();
 		
 		graphics.setColor(Color.white);
-		graphics.fillOval(position.getXi()+cameraPos.getXi(), position.getYi()+cameraPos.getYi(), size.width, size.height);
+		graphics.fillOval(position.getXi()+cameraPos.getXi()-size.width/2, position.getYi()+cameraPos.getYi()-size.height/2, size.width, size.height);
 	}
 
 }

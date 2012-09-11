@@ -3,7 +3,7 @@ package doharm.gui.input;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-public class WindowKeyListener implements KeyListener
+public class KeyboardManager implements KeyListener
 {
 
 	@Override
@@ -18,7 +18,7 @@ public class WindowKeyListener implements KeyListener
 		switch(e.getKeyCode())
 		{
 		case KeyEvent.VK_ESCAPE:
-			System.exit(0);
+			System.exit(0); //TODO handle exit confirmation
 			break;
 		}
 		

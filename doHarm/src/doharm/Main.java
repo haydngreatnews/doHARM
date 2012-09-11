@@ -30,7 +30,7 @@ public class Main
 
 	private static void runServer() 
 	{
-		
+		//TODO load world if not creating a new one.
 		
 	}
 }

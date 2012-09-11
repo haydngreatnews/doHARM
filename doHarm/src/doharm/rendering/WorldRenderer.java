@@ -46,12 +46,16 @@ public class WorldRenderer
 		graphics.setColor(Color.black);
 		graphics.fillRect(0, 0, canvasSize.width, canvasSize.height);
 		
+		//give the camera the canvas size so we can calculate the centre of the screen
 		game.getCamera().setCanvasDimensions(canvasSize);
-		
-		playerRenderer.redraw(graphics);
 		
 		
 		//draw the current game, based on the camera, etc.
+		//TODO tileRenderer		
+		playerRenderer.redraw(graphics);
+		
+		
+		
 		
 		
 	}

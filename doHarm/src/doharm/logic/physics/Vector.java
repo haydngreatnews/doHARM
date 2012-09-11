@@ -40,11 +40,17 @@ public class Vector
 		return y;
 	}
 
+	/**
+	 * @return an integer version of this vector's x component
+	 */
 	public int getXi() 
 	{
 		return (int)x;
 	}
 	
+	/**
+	 * @return an integer version of this vector's y component
+	 */
 	public int getYi() 
 	{
 		return (int)y;

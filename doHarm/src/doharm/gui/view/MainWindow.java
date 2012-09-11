@@ -5,7 +5,8 @@ import java.awt.Toolkit;
 
 import javax.swing.JFrame;
 
-import doharm.gui.input.WindowKeyListener;
+import doharm.gui.input.KeyboardManager;
+import doharm.gui.input.MouseManager;
 import doharm.logic.Game;
 import doharm.rendering.WorldRenderer;
 
@@ -17,20 +18,35 @@ public class MainWindow extends JFrame
 	public MainWindow(Game game)
 	{
 		super(TITLE);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //TODO window close listener
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //TODO window close listener and handle exit confirmation
 		
 		WorldRenderer renderer = new WorldRenderer(game);
-		Canvas canvas = new Canvas(renderer);
+		WorldCanvas canvas = new WorldCanvas(renderer);
 		add(canvas);
 
-
+		addKeyListener(new KeyboardManager());
+		MouseManager mouseManager = new MouseManager(game);
+		addMouseListener(mouseManager);
+		addMouseMotionListener(mouseManager);
+		
+		
+		//TODO add option for switching between fullscreen
+		//FULLSCREEN CODE
+		////////////////////////////////////////////////////////////////////
 		setUndecorated(true);
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		setBounds(0,0,screenSize.width, screenSize.height);
+		////////////////////////////////////////////////////////////////////
 		
-		addKeyListener(new WindowKeyListener());
+		//WINDOWED CODE
+		////////////////////////////////////////////////////////////////////
+		//...
 		
 		//pack();
+		////////////////////////////////////////////////////////////////////
+		
+		
+		
 		setVisible(true);
 		
 		

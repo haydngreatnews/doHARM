@@ -7,11 +7,14 @@ import java.util.Set;
 
 import doharm.logic.gameobjects.entities.players.HumanPlayer;
 import doharm.logic.gameobjects.entities.players.Player;
+import doharm.logic.gameobjects.entities.players.PlayerFactory;
+import doharm.logic.gameobjects.entities.players.PlayerType;
 
 public class Game 
 {
 	private Camera camera;
 	private Set<Player> players;
+	private HumanPlayer humanPlayer;
 	private boolean running;
 	
 	public Game()
@@ -22,8 +25,8 @@ public class Game
 		
 		players = new HashSet<Player>();
 		
-		Player p = new HumanPlayer();
-		players.add(p);
+		humanPlayer = (HumanPlayer) PlayerFactory.createPlayer(0, PlayerType.HUMAN);
+		players.add(humanPlayer);
 		
 	}
 	
@@ -47,5 +50,13 @@ public class Game
 	public boolean isRunning() 
 	{
 		return running;
+	}
+
+	public void moveHumanPlayer(int x, int y) 
+	{
+		if (humanPlayer == null)
+			return;
+		humanPlayer.getPosition().setX(x-camera.getRenderPosition().getXi());
+		humanPlayer.getPosition().setY(y-camera.getRenderPosition().getYi());
 	}
 }
