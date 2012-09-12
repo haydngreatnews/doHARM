@@ -1,7 +1,5 @@
 package doharm.logic.gameobjects.entities.characters.players;
 
-
-
 /**
  * Player constructors are protected so that they can only be created via this PlayerFactory class.
  * 
