@@ -43,7 +43,7 @@ public class Vector
 	/**
 	 * @return an integer version of this vector's x component
 	 */
-	public int getXi() 
+	public int getXAsInt() 
 	{
 		return (int)x;
 	}
@@ -51,7 +51,7 @@ public class Vector
 	/**
 	 * @return an integer version of this vector's y component
 	 */
-	public int getYi() 
+	public int getYAsInt() 
 	{
 		return (int)y;
 	}
@@ -68,6 +68,17 @@ public class Vector
 		updateLength();
 	}
 	
+	public void set(float x, float y) 
+	{
+		this.x = x;
+		this.y = y;
+		updateLength();
+	}
+	public void set(Vector v) 
+	{
+		set(v.x,v.y);
+	}
+	
 	public void multiply(float value)
 	{
 		x *= value;
@@ -79,6 +90,39 @@ public class Vector
 	{
 		return length;
 	}
+
+	public void add(Vector v) 
+	{
+		x += v.x;
+		y += v.y;
+		updateLength();
+	}
+
+	public Vector subtract(Vector v) 
+	{
+		return new Vector(x-v.x,y-v.y);
+	}
+
+	@Override 
+	public boolean equals(Object other)
+	{
+		if (other == null || other.getClass() != getClass())
+			return false;
+		Vector v = (Vector)other;
+		if (v.x != x || v.y != y)
+			return false;
+		
+		return true;
+	}
+
+	public void reset() 
+	{
+		x = 0;
+		y = 0;
+		updateLength();
+	}
+
+	
 
 	
 	

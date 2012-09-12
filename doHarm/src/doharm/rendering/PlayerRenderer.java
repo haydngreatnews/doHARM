@@ -5,27 +5,30 @@ import java.awt.Dimension;
 import java.awt.Graphics2D;
 
 import doharm.logic.Game;
-import doharm.logic.gameobjects.entities.players.Player;
+import doharm.logic.gameobjects.entities.characters.Character;
 import doharm.logic.physics.Vector;
+import doharm.logic.world.World;
 
 public class PlayerRenderer {
 
 	private Game game;
+	private World world;
 
 	public PlayerRenderer(Game game) 
 	{
 		this.game = game;
+		this.world = game.getWorld();
 	}
 
 	public void redraw(Graphics2D graphics) 
 	{
-		for (Player player: game.getPlayers())
+		for (Character player: world.getPlayers())
 		{
 			drawPlayer(player,graphics);
 		}
 	}
 
-	private void drawPlayer(Player player, Graphics2D graphics) 
+	private void drawPlayer(Character player, Graphics2D graphics) 
 	{
 		Vector cameraPos = game.getCamera().getRenderPosition();
 		
@@ -33,7 +36,7 @@ public class PlayerRenderer {
 		Vector position = player.getPosition();
 		
 		graphics.setColor(Color.white);
-		graphics.fillOval(position.getXi()+cameraPos.getXi()-size.width/2, position.getYi()+cameraPos.getYi()-size.height/2, size.width, size.height);
+		graphics.fillOval(position.getXAsInt()+cameraPos.getXAsInt()-size.width/2, position.getYAsInt()+cameraPos.getYAsInt()-size.height/2, size.width, size.height);
 	}
 
 }

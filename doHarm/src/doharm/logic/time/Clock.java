@@ -20,8 +20,6 @@ public class Clock extends Thread
 	{
 		while(true)
 		{
-			if (!game.isRunning())
-				break;
 			game.run();
 			window.repaint();
 			try 

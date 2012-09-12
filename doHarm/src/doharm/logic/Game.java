@@ -1,33 +1,18 @@
 package doharm.logic;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-
-import doharm.logic.gameobjects.entities.players.HumanPlayer;
-import doharm.logic.gameobjects.entities.players.Player;
-import doharm.logic.gameobjects.entities.players.PlayerFactory;
-import doharm.logic.gameobjects.entities.players.PlayerType;
+import doharm.logic.camera.Camera;
+import doharm.logic.world.World;
 
 public class Game 
 {
 	private Camera camera;
-	private Set<Player> players;
-	private HumanPlayer humanPlayer;
-	private boolean running;
+	private World world;
+	
 	
 	public Game()
 	{
-		camera = new Camera();
-		running = true;
-		
-		
-		players = new HashSet<Player>();
-		
-		humanPlayer = (HumanPlayer) PlayerFactory.createPlayer(0, PlayerType.HUMAN);
-		players.add(humanPlayer);
-		
+		camera = new Camera();		
+		world = new World(camera);
 	}
 	
 	public Camera getCamera()
@@ -35,28 +20,19 @@ public class Game
 		return camera;
 	}
 	
-	//public void addPlayer()
-	
-	public Collection<Player> getPlayers()
-	{
-		return Collections.unmodifiableCollection(players);
-	}
 
 	public void run() 
 	{
-		
+		world.moveEntities();
 	}
 
-	public boolean isRunning() 
+	public World getWorld()
 	{
-		return running;
+		return world;
 	}
 
-	public void moveHumanPlayer(int x, int y) 
+	public void mouseEvent(int x, int y) 
 	{
-		if (humanPlayer == null)
-			return;
-		humanPlayer.getPosition().setX(x-camera.getRenderPosition().getXi());
-		humanPlayer.getPosition().setY(y-camera.getRenderPosition().getYi());
+		world.moveHumanPlayer(x, y);	
 	}
 }

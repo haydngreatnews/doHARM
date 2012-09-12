@@ -1,4 +1,4 @@
-package doharm.logic;
+package doharm.logic.camera;
 
 import java.awt.Dimension;
 
