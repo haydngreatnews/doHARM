@@ -58,23 +58,22 @@ public class MainWindow{
 	// }
 
 	public void toggleSize() {
-		if (state != MINIMIZED) {
-			frame.dispose();
-			frame = new JFrame();
-			frame.add(canvas);
+		frame.dispose();
+		frame = new JFrame();
+		frame.add(canvas);
+		if (state == MINIMIZED) {
 			frame.setUndecorated(true);
 			Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 			frame.setBounds(0, 0, screenSize.width, screenSize.height);
-		} else if (state != MAXIMIZED) {
-			frame.dispose();
-			frame = new JFrame();
-			frame.add(canvas);
-			frame.setUndecorated(true);
+			state = MAXIMIZED;
+		} else if (state == MAXIMIZED) {
+			frame.setUndecorated(false);
 			frame.setBounds(0, 0, 800, 600);
 			//frame.pack();
+			state = MINIMIZED;
 		}
-		
 		addListeners();
+		frame.setVisible(true);
 	}
 
 	private void addListeners() {
