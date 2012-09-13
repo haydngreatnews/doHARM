@@ -112,7 +112,7 @@ public class WorldRenderer
 		images = new BufferedImage[t.getTileNames().size()];
 		
 		try{
-			tileSet = ImageIO.read(new File(t.getTileSetImage())); 
+			tileSet = ImageIO.read(new File("res/tilesets/"+t.getTileSetImage())); 
 			
 			for(int r = 0; r < tileSet.getHeight()/t.getTileHeight(); r++){
 				for(int c = 0; c < tileSet.getWidth()/t.getTileWidth(); c++){

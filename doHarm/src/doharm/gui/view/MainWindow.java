@@ -21,7 +21,7 @@ public class MainWindow extends JFrame
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //TODO window close listener and handle exit confirmation
 		
 		WorldRenderer renderer = new WorldRenderer(game);
-		WorldCanvas canvas = new WorldCanvas(renderer);
+		WorldCanvas canvas = new WorldCanvas(game, renderer);
 		add(canvas);
 
 		addKeyListener(new KeyboardManager());

@@ -23,7 +23,7 @@ public class Main
 		
 		Game game = new Game();
 		MainWindow window = new MainWindow(game);
-		Clock clock = new Clock(game, window);
+		Clock clock = new Clock(window);
 		clock.start();
 		
 	}

@@ -56,9 +56,9 @@ public abstract class Entity implements GameObject
 			velocity.set(direction);
 			velocity.multiply(5);
 		}
-		else if (!position.equals(destination))
+		else //if (!position.equals(destination))
 		{
-			position.set(destination);
+			//position.set(destination);
 			velocity.reset();
 		}
 		

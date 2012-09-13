@@ -7,12 +7,10 @@ public class Clock extends Thread
 {
 	private static final int CLOCK_INTERVAL = 30;
 	
-	private Game game;
 	private MainWindow window;
 	
-	public Clock(Game game, MainWindow window)
+	public Clock(MainWindow window)
 	{
-		this.game = game;
 		this.window = window;
 	}
 	
@@ -20,7 +18,6 @@ public class Clock extends Thread
 	{
 		while(true)
 		{
-			game.run();
 			window.repaint();
 			try 
 			{
