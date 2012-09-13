@@ -2,6 +2,7 @@ package doharm.storage;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -12,12 +13,11 @@ public class WorldLoader
 	private int numTilesX;
 	private int numTilesY;
 	private String worldDirectory;
-	private List<String> layerFiles;
 	
 	private TilesetLoader tilesetLoader;
-	private LayerLoader layerLoader;
+	private List<LayerData> layers;
 
-	public WorldLoader(String worldDirectory) throws FileNotFoundException
+	public WorldLoader(String worldDirectory) throws IOException
 	{
 		Scanner scanner = new Scanner(new File("res/worlds/"+worldDirectory+"/world.txt"));
 		numTilesX = scanner.nextInt();
@@ -25,14 +25,13 @@ public class WorldLoader
 		String tileset = scanner.next();
 		
 		this.worldDirectory = worldDirectory;
-		layerFiles = new ArrayList<String>();
+		layers = new ArrayList<LayerData>();
 		while (scanner.hasNext())
 		{
-			layerFiles.add(scanner.next());
+			layers.add(new LayerData(this, scanner.next()));
 		}
 		
 		tilesetLoader = new TilesetLoader(tileset);
-		layerLoader = new LayerLoader(Collections.unmodifiableList(layerFiles));
 	}
 
 	public int getNumTilesX() 
@@ -44,22 +43,19 @@ public class WorldLoader
 	{
 		return numTilesY;
 	}
-
-	public TilesetLoader getTileset() 
-	{
-		return tilesetLoader;
-	}
 	
 	public String getWorldDirectory()
 	{
 		return worldDirectory;
 	}
 
-	public TilesetLoader getTilesetLoader() {
+	public TilesetLoader getTilesetLoader() 
+	{
 		return tilesetLoader;
 	}
-
-	public List<String> getLayerFiles() {
-		return layerFiles;
+	
+	public LayerData getLayerData(int layerNumber)
+	{
+		return layers.get(layerNumber);
 	}
 }

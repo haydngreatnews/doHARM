@@ -6,3 +6,4 @@ grass
 nothing
 water
 tree
+dungeon

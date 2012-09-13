@@ -2,6 +2,7 @@ package doharm.logic.world;
 
 import java.awt.Dimension;
 
+import doharm.storage.LayerData;
 import doharm.storage.TilesetLoader;
 import doharm.storage.WorldLoader;
 
@@ -11,22 +12,17 @@ public class Layer
 	
 	public Layer(WorldLoader worldLoader, int layerNumber)
 	{
-		tiles = new Tile[worldLoader.getNumTilesX()][worldLoader.getNumTilesY()];
+		tiles = new Tile[worldLoader.getNumTilesY()][worldLoader.getNumTilesX()];
 		TilesetLoader tileLoader = worldLoader.getTilesetLoader();
+		LayerData layerData = worldLoader.getLayerData(layerNumber);
 		
 		for (int y= 0; y < tiles.length; y++)
 		{
 			for (int x= 0; x < tiles[0].length; x++)
 			{
-				int imageID = (x == 0 || y == 0 || x == tiles[0].length-1 || y == tiles.length-1)?0:1;
-				tiles[x][y] = new Tile(new Dimension(x*tileLoader.getTileWidth(),y*tileLoader.getTileHeight()),imageID);
+				tiles[y][x] = new Tile(new Dimension(x*tileLoader.getTileWidth(),y*tileLoader.getTileHeight()),layerData.getImageID(y,x));
 			}
 		}
-		
-		
-		
-		
-		
 	}
 	
 	

@@ -25,8 +25,6 @@ public class MainWindow{
 	private KeyboardManager keyboardManager;
 
 	public MainWindow(Game game) {
-		frame = new JFrame(TITLE);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
 		// TODO window close
 
 		WorldRenderer renderer = new WorldRenderer(game);
@@ -35,32 +33,18 @@ public class MainWindow{
 		mouseManager = new MouseManager(game);
 		keyboardManager = new KeyboardManager(this);
 		
-		// listener and handle
-		// exit confirmation
+		
 		this.game = game;
-		// TODO add option for switching between fullscreen
+
 		state = MAXIMIZED;
-		// FULLSCREEN CODE
-		// //////////////////////////////////////////////////////////////////
-		frame.add(canvas);
-		frame.setUndecorated(true);
-		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		frame.setBounds(0, 0, screenSize.width, screenSize.height);
-		// //////////////////////////////////////////////////////////////////
-
-		frame.setVisible(true);
-
-		addListeners();
+		
+		toggleSize();
 	}
 
-	// public MainWindow(Game g) {
-
-	//new MainWindow(g, MAXIMIZED);
-	// }
-
 	public void toggleSize() {
-		frame.dispose();
-		frame = new JFrame();
+		if (frame != null)
+			frame.dispose();
+		frame = new JFrame(TITLE);
 		frame.add(canvas);
 		if (state == MINIMIZED) {
 			frame.setUndecorated(true);
@@ -73,6 +57,8 @@ public class MainWindow{
 			//frame.pack();
 			state = MINIMIZED;
 		}
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //TODO change to window listener and handle exit confirmation
+
 		addListeners();
 		frame.setVisible(true);
 	}

@@ -1,6 +1,7 @@
 package doharm.logic.world;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -29,7 +30,7 @@ public class World
 		{
 			worldLoader = new WorldLoader(worldName);
 		}
-		catch (FileNotFoundException e) 
+		catch (IOException e) 
 		{
 			e.printStackTrace();
 			System.exit(1);
@@ -80,5 +81,10 @@ public class World
 	public Layer getLayer(int number)
 	{
 		return layers[number];
+	}
+	
+	public int getNumLayers()
+	{
+		return layers.length;
 	}
 }

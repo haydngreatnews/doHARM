@@ -95,12 +95,14 @@ public class WorldRenderer
 		
 		Tile[][] tiles = layer.getTiles();
 		
-		for(int r = 0; r < tiles[0].length; r++){
-			for(int c = 0; c < tiles.length; c++){
-					Tile tile = tiles[c][r];
-					graphics.drawImage(images[tile.getImageID()], c*32, r*32, null);
-				}
+		for(int r = 0; r < tiles[0].length; r++)
+		{
+			for(int c = 0; c < tiles.length; c++)
+			{
+				Tile tile = tiles[c][r];
+				graphics.drawImage(images[tile.getImageID()], c*32, r*32, null);
 			}
+		}
 		
 		/*
 		 *
@@ -115,21 +117,24 @@ public class WorldRenderer
 		BufferedImage tileSet = null;
 		WorldLoader wl = world.getWorldLoader();
 		
-		TilesetLoader t = wl.getTileset();
-		images = new BufferedImage[t.getTileNames().size()];
+		TilesetLoader tsl = wl.getTilesetLoader();
+		images = new BufferedImage[tsl.getTileNames().size()];
+		
+		int width = tsl.getTileWidth();
+		int height = tsl.getTileHeight();
 		
 		try{
-			tileSet = ImageIO.read(new File("res/tilesets/"+t.getTileSetImage())); 
+			tileSet = ImageIO.read(new File("res/tilesets/"+tsl.getTileSetImage())); 
 			
-			for(int r = 0; r < tileSet.getHeight()/t.getTileHeight(); r++){
-				for(int c = 0; c < tileSet.getWidth()/t.getTileWidth(); c++){
-					BufferedImage n = new BufferedImage(t.getTileWidth(), t.getTileHeight(), BufferedImage.TYPE_INT_ARGB);
+			for(int r = 0; r < tileSet.getHeight()/height; r++)
+			{
+				for(int c = 0; c < tileSet.getWidth()/width; c++)
+				{
+					BufferedImage n = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 					Graphics2D g = n.createGraphics();
-					g.drawImage(tileSet,0, 0,t.getTileWidth(), t.getTileHeight(),
-							c*t.getTileWidth(), r*t.getTileHeight(), t.getTileWidth()*(c+1), (r+1)*t.getTileHeight(), null);
+					g.drawImage(tileSet,0, 0,width, height,	c*width, r*height, width*(c+1), (r+1)*height, null);
 					
-					images[((tileSet.getHeight()/t.getTileHeight())*r) + c] = n;
-					
+					images[((tileSet.getHeight()/height)*r) + c] = n;
 				}
 			}
 			
