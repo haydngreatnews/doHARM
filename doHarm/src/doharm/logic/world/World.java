@@ -1,5 +1,6 @@
 package doharm.logic.world;
 
+import java.io.FileNotFoundException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -9,6 +10,7 @@ import doharm.logic.camera.Camera;
 import doharm.logic.gameobjects.entities.characters.players.HumanPlayer;
 import doharm.logic.gameobjects.entities.characters.players.Player;
 import doharm.logic.gameobjects.entities.characters.players.PlayerFactory;
+import doharm.storage.WorldLoader;
 
 
 public class World 
@@ -17,11 +19,21 @@ public class World
 	private Set<Player> players;
 	private HumanPlayer humanPlayer;
 	private Camera camera;
+	private WorldLoader worldLoader;
 	
-	public World(Camera camera)
+	public World(String worldName, Camera camera)
 	{
 		this.camera = camera;
 		players = new HashSet<Player>();
+		try 
+		{
+			worldLoader = new WorldLoader(worldName);
+		}
+		catch (FileNotFoundException e) 
+		{
+			e.printStackTrace();
+			System.exit(1);
+		}
 		
 		
 		humanPlayer = PlayerFactory.createHumanPlayer("Test player", 0);
@@ -49,5 +61,10 @@ public class World
 			return;
 		humanPlayer.moveTo(x-camera.getRenderPosition().getXAsInt(), y-camera.getRenderPosition().getYAsInt());
 		
+	}
+
+	public WorldLoader getWorldLoader() 
+	{
+		return worldLoader;
 	}
 }

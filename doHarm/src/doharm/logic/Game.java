@@ -12,7 +12,8 @@ public class Game
 	public Game()
 	{
 		camera = new Camera();		
-		world = new World(camera);
+		String worldName = "world1";
+		world = new World(worldName,camera);
 	}
 	
 	public Camera getCamera()
