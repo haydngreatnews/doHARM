@@ -1,0 +1,8 @@
+32
+32
+tileset1.png
+wall
+grass
+nothing
+water
+tree
