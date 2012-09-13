@@ -58,9 +58,7 @@ public class WorldRenderer
 		if (!this.canvasSize.equals(canvasSize))
 			createImage(canvasSize); //resize the canvas
 		
-		//clear the screen
-		graphics.setColor(Color.black);
-		graphics.fillRect(0, 0, canvasSize.width, canvasSize.height);
+		
 		
 		
 		Camera camera = game.getCamera();
@@ -69,9 +67,17 @@ public class WorldRenderer
 		camera.setCanvasDimensions(canvasSize);
 		
 		transform.setToIdentity();
+		graphics.setTransform(transform);
+		
+		//clear the screen
+		graphics.setColor(Color.black);
+		graphics.fillRect(0, 0, canvasSize.width, canvasSize.height);
+		
 		transform.translate(-camera.getRenderPosition().getX(), -camera.getRenderPosition().getY());
 		graphics.setTransform(transform);
 		//draw the current game, based on the camera, etc.
+		
+		
 		
 		renderTiles();
 		
