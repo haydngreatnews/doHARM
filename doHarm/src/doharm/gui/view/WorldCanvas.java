@@ -4,11 +4,12 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 
 import javax.swing.JComponent;
+import javax.swing.JPanel;
 
 import doharm.logic.Game;
 import doharm.rendering.WorldRenderer;
 
-public class WorldCanvas extends JComponent
+public class WorldCanvas extends JPanel
 {
 	private static final long serialVersionUID = 1L;
 	private WorldRenderer renderer;
@@ -22,7 +23,7 @@ public class WorldCanvas extends JComponent
 	}
 	
 	@Override 
-	public void paint(Graphics g)
+	public void paintComponent(Graphics g)
 	{
 		Dimension canvasSize = new Dimension(getWidth(),getHeight());
 		

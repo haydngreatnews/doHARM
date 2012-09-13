@@ -18,23 +18,22 @@ public class MainWindow{
 	public static final int MINIMIZED = 2;
 
 	private int state;
-	private JPanel godPanel;
 	private JFrame frame;
 	private Game game;
 	private WorldCanvas canvas;
+	private MouseManager mouseManager;
 
 	public MainWindow(Game game) {
 		frame = new JFrame(TITLE);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
 		// TODO window close
-		 godPanel = new JPanel();
-		 WorldRenderer renderer = new WorldRenderer(game);
-		 canvas = new WorldCanvas(game,renderer);
-		 godPanel.add(canvas);
-		 godPanel.addKeyListener(new KeyboardManager(this));
-		 MouseManager mouseManager = new MouseManager(game);
-		 godPanel.addMouseListener(mouseManager);
-		 godPanel.addMouseMotionListener(mouseManager);
+
+		WorldRenderer renderer = new WorldRenderer(game);
+		canvas = new WorldCanvas(game,renderer);
+
+		
+		mouseManager = new MouseManager(game);
+		
 		// listener and handle
 		// exit confirmation
 		this.game = game;
@@ -42,13 +41,15 @@ public class MainWindow{
 		state = MAXIMIZED;
 		// FULLSCREEN CODE
 		// //////////////////////////////////////////////////////////////////
-		frame.add(godPanel);
+		frame.add(canvas);
 		frame.setUndecorated(true);
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		frame.setBounds(0, 0, screenSize.width, screenSize.height);
 		// //////////////////////////////////////////////////////////////////
 
 		frame.setVisible(true);
+
+		addListeners();
 	}
 
 	// public MainWindow(Game g) {
@@ -60,26 +61,33 @@ public class MainWindow{
 		if (state != MINIMIZED) {
 			frame.dispose();
 			frame = new JFrame();
-			frame.add(godPanel);
+			frame.add(canvas);
 			frame.setUndecorated(true);
 			Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 			frame.setBounds(0, 0, screenSize.width, screenSize.height);
 		} else if (state != MAXIMIZED) {
 			frame.dispose();
 			frame = new JFrame();
-			frame.add(godPanel);
+			frame.add(canvas);
 			frame.setUndecorated(true);
 			frame.setBounds(0, 0, 800, 600);
-			frame.pack();
+			//frame.pack();
 		}
+		
+		addListeners();
 	}
-	
+
+	private void addListeners() {
+		frame.addMouseListener(mouseManager);
+		frame.addMouseMotionListener(mouseManager);
+		frame.addKeyListener(new KeyboardManager(this));
+	}
+
 	public JFrame getFrame(){
 		return frame;
 	}
 	public void repaint(){
 		frame.repaint();
-		canvas.repaint();
 	}
 
 }

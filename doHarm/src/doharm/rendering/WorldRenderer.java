@@ -86,7 +86,6 @@ public class WorldRenderer
 		Layer layer = world.getLayer(0);
 		
 		Tile[][] tiles = layer.getTiles();
-		System.out.println(tiles.length);
 		
 		for(int r = 0; r < tiles[0].length; r++){
 			for(int c = 0; c < tiles.length; c++){
