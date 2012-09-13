@@ -4,53 +4,82 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 import doharm.gui.input.KeyboardManager;
 import doharm.gui.input.MouseManager;
 import doharm.logic.Game;
 import doharm.rendering.WorldRenderer;
 
-public class MainWindow extends JFrame
-{
+public class MainWindow{
 	private static final long serialVersionUID = 1L;
 	private static final String TITLE = "OUR GAME";
+	public static final int MAXIMIZED = 1;
+	public static final int MINIMIZED = 2;
 
-	public MainWindow(Game game)
-	{
-		super(TITLE);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //TODO window close listener and handle exit confirmation
-		
-		WorldRenderer renderer = new WorldRenderer(game);
-		WorldCanvas canvas = new WorldCanvas(game, renderer);
-		add(canvas);
+	private int state;
+	private JPanel godPanel;
+	private JFrame frame;
+	private Game game;
+	private WorldCanvas canvas;
 
-		addKeyListener(new KeyboardManager());
-		MouseManager mouseManager = new MouseManager(game);
-		addMouseListener(mouseManager);
-		addMouseMotionListener(mouseManager);
-		
-		
-		//TODO add option for switching between fullscreen
-		//FULLSCREEN CODE
-		////////////////////////////////////////////////////////////////////
-		setUndecorated(true);
+	public MainWindow(Game game) {
+		frame = new JFrame(TITLE);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
+		// TODO window close
+		 godPanel = new JPanel();
+		 WorldRenderer renderer = new WorldRenderer(game);
+		 canvas = new WorldCanvas(game,renderer);
+		 godPanel.add(canvas);
+		 godPanel.addKeyListener(new KeyboardManager(this));
+		 MouseManager mouseManager = new MouseManager(game);
+		 godPanel.addMouseListener(mouseManager);
+		 godPanel.addMouseMotionListener(mouseManager);
+		// listener and handle
+		// exit confirmation
+		this.game = game;
+		// TODO add option for switching between fullscreen
+		state = MAXIMIZED;
+		// FULLSCREEN CODE
+		// //////////////////////////////////////////////////////////////////
+		frame.add(godPanel);
+		frame.setUndecorated(true);
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		setBounds(0,0,screenSize.width, screenSize.height);
-		////////////////////////////////////////////////////////////////////
-		
-		//WINDOWED CODE
-		////////////////////////////////////////////////////////////////////
-		//...
-		
-		//pack();
-		////////////////////////////////////////////////////////////////////
-		
-		
-		
-		setVisible(true);
-		
-		
-		
-		
+		frame.setBounds(0, 0, screenSize.width, screenSize.height);
+		// //////////////////////////////////////////////////////////////////
+
+		frame.setVisible(true);
 	}
+
+	// public MainWindow(Game g) {
+
+	//new MainWindow(g, MAXIMIZED);
+	// }
+
+	public void toggleSize() {
+		if (state != MINIMIZED) {
+			frame.dispose();
+			frame = new JFrame();
+			frame.add(godPanel);
+			frame.setUndecorated(true);
+			Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+			frame.setBounds(0, 0, screenSize.width, screenSize.height);
+		} else if (state != MAXIMIZED) {
+			frame.dispose();
+			frame = new JFrame();
+			frame.add(godPanel);
+			frame.setUndecorated(true);
+			frame.setBounds(0, 0, 800, 600);
+			frame.pack();
+		}
+	}
+	
+	public JFrame getFrame(){
+		return frame;
+	}
+	public void repaint(){
+		frame.repaint();
+		canvas.repaint();
+	}
+
 }
