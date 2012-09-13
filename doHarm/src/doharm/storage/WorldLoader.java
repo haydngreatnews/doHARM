@@ -2,6 +2,7 @@ package doharm.storage;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
@@ -24,7 +25,7 @@ public class WorldLoader
 		String tileset = scanner.next();
 		
 		this.worldDirectory = worldDirectory;
-		
+		layerFiles = new ArrayList<String>();
 		while (scanner.hasNext())
 		{
 			layerFiles.add(scanner.next());
