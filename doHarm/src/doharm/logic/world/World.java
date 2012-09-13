@@ -15,7 +15,7 @@ import doharm.storage.WorldLoader;
 
 public class World 
 {
-	Layer[] levels;  
+	Layer[] layers;  
 	private Set<Player> players;
 	private HumanPlayer humanPlayer;
 	private Camera camera;
@@ -34,6 +34,11 @@ public class World
 			e.printStackTrace();
 			System.exit(1);
 		}
+		
+		
+		layers = new Layer[1];
+		
+		layers[0] = new Layer();
 		
 		
 		humanPlayer = PlayerFactory.createHumanPlayer("Test player", 0);
@@ -66,5 +71,10 @@ public class World
 	public WorldLoader getWorldLoader() 
 	{
 		return worldLoader;
+	}
+	
+	public Layer getLayer(int number)
+	{
+		return layers[number];
 	}
 }

@@ -4,7 +4,13 @@ public class Layer
 {
 	public Tile[][] tiles;
 	
-	
+	public Layer()
+	{
+		
+		
+		
+		
+	}
 	
 	
 	
