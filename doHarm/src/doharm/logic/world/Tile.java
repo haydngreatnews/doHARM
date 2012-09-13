@@ -4,6 +4,20 @@ import java.awt.Dimension;
 
 public class Tile 
 {
+	public int imageID;
 	Dimension position;
-	Dimension size;
+	
+	public Tile(Dimension position, int imageID) 
+	{
+		this.position = position;
+		this.imageID = imageID;
+	}
+
+	public int getImageID() {
+		return imageID;
+	}
+
+	public Dimension getPosition() {
+		return position;
+	}
 }

@@ -38,7 +38,7 @@ public class World
 		
 		layers = new Layer[1];
 		
-		layers[0] = new Layer();
+		layers[0] = new Layer(worldLoader, 0);
 		
 		
 		humanPlayer = PlayerFactory.createHumanPlayer("Test player", 0);
