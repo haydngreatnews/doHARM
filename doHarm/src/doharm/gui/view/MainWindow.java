@@ -22,6 +22,7 @@ public class MainWindow{
 	private Game game;
 	private WorldCanvas canvas;
 	private MouseManager mouseManager;
+	private KeyboardManager keyboardManager;
 
 	public MainWindow(Game game) {
 		frame = new JFrame(TITLE);
@@ -30,9 +31,9 @@ public class MainWindow{
 
 		WorldRenderer renderer = new WorldRenderer(game);
 		canvas = new WorldCanvas(game,renderer);
-
 		
 		mouseManager = new MouseManager(game);
+		keyboardManager = new KeyboardManager(this);
 		
 		// listener and handle
 		// exit confirmation
@@ -80,7 +81,8 @@ public class MainWindow{
 	private void addListeners() {
 		frame.addMouseListener(mouseManager);
 		frame.addMouseMotionListener(mouseManager);
-		frame.addKeyListener(new KeyboardManager(this));
+		frame.addKeyListener(keyboardManager);
+		
 	}
 
 	public JFrame getFrame(){

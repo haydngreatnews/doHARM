@@ -26,10 +26,15 @@ public class Camera
 		return position;
 	}
 	
+	public void setPosition(float x, float y)
+	{
+		position.set(x,y);
+	}
+	
 	public Vector getRenderPosition() 
 	{
-		renderPosition.setX(position.getX() + canvasDimensions.width/2);
-		renderPosition.setY(position.getY() + canvasDimensions.height/2);
+		renderPosition.setX(position.getX() - canvasDimensions.width/2);
+		renderPosition.setY(position.getY() - canvasDimensions.height/2);
 		return renderPosition;
 	}
 }

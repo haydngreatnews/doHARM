@@ -30,13 +30,11 @@ public class PlayerRenderer {
 
 	private void drawPlayer(Character player, Graphics2D graphics) 
 	{
-		Vector cameraPos = game.getCamera().getRenderPosition();
-		
 		Dimension size = player.getSize();
 		Vector position = player.getPosition();
 		
 		graphics.setColor(Color.white);
-		graphics.fillOval(position.getXAsInt()+cameraPos.getXAsInt()-size.width/2, position.getYAsInt()+cameraPos.getYAsInt()-size.height/2, size.width, size.height);
+		graphics.fillOval(position.getXAsInt()-size.width/2, position.getYAsInt()-size.height/2, size.width, size.height);
 	}
 
 }

@@ -51,6 +51,10 @@ public class World
 		{
 			p.move();
 		}
+		if (humanPlayer != null)
+		{
+			camera.setPosition(humanPlayer.getPosition().getX(), humanPlayer.getPosition().getY());
+		}
 	}
 	
 	public Collection<Player> getPlayers()
@@ -64,7 +68,7 @@ public class World
 	{
 		if (humanPlayer == null)
 			return;
-		humanPlayer.moveTo(x-camera.getRenderPosition().getXAsInt(), y-camera.getRenderPosition().getYAsInt());
+		humanPlayer.moveTo(x+camera.getRenderPosition().getXAsInt(), y+camera.getRenderPosition().getYAsInt());
 		
 	}
 

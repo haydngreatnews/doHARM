@@ -3,12 +3,14 @@ package doharm.rendering;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
 
 import javax.imageio.ImageIO;
 
 import doharm.logic.Game;
+import doharm.logic.camera.Camera;
 import doharm.logic.physics.Vector;
 import doharm.logic.world.Layer;
 import doharm.logic.world.Tile;
@@ -22,7 +24,7 @@ public class WorldRenderer
 	private Graphics2D graphics;
 	private Dimension canvasSize;
 	private BufferedImage[] images;
-	
+	private AffineTransform transform;
 	private Game game;
 	
 	//
@@ -34,6 +36,7 @@ public class WorldRenderer
 		this.game = game;
 		playerRenderer = new PlayerRenderer(game);
 		canvasSize = new Dimension();
+		transform = new AffineTransform();
 		loadTileSets();
 	}
 	
@@ -59,10 +62,15 @@ public class WorldRenderer
 		graphics.setColor(Color.black);
 		graphics.fillRect(0, 0, canvasSize.width, canvasSize.height);
 		
+		
+		Camera camera = game.getCamera();
+		
 		//give the camera the canvas size so we can calculate the centre of the screen
-		game.getCamera().setCanvasDimensions(canvasSize);
+		camera.setCanvasDimensions(canvasSize);
 		
-		
+		transform.setToIdentity();
+		transform.translate(-camera.getRenderPosition().getX(), -camera.getRenderPosition().getY());
+		graphics.setTransform(transform);
 		//draw the current game, based on the camera, etc.
 		
 		renderTiles();
