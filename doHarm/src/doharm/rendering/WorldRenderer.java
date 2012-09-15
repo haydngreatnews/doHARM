@@ -3,6 +3,7 @@ package doharm.rendering;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -24,12 +25,22 @@ public class WorldRenderer
 	private Graphics2D graphics;
 	private Dimension canvasSize;
 	private BufferedImage[] images;
+	
+	private BufferedImage[] imagesIso;//As images, but the isometric versions.
+	
 	private AffineTransform transform;
 	private Game game;
 	
-	//
+	
 	
 	private PlayerRenderer playerRenderer;
+	
+	
+	private final int imgSize = 32;//Tiles assumed to be square.
+	
+	
+	final int imgIsoW = (int)Math.hypot((double)imgSize, (double)imgSize)+1;
+	final int imgIsoH = (int)(((double)imgIsoW)/2.0)+1;
 	
 	public WorldRenderer(Game game)
 	{
@@ -38,8 +49,11 @@ public class WorldRenderer
 		canvasSize = new Dimension();
 		transform = new AffineTransform();
 		loadTileSets();
+		createIsoImages();
 	}
 	
+
+
 	public void createImage(Dimension canvasSize)
 	{
 		this.canvasSize = canvasSize;
@@ -67,6 +81,7 @@ public class WorldRenderer
 		camera.setCanvasDimensions(canvasSize);
 		
 		transform.setToIdentity();
+		
 		graphics.setTransform(transform);
 		
 		//clear the screen
@@ -76,26 +91,16 @@ public class WorldRenderer
 		transform.translate(-camera.getRenderPosition().getX(), -camera.getRenderPosition().getY());
 		graphics.setTransform(transform);
 		//draw the current game, based on the camera, etc.
-		
-		
-		
-		renderTiles();
-		
-		
-		
+	
+		renderTilesIso();
+	
 		playerRenderer.redraw(graphics);
 		
-		
-		
-		
-		
+	
 	}
 
 	
 	private void renderTiles(){
-		//TODO tileRenderer	
-		Vector position = game.getCamera().getRenderPosition();
-		
 		World world = game.getWorld();
 		Layer layer = world.getLayer(0);
 		
@@ -109,14 +114,45 @@ public class WorldRenderer
 				graphics.drawImage(images[tile.getImageID()], c*32, r*32, null);
 			}
 		}
-		
-		/*
-		 *
-		 * 
-		 */
-		
 	}
 	
+	private void renderTilesIso(){
+		World world = game.getWorld();
+		Layer layer = world.getLayer(0);
+		
+		Tile[][] tiles = layer.getTiles();
+		
+		for(int r = 0; r < tiles[0].length; r++)
+		{
+			for(int c = 0; c < tiles.length; c++)
+			{
+				Tile tile = tiles[c][r];
+				graphics.drawImage(imagesIso[tile.getImageID()], (-r*imgIsoW/2)+(c*imgIsoW/2), (r*imgIsoH/2)+(c*imgIsoH/2), null);
+			}
+		}
+	}
+	
+	/**
+	 * rotates and scales the elements of "images" for the isometric view
+	 * and adds them to "imagesIso".
+	 */
+	private void createIsoImages(){
+		imagesIso = new BufferedImage[images.length];
+		int c = 0;
+		for(BufferedImage img : images){
+			BufferedImage b = new BufferedImage(imgIsoW, imgIsoW, BufferedImage.TYPE_INT_ARGB);
+		
+			AffineTransform trans = AffineTransform.getRotateInstance(Math.PI/4, ((double)imgIsoW)/2.0, ((double)imgIsoW)/2.0);
+			
+			Graphics2D g = (Graphics2D)b.getGraphics();
+			g.setTransform(trans);
+			g.drawImage(img, img.getWidth()/4, img.getHeight()/4, null);
+			b = RenderUtil.scaleImage(b, imgIsoW, imgIsoH);
+			imagesIso[c] = b;
+			c++;
+		}
+		
+	}
 	
 	private void loadTileSets(){
 		World world = game.getWorld();
@@ -147,8 +183,6 @@ public class WorldRenderer
 		}catch(Exception e){}
 		
 	}
-	
 
-	
 	
 }

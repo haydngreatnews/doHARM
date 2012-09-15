@@ -34,7 +34,7 @@ public class PlayerRenderer {
 		Vector position = player.getPosition();
 		
 		graphics.setColor(Color.white);
-		graphics.fillOval(position.getXAsInt()-size.width/2, position.getYAsInt()-size.height/2, size.width, size.height);
+		graphics.fillOval(position.getXAsInt()-size.width/2, position.getYAsInt()-size.height/2, size.width, size.height/2);
 	}
 
 }
