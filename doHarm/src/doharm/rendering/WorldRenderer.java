@@ -3,7 +3,7 @@ package doharm.rendering;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
-import java.awt.RenderingHints;
+
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -12,7 +12,7 @@ import javax.imageio.ImageIO;
 
 import doharm.logic.Game;
 import doharm.logic.camera.Camera;
-import doharm.logic.physics.Vector;
+
 import doharm.logic.world.Layer;
 import doharm.logic.world.Tile;
 import doharm.logic.world.World;
@@ -36,11 +36,11 @@ public class WorldRenderer
 	private PlayerRenderer playerRenderer;
 	
 	
-	private final int imgSize = 32;//Tiles assumed to be square.
+	private int imgSize;//Tiles assumed to be square.
 	
 	
-	final int imgIsoW = (int)Math.hypot((double)imgSize, (double)imgSize)+1;
-	final int imgIsoH = (int)(((double)imgIsoW)/2.0)+1;
+	private int imgIsoW;
+	private int imgIsoH;
 	
 	public WorldRenderer(Game game)
 	{
@@ -61,7 +61,8 @@ public class WorldRenderer
 		worldImage = new BufferedImage(canvasSize.width, canvasSize.height, BufferedImage.TYPE_INT_ARGB);
 		graphics = worldImage.createGraphics();
 	}
-
+	
+	
 	public BufferedImage getImage() 
 	{
 		return worldImage;
@@ -71,10 +72,7 @@ public class WorldRenderer
 	{
 		if (!this.canvasSize.equals(canvasSize))
 			createImage(canvasSize); //resize the canvas
-		
-		
-		
-		
+	
 		Camera camera = game.getCamera();
 		
 		//give the camera the canvas size so we can calculate the centre of the screen
@@ -92,7 +90,7 @@ public class WorldRenderer
 		graphics.setTransform(transform);
 		//draw the current game, based on the camera, etc.
 	
-		renderTilesIso();
+		renderWorldIso();
 	
 		playerRenderer.redraw(graphics);
 		
@@ -111,27 +109,38 @@ public class WorldRenderer
 			for(int c = 0; c < tiles.length; c++)
 			{
 				Tile tile = tiles[c][r];
-				graphics.drawImage(images[tile.getImageID()], c*32, r*32, null);
+				graphics.drawImage(images[tile.getImageID()], c*imgSize, r*imgSize, null);
 			}
 		}
 	}
 	
-	private void renderTilesIso(){
+	private void renderWorldIso(){
 		World world = game.getWorld();
-		Layer layer = world.getLayer(0);
 		
-		Tile[][] tiles = layer.getTiles();
-		
-		for(int r = 0; r < tiles[0].length; r++)
-		{
-			for(int c = 0; c < tiles.length; c++)
+		Layer[] layers = world.getLayers();
+		for(int layerCount = 0; layerCount < layers.length; layerCount++){
+
+			Tile[][] tiles = layers[layerCount].getTiles();
+			
+			boolean isTransparent = false;
+			//TODO this must be changed when camera views are implemented.
+			//if(tile above the player with respect to the isometric view, 
+			//ie. the tile(s) obscuring view of the player, is not an invisible tile, make this entire layer transparent.
+			//and dont draw any subsequent layers.
+			
+			for(int r = 0; r < tiles[0].length; r++)
 			{
-				Tile tile = tiles[c][r];
-				graphics.drawImage(imagesIso[tile.getImageID()], (-r*(imgIsoW/2-1))+(c*(imgIsoW/2-1)), (r*(imgIsoH/2-1))+(c*(imgIsoH/2-1)), null);
+				for(int c = 0; c < tiles.length; c++)
+				{
+					Tile tile = tiles[c][r];
+					
+					graphics.drawImage(imagesIso[tile.getImageID()], (-r*(imgIsoW/2-1))+(c*(imgIsoW/2-1)), (r*(imgIsoH/2-1))+(c*(imgIsoH/2-1))-(layerCount*imgIsoH), null);
+				}
 			}
+		
 		}
 	}
-	
+
 	/**
 	 * rotates and scales the elements of "images" for the isometric view
 	 * and adds them to "imagesIso".
@@ -159,7 +168,13 @@ public class WorldRenderer
 		BufferedImage tileSet = null;
 		WorldLoader wl = world.getWorldLoader();
 		
+		
 		TilesetLoader tsl = wl.getTilesetLoader();
+		imgSize = tsl.getTileWidth();
+		imgIsoW = (int)Math.hypot((double)imgSize, (double)imgSize)+1;
+		imgIsoH = (int)(((double)imgIsoW)/2.0)+1;
+		
+		
 		images = new BufferedImage[tsl.getTileNames().size()];
 		
 		int width = tsl.getTileWidth();
