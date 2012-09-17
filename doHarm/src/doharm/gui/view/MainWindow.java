@@ -4,8 +4,8 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 
 import javax.swing.JFrame;
-import javax.swing.JPanel;
 
+import net.miginfocom.swing.MigLayout;
 import doharm.gui.input.KeyboardManager;
 import doharm.gui.input.MouseManager;
 import doharm.logic.Game;
@@ -29,7 +29,7 @@ public class MainWindow{
 
 		WorldRenderer renderer = new WorldRenderer(game);
 		canvas = new WorldCanvas(game,renderer);
-		
+		canvas.setLayout(new MigLayout());
 		mouseManager = new MouseManager(game);
 		keyboardManager = new KeyboardManager(this);
 		
