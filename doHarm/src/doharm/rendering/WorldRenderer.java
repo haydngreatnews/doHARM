@@ -49,7 +49,8 @@ public class WorldRenderer
 		canvasSize = new Dimension();
 		transform = new AffineTransform();
 		loadTileSets();
-		createIsoImages();
+		newLoadTileSets();
+		//createIsoImages();
 	}
 	
 
@@ -134,7 +135,7 @@ public class WorldRenderer
 				{
 					Tile tile = tiles[c][r];
 					
-					graphics.drawImage(imagesIso[tile.getImageID()], (-r*(imgIsoW/2-1))+(c*(imgIsoW/2-1)), (r*(imgIsoH/2-1))+(c*(imgIsoH/2-1))-(layerCount*imgIsoH), null);
+					graphics.drawImage(images[tile.getImageID()], (-r*(imgIsoW/2-1))+(c*(imgIsoW/2-1)), (r*(imgIsoH/2-1))+(c*(imgIsoH/2-1))-(layerCount*imgIsoH), null);
 				}
 			}
 		
@@ -164,6 +165,42 @@ public class WorldRenderer
 	}
 	
 	private void loadTileSets(){
+		World world = game.getWorld();
+		BufferedImage tileSet = null;
+		WorldLoader wl = world.getWorldLoader();
+		
+		
+		TilesetLoader tsl = wl.getTilesetLoader();
+		imgSize = tsl.getTileWidth();
+		imgIsoW = tsl.getTileWidth();
+		imgIsoH = tsl.getTileHeight();
+		
+		
+		images = new BufferedImage[tsl.getTileNames().size()];
+		
+		int width = tsl.getTileWidth();
+		int height = tsl.getTileHeight();
+		
+		try{
+			tileSet = ImageIO.read(new File("res/tilesets/"+tsl.getTileSetImage())); 
+			
+			for(int r = 0; r < tileSet.getHeight()/height; r++)
+			{
+				for(int c = 0; c < tileSet.getWidth()/width; c++)
+				{
+					BufferedImage n = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+					Graphics2D g = n.createGraphics();
+					g.drawImage(tileSet,0, 0,width, height,	c*width, r*height, width*(c+1), (r+1)*height, null);
+					
+					images[((tileSet.getHeight()/height)*r) + c] = n;
+				}
+			}
+			
+		}catch(Exception e){}
+		
+	}	
+	
+	private void newLoadTileSets(){
 		World world = game.getWorld();
 		BufferedImage tileSet = null;
 		WorldLoader wl = world.getWorldLoader();

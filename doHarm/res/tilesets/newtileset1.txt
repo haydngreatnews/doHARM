@@ -1,6 +1,6 @@
 46
 54
-newtileset1.png
+newtileset1.jpg
 wall
 grass
 nothing

@@ -1,6 +1,6 @@
 20
 20
-tileset1.txt
+newtileset1.txt
 ground.txt
 walls.txt
 
