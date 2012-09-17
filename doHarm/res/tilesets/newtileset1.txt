@@ -1,0 +1,9 @@
+46
+54
+newtileset1.png
+wall
+grass
+nothing
+water
+tree
+dungeon
