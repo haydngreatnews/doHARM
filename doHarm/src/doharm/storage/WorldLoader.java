@@ -58,4 +58,9 @@ public class WorldLoader
 	{
 		return layers.get(layerNumber);
 	}
+
+	public int getNumLayers() 
+	{
+		return layers.size();
+	}
 }

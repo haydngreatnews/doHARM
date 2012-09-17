@@ -37,9 +37,9 @@ public class World
 		}
 		
 		
-		layers = new Layer[1];
-		
-		layers[0] = new Layer(worldLoader, 0);
+		layers = new Layer[worldLoader.getNumLayers()];
+		for (int i = 0; i < layers.length; i++)
+			layers[i] = new Layer(worldLoader, i);
 		
 		
 		humanPlayer = PlayerFactory.createHumanPlayer("Test player", 0);
@@ -81,6 +81,11 @@ public class World
 	public Layer getLayer(int number)
 	{
 		return layers[number];
+	}
+	
+	public Layer[] getLayers()
+	{
+		return layers;
 	}
 	
 	public int getNumLayers()

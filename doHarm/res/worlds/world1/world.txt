@@ -2,3 +2,5 @@
 20
 tileset1.txt
 ground.txt
+walls.txt
+

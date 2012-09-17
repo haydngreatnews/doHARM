@@ -127,7 +127,7 @@ public class WorldRenderer
 			for(int c = 0; c < tiles.length; c++)
 			{
 				Tile tile = tiles[c][r];
-				graphics.drawImage(imagesIso[tile.getImageID()], (-r*imgIsoW/2)+(c*imgIsoW/2), (r*imgIsoH/2)+(c*imgIsoH/2), null);
+				graphics.drawImage(imagesIso[tile.getImageID()], (-r*(imgIsoW/2-1))+(c*(imgIsoW/2-1)), (r*(imgIsoH/2-1))+(c*(imgIsoH/2-1)), null);
 			}
 		}
 	}
