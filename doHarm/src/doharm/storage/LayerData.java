@@ -8,13 +8,13 @@ import java.util.Scanner;
 
 public class LayerData 
 {
-	private byte[][] imageIDs;
+	private byte[][] tileIDs;
 	public LayerData(WorldLoader worldLoader, String fileName) throws IOException 
 	{
 		Scanner scanner = new Scanner(new File("res/worlds/"+worldLoader.getWorldDirectory()+"/layers/"+fileName));
 		
 		
-		imageIDs = new byte[worldLoader.getNumTilesY()][worldLoader.getNumTilesX()];
+		tileIDs = new byte[worldLoader.getNumTilesY()][worldLoader.getNumTilesX()];
 		
 		for (int r = 0; r < worldLoader.getNumTilesY(); r++)
 		{
@@ -25,14 +25,14 @@ public class LayerData
 				byte id = (byte) (read - '0');
 				
 				
-				imageIDs[r][c] = id;
+				tileIDs[r][c] = id;
 			}
 		}
 		
 	}
 
-	public int getImageID(int y, int x) {
-		return imageIDs[y][x];
+	public int getTileID(int y, int x) {
+		return tileIDs[y][x];
 	}
 	
 }

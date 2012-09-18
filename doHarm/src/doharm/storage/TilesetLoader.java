@@ -12,27 +12,33 @@ public class TilesetLoader
 	private int tileWidth;
 	private int tileHeight;
 	private String tileSetImage;
-	private List<String> tileNames;
+	private List<TileData> tileData;
 
 	public TilesetLoader(String filename) throws FileNotFoundException
 	{
 		Scanner scanner = new Scanner(new File("res/tilesets/"+filename));
-		tileWidth = scanner.nextInt();
-		tileHeight = scanner.nextInt();
-		tileSetImage = scanner.next();
+		tileWidth = Integer.parseInt(scanner.nextLine());
+		tileHeight = Integer.parseInt(scanner.nextLine());
+		int isowidth = Integer.parseInt(scanner.nextLine());
+		int isoheight = Integer.parseInt(scanner.nextLine());
 		
-		tileNames = new ArrayList<String>();
-		while (scanner.hasNext())
+		tileSetImage = scanner.nextLine().trim();
+		
+		tileData = new ArrayList<TileData>();
+		
+		while (scanner.hasNextLine())
 		{
-			tileNames.add(scanner.next());
+			String line = scanner.nextLine();
+			if (line.trim().length() > 0)
+				tileData.add(new TileData(line));
 		}
 	}
 	
 	
-	public List<String> getTileNames()
+	/*public List<TileData> getTileData()
 	{
-		return Collections.unmodifiableList(tileNames);
-	}
+		return Collections.unmodifiableList(tileData);
+	}*/
 
 
 	public int getTileWidth() {
@@ -47,6 +53,18 @@ public class TilesetLoader
 
 	public String getTileSetImage() {
 		return tileSetImage;
+	}
+
+
+	public TileData getTileData(int tileID) 
+	{
+		return tileData.get(tileID);
+	}
+
+
+	public int getNumTiles() 
+	{
+		return tileData.size();
 	}
 	
 	

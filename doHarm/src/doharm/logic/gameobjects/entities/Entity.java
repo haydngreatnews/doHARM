@@ -72,13 +72,26 @@ public abstract class Entity implements GameObject
 			velocity.reset();
 		}
 		
-		position.add(velocity);
-		velocity.multiply(friction);
 		
 		
-		currentTile = currentLayer.getTileAt(position.getX(),position.getY());
-		relativePosition.set(position.getX()-currentTile.getX(),position.getY()-currentTile.getY());
-		currentLayer = currentTile.getLayer();
+		 
+		
+		
+		
+		Tile newTile = currentLayer.getTileAt(position.getX(),position.getY());
+		if (newTile.isWalkable())
+		{
+			currentTile = newTile;
+			position.add(velocity);
+			velocity.multiply(friction);
+			
+			relativePosition.set(position.getX()-currentTile.getX(),position.getY()-currentTile.getY());
+			currentLayer = currentTile.getLayer();
+		}
+		else
+		{
+			velocity.reset();
+		}
 		
 		System.out.println(currentTile.getRow()+","+ currentTile.getCol());
 		

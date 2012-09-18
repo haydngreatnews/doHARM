@@ -1,27 +1,40 @@
 package doharm.logic.world;
 
 import doharm.logic.physics.Vector;
+import doharm.storage.TileData;
 
 public class Tile 
 {
-	public int imageID;
+	public TileData tileData;
 	Vector position;
 	private Layer layer;
 	private int row;
 	private int col;
+	private int imageNumber;
+	private int switchImageTimer;
 	
-	public Tile(Layer layer, int row, int col, Vector position, int imageID) 
+	public Tile(Layer layer, int row, int col, Vector position, TileData data) 
 	{
 		this.row = row;
 		this.col = col;
 		this.layer = layer;
 		this.position = position;
-		this.imageID = imageID;
+		this.tileData = data;
+		switchImageTimer = tileData.getNumFramesPerImage();
 	}
 
 	public int getImageID() 
 	{
-		return imageID;
+		if (switchImageTimer == 0)
+		{
+			switchImageTimer = tileData.getNumFramesPerImage();
+			imageNumber = (imageNumber + 1) % tileData.getNumImages();
+		}
+		else
+			switchImageTimer--;
+		
+		
+		return tileData.getImageID(imageNumber); //TODO
 	}
 
 	public int getX()
@@ -49,5 +62,10 @@ public class Tile
 	public int getCol() 
 	{
 		return col;
+	}
+	
+	public boolean isWalkable()
+	{
+		return tileData.getType() != 0; //TODO
 	}
 }

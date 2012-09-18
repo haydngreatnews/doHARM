@@ -16,8 +16,12 @@ tilewidth
 tileheight
 iso tile width
 iso tile height
-num_tileset images
-tilename imagenumber0 [imagenumber1] [imagenumber...] [imagenumberN]
+tileset image
+tilename tiletype imagenumber0 [imagenumber1] [imagenumber...] [imagenumberN]
 
 
 
+
+
+ 
+Tile type: 0 = wall (not walkable) 1=walkable 2=water (not walkable?) 3=object(destructible)

@@ -174,7 +174,7 @@ public class WorldRenderer
 		imgIsoH = tsl.getTileHeight();
 		
 		
-		images = new BufferedImage[tsl.getTileNames().size()];
+		images = new BufferedImage[tsl.getNumTiles()];
 		
 		int width = tsl.getTileWidth();
 		int height = tsl.getTileHeight();
@@ -210,7 +210,7 @@ public class WorldRenderer
 		imgIsoH = 23;
 		
 		
-		images = new BufferedImage[tsl.getTileNames().size()];
+		images = new BufferedImage[tsl.getNumTiles()];
 		
 		int width = tsl.getTileWidth();
 		int height = tsl.getTileHeight();
