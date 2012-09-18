@@ -42,7 +42,7 @@ public class World
 			layers[i] = new Layer(worldLoader, i);
 		
 		
-		humanPlayer = PlayerFactory.createHumanPlayer("Test player", 0);
+		humanPlayer = PlayerFactory.createHumanPlayer(layers[0].getTiles()[5][5],"Test player", 0);
 		players.add(humanPlayer);
 	}
 

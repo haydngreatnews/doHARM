@@ -1,5 +1,7 @@
 package doharm.logic.gameobjects.entities.characters.players;
 
+import doharm.logic.world.Tile;
+
 /**
  * Player constructors are protected so that they can only be created via this PlayerFactory class.
  * 
@@ -7,16 +9,16 @@ package doharm.logic.gameobjects.entities.characters.players;
  */
 public class PlayerFactory 
 {	
-	public static HumanPlayer createHumanPlayer(String name, int id)
+	public static HumanPlayer createHumanPlayer(Tile spawnTile, String name, int id)
 	{
-		return new HumanPlayer(name, id);
+		return new HumanPlayer(spawnTile, name, id);
 	}
-	public static NetworkPlayer createNetworkPlayer(String name, int id)
+	public static NetworkPlayer createNetworkPlayer(Tile spawnTile, String name, int id)
 	{
-		return new NetworkPlayer(name, id);
+		return new NetworkPlayer(spawnTile, name, id);
 	}
-	public static AIPlayer createAIPlayer(String name, int id)
+	public static AIPlayer createAIPlayer(Tile spawnTile, String name, int id)
 	{
-		return new AIPlayer(name, id);
+		return new AIPlayer(spawnTile, name, id);
 	}
 }

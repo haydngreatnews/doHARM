@@ -1,5 +1,7 @@
 package doharm.logic.physics;
 
+import java.awt.Dimension;
+
 public class Vector 
 {
 	private float x;
@@ -18,11 +20,19 @@ public class Vector
 		this(0,0);
 	}
 
+	public Vector(Vector v) 
+	{
+		this(v.x,v.y);
+	}
+
+	public Vector(Dimension d) 
+	{
+		this(d.width,d.height);
+	}
+
 	public void normalize()
 	{
-		x /= length;
-		y /= length;
-		updateLength();
+		set(x/length,y/length);
 	}
 
 	private void updateLength() 
@@ -58,14 +68,12 @@ public class Vector
 	
 	public void setX(float x) 
 	{
-		this.x = x;
-		updateLength();
+		set(x,this.y);
 	}
 
 	public void setY(float y) 
 	{
-		this.y = y;
-		updateLength();
+		set(this.x, y);
 	}
 	
 	public void set(float x, float y) 
@@ -81,9 +89,7 @@ public class Vector
 	
 	public void multiply(float value)
 	{
-		x *= value;
-		y *= value;
-		updateLength();
+		set(x*value,y*value);
 	}
 
 	public float getLength() 
@@ -93,9 +99,7 @@ public class Vector
 
 	public void add(Vector v) 
 	{
-		x += v.x;
-		y += v.y;
-		updateLength();
+		set(x+v.x,y+v.y);
 	}
 
 	public Vector subtract(Vector v) 
@@ -121,10 +125,4 @@ public class Vector
 		y = 0;
 		updateLength();
 	}
-
-	
-
-	
-	
-	
 }

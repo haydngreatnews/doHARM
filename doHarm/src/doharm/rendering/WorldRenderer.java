@@ -3,7 +3,6 @@ package doharm.rendering;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
-
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -12,7 +11,6 @@ import javax.imageio.ImageIO;
 
 import doharm.logic.Game;
 import doharm.logic.camera.Camera;
-
 import doharm.logic.world.Layer;
 import doharm.logic.world.Tile;
 import doharm.logic.world.World;
@@ -218,7 +216,30 @@ public class WorldRenderer
 		int height = tsl.getTileHeight();
 		
 		try{
-			tileSet = ImageIO.read(new File("res/tilesets/"+tsl.getTileSetImage())); 
+			tileSet = ImageIO.read(new File("res/tilesets/"+tsl.getTileSetImage()));
+			
+			
+			/*
+			BufferedImage transparentImage = new BufferedImage(tileSet.getWidth(),tileSet.getHeight(),BufferedImage.TYPE_INT_ARGB);
+			Graphics2D transparentGraphics = transparentImage.createGraphics();
+			transparentGraphics.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.1f));
+			transparentGraphics.drawImage(tileSet, 0,0,null);
+			*/
+			
+			/*
+			 * 
+			 * 
+			 * 
+			 * 
+			 * Composite old = backbufferGraphics.getComposite();
+			backbufferGraphics.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.1f));
+			//backbufferGraphics.drawImage(boardImage, 0, 0,boardImage.getWidth(),boardImage.getHeight(),null);	
+			//backbufferGraphics.setComposite(old);
+			drawBoard();
+			backbufferGraphics.setComposite(old);
+			 * 
+			 * 
+			 */
 			
 			for(int r = 0; r < tileSet.getHeight()/height; r++)
 			{

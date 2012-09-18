@@ -1,23 +1,53 @@
 package doharm.logic.world;
 
-import java.awt.Dimension;
+import doharm.logic.physics.Vector;
 
 public class Tile 
 {
 	public int imageID;
-	Dimension position;
+	Vector position;
+	private Layer layer;
+	private int row;
+	private int col;
 	
-	public Tile(Dimension position, int imageID) 
+	public Tile(Layer layer, int row, int col, Vector position, int imageID) 
 	{
+		this.row = row;
+		this.col = col;
+		this.layer = layer;
 		this.position = position;
 		this.imageID = imageID;
 	}
 
-	public int getImageID() {
+	public int getImageID() 
+	{
 		return imageID;
 	}
 
-	public Dimension getPosition() {
+	public int getX()
+	{
+		return position.getXAsInt();
+	}
+	public int getY()
+	{
+		return position.getYAsInt();
+	}
+	/*public Vector getPosition() 
+	{
 		return position;
+	}*/
+	
+	public Layer getLayer()
+	{
+		return layer;
+	}
+
+	public int getRow() 
+	{
+		return row;
+	}
+	public int getCol() 
+	{
+		return col;
 	}
 }

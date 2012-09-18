@@ -1,11 +1,13 @@
 package doharm.logic.gameobjects.entities.characters.players;
 
+import doharm.logic.world.Tile;
+
 
 public class NetworkPlayer extends Player
 {
-	protected NetworkPlayer(String name, int id) 
+	protected NetworkPlayer(Tile spawnTile, String name, int id) 
 	{
-		super(name, id, PlayerType.AI);
+		super(spawnTile, name, id, PlayerType.AI);
 	}
 	
 }

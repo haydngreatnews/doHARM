@@ -4,23 +4,33 @@ import java.awt.Dimension;
 
 import doharm.logic.gameobjects.GameObject;
 import doharm.logic.physics.Vector;
+import doharm.logic.world.Layer;
+import doharm.logic.world.Tile;
 
 public abstract class Entity implements GameObject 
 {
 	protected Vector position;
+	protected Vector relativePosition;
 	protected Vector destination;
 	protected Vector velocity;
 	private Dimension size;
 	private float angle;
 	private float friction = 0.98f;
 	
+	private Layer currentLayer;
+	private Tile currentTile;
+	
 
-	public Entity()
+	public Entity(Tile spawnTile)
 	{
-		position = new Vector();
-		destination = new Vector();
+		this.currentTile = spawnTile;
+		currentLayer = currentTile.getLayer();
+		position = new Vector(spawnTile.getX(), spawnTile.getY());
+		relativePosition = new Vector();
+		
+		destination = new Vector(position);
 		velocity = new Vector();
-		size = new Dimension(32,32);
+		size = new Dimension(32,32); //urgh
 		angle = 0;
 	}
 	
@@ -66,8 +76,11 @@ public abstract class Entity implements GameObject
 		velocity.multiply(friction);
 		
 		
+		currentTile = currentLayer.getTileAt(position.getX(),position.getY());
+		relativePosition.set(position.getX()-currentTile.getX(),position.getY()-currentTile.getY());
+		currentLayer = currentTile.getLayer();
 		
-		
+		System.out.println(currentTile.getRow()+","+ currentTile.getCol());
 		
 	}
 	
@@ -77,5 +90,20 @@ public abstract class Entity implements GameObject
 	public void moveTo(float x, float y) 
 	{
 		destination.set(x,y);
+	}
+	
+	public Layer getCurrentLayer()
+	{
+		return currentTile.getLayer();
+	}
+	
+	public Tile getCurrentTile()
+	{
+		return currentTile;
+	}
+	
+	public Vector getPositionRelativeToTile()
+	{
+		return relativePosition;
 	}
 }

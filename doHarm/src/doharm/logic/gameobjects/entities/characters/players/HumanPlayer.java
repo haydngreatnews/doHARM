@@ -1,10 +1,12 @@
 package doharm.logic.gameobjects.entities.characters.players;
 
+import doharm.logic.world.Tile;
+
 
 public class HumanPlayer extends Player
 {
-	protected HumanPlayer(String name, int id) 
+	protected HumanPlayer(Tile spawnTile, String name, int id) 
 	{
-		super(name, id, PlayerType.AI);
+		super(spawnTile, name, id, PlayerType.AI);
 	}
 }
