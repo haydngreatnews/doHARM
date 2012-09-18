@@ -78,7 +78,7 @@ public abstract class Entity implements GameObject
 		
 		
 		
-		Tile newTile = currentLayer.getTileAt(position.getX(),position.getY());
+		Tile newTile = currentLayer.getTileAt(position.getX()+velocity.getX(),position.getY()+velocity.getY());
 		if (newTile.isWalkable())
 		{
 			currentTile = newTile;
