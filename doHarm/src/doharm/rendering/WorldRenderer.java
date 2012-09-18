@@ -208,8 +208,8 @@ public class WorldRenderer
 		
 		TilesetLoader tsl = wl.getTilesetLoader();
 		imgSize = tsl.getTileWidth();
-		imgIsoW = (int)Math.hypot((double)imgSize, (double)imgSize)+1;
-		imgIsoH = (int)(((double)imgIsoW)/2.0)+1;
+		imgIsoW = tsl.getTileWidth();
+		imgIsoH = 23;
 		
 		
 		images = new BufferedImage[tsl.getTileNames().size()];
