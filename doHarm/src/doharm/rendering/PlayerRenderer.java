@@ -7,6 +7,8 @@ import java.awt.Graphics2D;
 import doharm.logic.Game;
 import doharm.logic.gameobjects.entities.characters.Character;
 import doharm.logic.physics.Vector;
+import doharm.logic.world.Layer;
+import doharm.logic.world.Tile;
 import doharm.logic.world.World;
 
 public class PlayerRenderer {
@@ -31,10 +33,15 @@ public class PlayerRenderer {
 	private void drawPlayer(Character player, Graphics2D graphics) 
 	{
 		Dimension size = player.getSize();
-		Vector position = player.getPosition();
+		Tile tile = player.getCurrentTile();
+		Layer layer = player.getCurrentLayer();
+		Vector relative = player.getPositionRelativeToTile();
+		int row = tile.getRow();
+		int col = tile.getCol();
 		
 		graphics.setColor(Color.white);
-		graphics.fillOval(position.getXAsInt()-size.width/2, position.getYAsInt()-size.height/2, size.width, size.height/2);
+		
+		//graphics.fillOval(position.getXAsInt()-size.width/2, position.getYAsInt()-size.height/2, size.width, size.height/2);
 	}
 
 }
