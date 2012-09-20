@@ -12,9 +12,13 @@ public class Tile
 	private int col;
 	private int imageNumber;
 	private int switchImageTimer;
+	private int width;
+	private int height;
 	
-	public Tile(Layer layer, int row, int col, Vector position, TileData data) 
+	public Tile(Layer layer, int row, int col, int width, int height, Vector position, TileData data) 
 	{
+		this.width = width;
+		this.height = height;
 		this.row = row;
 		this.col = col;
 		this.layer = layer;
@@ -45,6 +49,16 @@ public class Tile
 	{
 		return position.getYAsInt();
 	}
+	
+	public int getWidth()
+	{
+		return width;
+	}
+	public int getHeight()
+	{
+		return height;
+	}
+
 	/*public Vector getPosition() 
 	{
 		return position;
