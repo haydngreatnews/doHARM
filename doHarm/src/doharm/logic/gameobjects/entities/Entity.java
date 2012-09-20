@@ -93,7 +93,7 @@ public abstract class Entity implements GameObject
 			velocity.reset();
 		}
 		
-		System.out.println(currentTile.getRow()+","+ currentTile.getCol());
+		//System.out.println(currentTile.getRow()+","+ currentTile.getCol());
 		
 	}
 	

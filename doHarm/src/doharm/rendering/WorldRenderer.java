@@ -11,6 +11,7 @@ import javax.imageio.ImageIO;
 
 import doharm.logic.Game;
 import doharm.logic.camera.Camera;
+import doharm.logic.physics.Vector;
 import doharm.logic.world.Layer;
 import doharm.logic.world.Tile;
 import doharm.logic.world.World;
@@ -37,8 +38,8 @@ public class WorldRenderer
 	private int imgSize;//Tiles assumed to be square.
 	
 	
-	private int imgIsoW;
-	private int imgIsoH;
+	public final int imgIsoW;
+	public final int imgIsoH;
 	
 	public WorldRenderer(Game game)
 	{
@@ -46,9 +47,13 @@ public class WorldRenderer
 		playerRenderer = new PlayerRenderer(game);
 		canvasSize = new Dimension();
 		transform = new AffineTransform();
-		loadTileSets();
+		Dimension d = newLoadTileSets();
+		imgIsoW = d.width;
+		imgIsoH = d.height;
+		RenderUtil.setImgDimensions(imgIsoW, imgIsoH);
+		
 		newLoadTileSets();
-		//createIsoImages();
+		
 	}
 	
 
@@ -85,33 +90,20 @@ public class WorldRenderer
 		graphics.setColor(Color.black);
 		graphics.fillRect(0, 0, canvasSize.width, canvasSize.height);
 		
+		Vector v = RenderUtil.convertCoordsToIso(-camera.getRenderPosition().getX(), -camera.getRenderPosition().getY());
 		transform.translate(-camera.getRenderPosition().getX(), -camera.getRenderPosition().getY());
 		graphics.setTransform(transform);
 		//draw the current game, based on the camera, etc.
 	
 		renderWorldIso();
 	
-		playerRenderer.redraw(graphics);
+		playerRenderer.redraw(graphics, imgIsoW, imgIsoH);
 		
 	
 	}
 
 	
-	private void renderTiles(){
-		World world = game.getWorld();
-		Layer layer = world.getLayer(0);
-		
-		Tile[][] tiles = layer.getTiles();
-		
-		for(int r = 0; r < tiles[0].length; r++)
-		{
-			for(int c = 0; c < tiles.length; c++)
-			{
-				Tile tile = tiles[c][r];
-				graphics.drawImage(images[tile.getImageID()], c*imgSize, r*imgSize, null);
-			}
-		}
-	}
+	
 	
 	private void renderWorldIso(){
 		World world = game.getWorld();
@@ -139,30 +131,9 @@ public class WorldRenderer
 		
 		}
 	}
-
-	/**
-	 * rotates and scales the elements of "images" for the isometric view
-	 * and adds them to "imagesIso".
-	 */
-	private void createIsoImages(){
-		imagesIso = new BufferedImage[images.length];
-		int c = 0;
-		for(BufferedImage img : images){
-			BufferedImage b = new BufferedImage(imgIsoW, imgIsoW, BufferedImage.TYPE_INT_ARGB);
-		
-			AffineTransform trans = AffineTransform.getRotateInstance(Math.PI/4, ((double)imgIsoW)/2.0, ((double)imgIsoW)/2.0);
-			
-			Graphics2D g = (Graphics2D)b.getGraphics();
-			g.setTransform(trans);
-			g.drawImage(img, img.getWidth()/4, img.getHeight()/4, null);
-			b = RenderUtil.scaleImage(b, imgIsoW, imgIsoH);
-			imagesIso[c] = b;
-			c++;
-		}
-		
-	}
 	
-	private void loadTileSets(){
+	
+	private Dimension newLoadTileSets(){
 		World world = game.getWorld();
 		BufferedImage tileSet = null;
 		WorldLoader wl = world.getWorldLoader();
@@ -170,44 +141,8 @@ public class WorldRenderer
 		
 		TilesetLoader tsl = wl.getTilesetLoader();
 		imgSize = tsl.getTileWidth();
-		imgIsoW = tsl.getTileWidth();
-		imgIsoH = tsl.getTileHeight();
-		
-		
-		images = new BufferedImage[tsl.getNumTiles()];
-		
-		int width = tsl.getTileWidth();
-		int height = tsl.getTileHeight();
-		
-		try{
-			tileSet = ImageIO.read(new File("res/tilesets/"+tsl.getTileSetImage())); 
-			
-			for(int r = 0; r < tileSet.getHeight()/height; r++)
-			{
-				for(int c = 0; c < tileSet.getWidth()/width; c++)
-				{
-					BufferedImage n = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-					Graphics2D g = n.createGraphics();
-					g.drawImage(tileSet,0, 0,width, height,	c*width, r*height, width*(c+1), (r+1)*height, null);
-					
-					images[((tileSet.getHeight()/height)*r) + c] = n;
-				}
-			}
-			
-		}catch(Exception e){}
-		
-	}	
-	
-	private void newLoadTileSets(){
-		World world = game.getWorld();
-		BufferedImage tileSet = null;
-		WorldLoader wl = world.getWorldLoader();
-		
-		
-		TilesetLoader tsl = wl.getTilesetLoader();
-		imgSize = tsl.getTileWidth();
-		imgIsoW = tsl.getTileWidth();
-		imgIsoH = 23;
+		int x = tsl.getTileWidth();
+		int y = 23;
 		
 		
 		images = new BufferedImage[tsl.getNumTiles()];
@@ -254,7 +189,7 @@ public class WorldRenderer
 			}
 			
 		}catch(Exception e){}
-		
+		return new Dimension(x, y);
 	}
 
 	

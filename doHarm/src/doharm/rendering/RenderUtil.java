@@ -4,7 +4,12 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 
+import doharm.logic.physics.Vector;
+
 public class RenderUtil {
+	
+	private static int imgIsoW = 0;
+	private static int imgIsoH = 0;
 	
 	/**
 	 * Scales the img parameter to the specified width and height.
@@ -21,4 +26,21 @@ public class RenderUtil {
 		return scaled;
 	}
 	
+	/**convers "square" world coordinates to their corresponding isometric coordinates.
+	 * 
+	 * @param col
+	 * @param row
+	 * @return
+	 */
+	public static Vector convertCoordsToIso(float col, float row){
+		float x = (-(col*(imgIsoW/2-1)))+(row*(imgIsoW/2-1));
+		float y = (col*(imgIsoH/2-1))+(row*(imgIsoH/2-1));
+		return new Vector(x, y);
+		
+	}
+	
+	static void setImgDimensions(int imgW, int imgH){
+		imgIsoW = imgW;
+		imgIsoH = imgH;
+	}
 }
