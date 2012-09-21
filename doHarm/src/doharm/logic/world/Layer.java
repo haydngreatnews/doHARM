@@ -28,7 +28,7 @@ public class Layer
 			for (int x= 0; x < tiles[0].length; x++)
 			{
 				TileData data = tileLoader.getTileData(layerData.getTileID(y,x));
-				tiles[y][x] = new Tile(this, y,x,new Vector(x*tileWidth,y*tileHeight),data);
+				tiles[y][x] = new Tile(this, y,x,tileWidth,tileHeight,new Vector(x*tileWidth,y*tileHeight),data);
 			}
 		}
 	}
