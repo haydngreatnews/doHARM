@@ -29,6 +29,9 @@ public class KeyboardManager implements KeyListener
 		case KeyEvent.VK_F11:
 			main.toggleSize();
 			break;
+		case KeyEvent.VK_F10:
+			main.showMenu();
+			break;
 		}
 			
 		
