@@ -2,8 +2,8 @@ package doharm.gui.view;
 
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 
-import javax.swing.JButton;
 import javax.swing.JPanel;
 
 import doharm.logic.Game;
@@ -17,21 +17,20 @@ public class WorldCanvas extends JPanel
 	
 	public WorldCanvas(Game game, WorldRenderer renderer)
 	{
+		super();
 		this.game = game;
 		this.renderer = renderer;
-		
-		//add(new JButton("Hello!"));
 	}
 	
 	@Override 
 	public void paintComponent(Graphics g)
 	{
 		super.paintComponent(g);
-		Dimension canvasSize = new Dimension(getWidth(),getHeight());
-		
+		Dimension canvasSize = new Dimension(getWidth(),getHeight());		
 		game.run();
 		renderer.redraw(canvasSize);
 		g.drawImage(renderer.getImage(), 0,0,canvasSize.width,canvasSize.height,null);
+		//paintChildren(g);
 	}
 	
 }

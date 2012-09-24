@@ -1,11 +1,12 @@
 package doharm.gui.view;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
 
-import net.miginfocom.swing.MigLayout;
 import doharm.gui.input.KeyboardManager;
 import doharm.gui.input.MouseManager;
 import doharm.logic.Game;
@@ -20,6 +21,7 @@ public class MainWindow{
 	private int state;
 	private JFrame frame;
 	private Game game;
+	private MenuScreen menu;
 	private WorldCanvas canvas;
 	private MouseManager mouseManager;
 	private KeyboardManager keyboardManager;
@@ -29,7 +31,7 @@ public class MainWindow{
 
 		WorldRenderer renderer = new WorldRenderer(game);
 		canvas = new WorldCanvas(game,renderer);
-		canvas.setLayout(new MigLayout());
+		canvas.setLayout(new BorderLayout());
 		mouseManager = new MouseManager(game);
 		keyboardManager = new KeyboardManager(this);
 		
@@ -61,6 +63,16 @@ public class MainWindow{
 
 		addListeners();
 		frame.setVisible(true);
+	}
+	
+	public void showMenu(){
+		if (menu == null){
+			//Make only one menu, so we don't end up with lots
+			menu = new MenuScreen();
+		}
+		canvas.add(menu, BorderLayout.CENTER);
+		menu.requestFocusInWindow();
+		canvas.revalidate();
 	}
 
 	private void addListeners() {
