@@ -2,7 +2,7 @@ package doharm.logic.gameobjects.entities.characters.players;
 
 
 import doharm.logic.gameobjects.entities.characters.Character;
-import doharm.logic.world.Tile;
+import doharm.logic.world.tiles.Tile;
 
 public abstract class Player extends Character
 {

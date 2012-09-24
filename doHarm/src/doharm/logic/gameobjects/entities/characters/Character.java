@@ -3,7 +3,7 @@ package doharm.logic.gameobjects.entities.characters;
 import doharm.logic.gameobjects.entities.Entity;
 import doharm.logic.gameobjects.entities.characters.attributes.Level;
 import doharm.logic.gameobjects.entities.characters.attributes.classes.CharacterClass;
-import doharm.logic.world.Tile;
+import doharm.logic.world.tiles.Tile;
 
 public abstract class Character extends Entity
 {

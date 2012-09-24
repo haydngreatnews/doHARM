@@ -2,8 +2,11 @@ package doharm.logic;
 
 public class TODO {
 	/**
-	 * player position relative to tile
-	 * collision detection
+	 * 
+	 * fix collision detection
+	 * A*
+	 * Basic AI character
+	 * 
 	 * multiple spawn positions (need seperate file for each layer containing objects etc...)
 	 * 
 	 * 

@@ -1,6 +1,7 @@
 package doharm.logic;
 
 import doharm.logic.camera.Camera;
+import doharm.logic.physics.Vector;
 import doharm.logic.world.World;
 
 public class Game 
@@ -11,9 +12,10 @@ public class Game
 	
 	public Game()
 	{
-		camera = new Camera();		
+				
 		String worldName = "world1";
-		world = new World(worldName,camera);
+		world = new World(worldName);
+		camera = world.getCamera();
 	}
 	
 	public Camera getCamera()
@@ -32,8 +34,5 @@ public class Game
 		return world;
 	}
 
-	public void mouseEvent(int x, int y) 
-	{
-		world.moveHumanPlayer(x, y);	
-	}
+	
 }

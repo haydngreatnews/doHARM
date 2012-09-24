@@ -1,6 +1,7 @@
-package doharm.logic.world;
+package doharm.logic.world.tiles;
 
 import doharm.logic.physics.Vector;
+import doharm.logic.world.Layer;
 import doharm.storage.TileData;
 
 public class Tile 
@@ -48,6 +49,16 @@ public class Tile
 	public int getY()
 	{
 		return position.getYAsInt();
+	}
+	
+	public int getMidX()
+	{
+		return position.getXAsInt()+width/2;
+	}
+	
+	public int getMidY()
+	{
+		return position.getYAsInt()+height/2;
 	}
 	
 	public int getWidth()

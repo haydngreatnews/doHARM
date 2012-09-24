@@ -5,7 +5,7 @@ import java.awt.Dimension;
 import doharm.logic.gameobjects.GameObject;
 import doharm.logic.physics.Vector;
 import doharm.logic.world.Layer;
-import doharm.logic.world.Tile;
+import doharm.logic.world.tiles.Tile;
 
 public abstract class Entity implements GameObject 
 {
@@ -47,6 +47,11 @@ public abstract class Entity implements GameObject
 	public Vector getVelocity() 
 	{
 		return velocity;
+	}
+	
+	public Vector getDestination() 
+	{
+		return destination;
 	}
 
 	public float getAngle() 

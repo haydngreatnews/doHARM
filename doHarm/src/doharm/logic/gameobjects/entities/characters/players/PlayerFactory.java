@@ -1,6 +1,6 @@
 package doharm.logic.gameobjects.entities.characters.players;
 
-import doharm.logic.world.Tile;
+import doharm.logic.world.tiles.Tile;
 
 /**
  * Player constructors are protected so that they can only be created via this PlayerFactory class.
