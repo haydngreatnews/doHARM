@@ -3,7 +3,7 @@ package doharm.net.packets;
 import java.nio.ByteBuffer;
 
 /** Struct representing a Server Snapshot, which is then converted into a packet to send over the wire. */
-public class Snapshot {
+public class Snapshot implements Cloneable {
 
 	public final int serverTime;
 	
@@ -27,11 +27,11 @@ public class Snapshot {
 	 * @param snap Snapshot object to convert
 	 * @return 
 	 */
-	public byte[] convertToBytes(Snapshot snap)
+	public byte[] convertToBytes()
 	{
 		byte[] temp = new byte[1024];
 		temp[0] = 1;	// 1 = Snapshot for Server packets
-		byte[] serverTimeBytes = ByteBuffer.allocate(4).putInt(snap.serverTime).array();
+		byte[] serverTimeBytes = ByteBuffer.allocate(4).putInt(serverTime).array();
 		return null;
 	}
 	
@@ -39,6 +39,21 @@ public class Snapshot {
 	public static int getTimestamp(byte[] data)
 	{
 		return 8*((int)data[1]) + 4*((int)data[2]) + 2*((int)data[3]) + ((int)data[4]);
+	}
+	
+	public Snapshot clone()
+	{
+		return this.clone();
+	}
+
+	/**
+	 * Add any fields that are in the given snapshot that are not present in this snapshot.
+	 * This WILL NOT overwrite any fields that this snapshot already has (even if their values differ). 
+	 * @param next
+	 */
+	public void addMissing(Snapshot next) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

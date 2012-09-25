@@ -16,7 +16,7 @@ public class Command {
 	 * @param cmd Command object to convert
 	 * @return 
 	 */
-	public byte[] convertToBytes(Command cmd)
+	public byte[] convertToBytes()
 	{
 		return null;
 	}

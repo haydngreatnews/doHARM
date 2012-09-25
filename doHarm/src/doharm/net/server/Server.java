@@ -36,12 +36,10 @@ public class Server {
 	}
 	
 	public void processIncomingPackets()
-	{
-		Queue<DatagramPacket> queue = receiver.getQueue();
-		
-		while (!queue.isEmpty())
+	{		
+		while (!receiver.isEmpty())
 		{
-			DatagramPacket packet = queue.poll();
+			DatagramPacket packet = receiver.poll();
 			byte[] data = packet.getData();
 			
 			// Check what type of packet it is.
@@ -59,7 +57,8 @@ public class Server {
 			case 2:		// case CPK_JOIN:
 				if (clients.size() < maxPlayers)
 				{
-					// TODO check if player is already connected with that address. If so, they must've dropped, so kill them and start them along the joining process again. 
+					// TODO check if player is already connected with that address.
+					// If so, they must've dropped, so kill them and start them along the joining process again. 
 					createClient(packet);
 				}
 				else
@@ -84,6 +83,7 @@ public class Server {
 				for (ConnectedClient c : clients)
 					if ( c.getAddress().equals(packet.getSocketAddress()) )
 					{
+						c.setState(ClientState.READY);
 						// send gamestate
 					}
 			}
@@ -112,15 +112,22 @@ public class Server {
 		clients.add(new ConnectedClient(packet.getSocketAddress()));
 	}
 	
-	private void createSnapshots()
+	/**
+	 * Builds new snapshots from the game state then sends them out.
+	 */
+	private void dispatchSnapshots()
 	{	
 		// get game changes.
+		Snapshot snap = null;
 		
 		for (ConnectedClient c : clients)
 		{
 			if (c.getState() == ClientState.INGAME)
 			{
-				// add changes to the last snapshot we were sending the client.
+				// add snapshot to client
+				c.addSnapshot(snap);
+				// build n send
+				transmit( c.buildTransmissionSnapshot().convertToBytes() , c.getAddress() );
 			}
 		}
 	}
@@ -137,8 +144,8 @@ public class Server {
 			// perform game logics
 			
 			
-			// send snapshots
-			createSnapshots();
+			// create then send snapshots
+			dispatchSnapshots();
 			
 			// wait for next tick
 		}
