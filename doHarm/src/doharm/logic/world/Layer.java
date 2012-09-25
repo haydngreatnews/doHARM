@@ -1,6 +1,7 @@
 package doharm.logic.world;
 
 import doharm.logic.physics.Vector;
+import doharm.logic.world.tiles.Tile;
 import doharm.storage.LayerData;
 import doharm.storage.TileData;
 import doharm.storage.TilesetLoader;

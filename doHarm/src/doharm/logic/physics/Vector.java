@@ -89,7 +89,11 @@ public class Vector
 	
 	public void multiply(float value)
 	{
-		set(x*value,y*value);
+		multiply(value,value);
+	}
+	
+	public void multiply(float x, float y) {
+		set(this.x*x,this.y*y);
 	}
 
 	public float getLength() 
@@ -99,7 +103,21 @@ public class Vector
 
 	public void add(Vector v) 
 	{
-		set(x+v.x,y+v.y);
+		add(v.x,v.y);
+	}
+	
+	private void add(float x, float y) 
+	{
+		set(this.x+x,this.y+y);
+	}
+
+	public void addX(float x) 
+	{
+		add(x,0);
+	}
+	public void addY(float y) 
+	{
+		add(0,y);
 	}
 
 	public Vector subtract(Vector v) 
@@ -125,4 +143,12 @@ public class Vector
 		y = 0;
 		updateLength();
 	}
+
+	public void divide(float x, float y) {
+		set(this.x/x,this.y/y);
+	}
+
+	
+
+	
 }

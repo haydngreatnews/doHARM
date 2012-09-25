@@ -11,6 +11,9 @@ import doharm.logic.camera.Camera;
 import doharm.logic.gameobjects.entities.characters.players.HumanPlayer;
 import doharm.logic.gameobjects.entities.characters.players.Player;
 import doharm.logic.gameobjects.entities.characters.players.PlayerFactory;
+import doharm.logic.physics.Vector;
+import doharm.logic.world.tiles.Tile;
+import doharm.storage.TilesetLoader;
 import doharm.storage.WorldLoader;
 
 
@@ -21,14 +24,20 @@ public class World
 	private HumanPlayer humanPlayer;
 	private Camera camera;
 	private WorldLoader worldLoader;
+	private int tileWidth;
+	private int tileHeight;
+	private int numRows;
+	private int numCols;
 	
-	public World(String worldName, Camera camera)
+	public World(String worldName)
 	{
-		this.camera = camera;
+		
 		players = new HashSet<Player>();
 		try 
 		{
 			worldLoader = new WorldLoader(worldName);
+			numRows = worldLoader.getNumTilesY();
+			numCols = worldLoader.getNumTilesX();
 		}
 		catch (IOException e) 
 		{
@@ -36,6 +45,11 @@ public class World
 			System.exit(1);
 		}
 		
+		TilesetLoader tsl = worldLoader.getTilesetLoader();
+		this.tileWidth = tsl.getTileWidth();
+		this.tileHeight = tsl.getTileWidth();
+		
+		camera = new Camera(tileWidth, tileHeight);
 		
 		layers = new Layer[worldLoader.getNumLayers()];
 		for (int i = 0; i < layers.length; i++)
@@ -63,15 +77,6 @@ public class World
 		return Collections.unmodifiableCollection(players);
 	}
 	
-	
-	
-	public void moveHumanPlayer(int x, int y) 
-	{
-		if (humanPlayer == null)
-			return;
-		humanPlayer.moveTo(x+camera.getRenderPosition().getXAsInt(), y+camera.getRenderPosition().getYAsInt());
-		
-	}
 
 	public WorldLoader getWorldLoader() 
 	{
@@ -91,5 +96,53 @@ public class World
 	public int getNumLayers()
 	{
 		return layers.length;
+	}
+
+	public Camera getCamera() {
+		return camera;
+	}
+	
+	
+	/**
+	 * 
+	 * @param row
+	 * @param col
+	 * @param layer
+	 * @return a rgb colour to draw a tile on the offscreen mouse picking image
+	 * See OpenGL colour picking technique.
+	 */
+	
+	public int getColour(int row, int col, int layer)
+	{
+		int colour = (row*numRows+col)+(layer*numRows*numCols);
+		
+		//System.out.println("row="+row +", col="+col + ", layer="+layer +", colour="+colour);
+		
+		return colour;
+	}
+	
+	public Tile getTile(int colour)
+	{
+		int layerNumber = colour / (numRows*numCols);
+		colour -= layerNumber * (numRows*numCols);
+		int row = colour / numRows;
+		colour -= row*numRows;
+		int col = colour;
+		
+		
+		Layer layer = getLayer(layerNumber);
+		return layer.getTiles()[row][col];
+	}
+
+	public HumanPlayer getHumanPlayer() 
+	{
+		return humanPlayer;
+	}
+
+	public float getTileWidth() {
+		return tileWidth;
+	}
+	public float getTileHeight() {
+		return tileHeight;
 	}
 }

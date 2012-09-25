@@ -1,16 +1,16 @@
 package doharm.logic.gameobjects.entities;
 
 import java.awt.Dimension;
+import java.util.PriorityQueue;
 
 import doharm.logic.gameobjects.GameObject;
 import doharm.logic.physics.Vector;
 import doharm.logic.world.Layer;
-import doharm.logic.world.Tile;
+import doharm.logic.world.tiles.Tile;
 
 public abstract class Entity implements GameObject 
 {
 	protected Vector position;
-	protected Vector relativePosition;
 	protected Vector destination;
 	protected Vector velocity;
 	private Dimension size;
@@ -26,7 +26,6 @@ public abstract class Entity implements GameObject
 		this.currentTile = spawnTile;
 		currentLayer = currentTile.getLayer();
 		position = new Vector(spawnTile.getX(), spawnTile.getY());
-		relativePosition = new Vector();
 		
 		destination = new Vector(position);
 		velocity = new Vector();
@@ -36,17 +35,22 @@ public abstract class Entity implements GameObject
 	
 	public Dimension getSize()
 	{
-		return size;
+		return new Dimension(size);
 	}
 	
 	public Vector getPosition() 
 	{
-		return position;
+		return new Vector(position);
 	}
 
 	public Vector getVelocity() 
 	{
-		return velocity;
+		return new Vector(velocity);
+	}
+	
+	public Vector getDestination() 
+	{
+		return new Vector(destination);
 	}
 
 	public float getAngle() 
@@ -74,35 +78,67 @@ public abstract class Entity implements GameObject
 		
 		
 		
-		 
+		//Tile newTile = currentLayer.getTileAt(position.getX()+velocity.getX(),position.getY()+velocity.getY());
+		
+		
+		position.add(velocity);
+
+		currentTile = currentLayer.getTileAt(position.getX(), position.getY());
+		currentLayer = currentTile.getLayer();
+		
+		
+		checkCollisions();
 		
 		
 		
-		Tile newTile = currentLayer.getTileAt(position.getX()+velocity.getX(),position.getY()+velocity.getY());
-		if (newTile.isWalkable())
+		/*if (newTile.isWalkable())
 		{
-			currentTile = newTile;
-			position.add(velocity);
+			
+			
 			velocity.multiply(friction);
 			
-			relativePosition.set(position.getX()-currentTile.getX(),position.getY()-currentTile.getY());
-			currentLayer = currentTile.getLayer();
+			relativePosition.set();
+			
 		}
 		else
 		{
 			velocity.reset();
-		}
+		}*/
 		
 		//System.out.println(currentTile.getRow()+","+ currentTile.getCol());
 		
 	}
 	
+	private void checkCollisions() 
+	{
+		
+		
+	}
+
 	protected abstract void abstractMove();
 	
 	
-	public void moveTo(float x, float y) 
+	public void moveTo(Tile goal) 
 	{
-		destination.set(x,y);
+		//calculate path...
+		PriorityQueue<Tile> queue = new PriorityQueue<Tile>();
+		
+		queue.add(currentTile);
+		
+		
+		
+		
+		while (!queue.isEmpty())
+		{
+			Tile node = queue.poll();
+			
+			if (node == goal)
+				break;
+
+		}
+		
+		
+		destination.set(goal.getMidX(),goal.getMidY());
 	}
 	
 	public Layer getCurrentLayer()
@@ -115,8 +151,5 @@ public abstract class Entity implements GameObject
 		return currentTile;
 	}
 	
-	public Vector getPositionRelativeToTile()
-	{
-		return relativePosition;
-	}
+	
 }

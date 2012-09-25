@@ -1,6 +1,8 @@
 package doharm.rendering;
 
+import java.awt.AlphaComposite;
 import java.awt.Color;
+import java.awt.Composite;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
@@ -13,8 +15,8 @@ import doharm.logic.Game;
 import doharm.logic.camera.Camera;
 import doharm.logic.physics.Vector;
 import doharm.logic.world.Layer;
-import doharm.logic.world.Tile;
 import doharm.logic.world.World;
+import doharm.logic.world.tiles.Tile;
 import doharm.storage.TilesetLoader;
 import doharm.storage.WorldLoader;
 
@@ -22,6 +24,10 @@ public class WorldRenderer
 {
 	private BufferedImage worldImage;
 	private Graphics2D graphics;
+	
+	private BufferedImage pickImage;
+	private Graphics2D pickGraphics;
+	
 	private Dimension canvasSize;
 	private BufferedImage[] images;
 	
@@ -29,9 +35,7 @@ public class WorldRenderer
 	
 	private AffineTransform transform;
 	private Game game;
-	
-	
-	
+
 	private PlayerRenderer playerRenderer;
 	
 	
@@ -64,6 +68,9 @@ public class WorldRenderer
 
 		worldImage = new BufferedImage(canvasSize.width, canvasSize.height, BufferedImage.TYPE_INT_ARGB);
 		graphics = worldImage.createGraphics();
+		
+		pickImage = new BufferedImage(canvasSize.width, canvasSize.height, BufferedImage.TYPE_INT_ARGB);
+		pickGraphics = pickImage.createGraphics();
 	}
 	
 	
@@ -85,24 +92,44 @@ public class WorldRenderer
 		transform.setToIdentity();
 		
 		graphics.setTransform(transform);
+		pickGraphics.setTransform(transform);
 		
 		//clear the screen
 		graphics.setColor(Color.black);
 		graphics.fillRect(0, 0, canvasSize.width, canvasSize.height);
 		
-		Vector v = RenderUtil.convertCoordsToIso(-camera.getRenderPosition().getX(), -camera.getRenderPosition().getY());
+		
+		//clear the mouse pick image
+		pickGraphics.setColor(Color.black);
+		pickGraphics.fillRect(0, 0, canvasSize.width, canvasSize.height);
+		
+		//transform.translate(v.getX(),v.getY());
 		transform.translate(-camera.getRenderPosition().getX(), -camera.getRenderPosition().getY());
 		graphics.setTransform(transform);
+		pickGraphics.setTransform(transform);
 		//draw the current game, based on the camera, etc.
 	
+		
 		renderWorldIso();
 	
 		playerRenderer.redraw(graphics, imgIsoW, imgIsoH);
 		
-	
+		
+		//TODO REMOVE
+		transform.setToIdentity();
+		graphics.setTransform(transform);
+		
+		Composite old = graphics.getComposite();
+		graphics.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
+		
+		graphics.drawImage(pickImage, 0, 0, null);
+		graphics.setComposite(old);
 	}
 
-	
+	public int getPickColourAt(int mouseX, int mouseY)
+	{
+		return pickImage.getRGB(mouseX, mouseY);
+	}
 	
 	
 	private void renderWorldIso(){
@@ -119,17 +146,48 @@ public class WorldRenderer
 			//ie. the tile(s) obscuring view of the player, is not an invisible tile, make this entire layer transparent.
 			//and dont draw any subsequent layers.
 			
-			for(int r = 0; r < tiles[0].length; r++)
+			for(int row = 0; row < tiles.length; row++)
 			{
-				for(int c = 0; c < tiles.length; c++)
+				for(int col = 0; col < tiles[0].length; col++)
 				{
-					Tile tile = tiles[c][r];
+					Tile tile = tiles[row][col];
+					BufferedImage image = images[tile.getImageID()];
 					
-					graphics.drawImage(images[tile.getImageID()], (-r*(imgIsoW/2-1))+(c*(imgIsoW/2-1)), (r*(imgIsoH/2-1))+(c*(imgIsoH/2-1))-(layerCount*imgIsoH), null);
+					Vector v = RenderUtil.convertCoordsToIso(col, row);
+					
+					graphics.drawImage(image,v.getXAsInt(),v.getYAsInt(), null);
+					
+					int rgb = world.getColour(row, col, layerCount);
+					
+					
+					// to extract the components into individual ints.
+					
+					int red = 0xFF & ( rgb >> 16);
+					int green = 0xFF & (rgb >> 8 );
+					int blue = 0xFF & (rgb >> 0 );
+					
+
+					//System.out.println("row="+row +", col="+col + ", layer="+layerCount +", r="+red+", g="+green+", b="+blue);
+					// to recreate the argb
+					//int argb = (alpha << 24) | (red << 16 ) | (green<<8) | blue;
+
+
+					
+					
+					
+					
+					
+					
+					Color colour = new Color(red,green,blue);
+					//
+					pickGraphics.setColor(colour);
+					pickGraphics.fillRect(v.getXAsInt(),v.getYAsInt(),image.getWidth(), image.getHeight());
+				
 				}
 			}
 		
 		}
+		
 	}
 	
 	
@@ -194,3 +252,4 @@ public class WorldRenderer
 
 	
 }
+

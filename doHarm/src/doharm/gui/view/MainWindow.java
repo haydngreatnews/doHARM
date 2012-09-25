@@ -31,8 +31,10 @@ public class MainWindow{
 
 		WorldRenderer renderer = new WorldRenderer(game);
 		canvas = new WorldCanvas(game,renderer);
+
 		canvas.setLayout(new BorderLayout());
-		mouseManager = new MouseManager(game);
+		mouseManager = new MouseManager(game,renderer);
+
 		keyboardManager = new KeyboardManager(this);
 		
 		

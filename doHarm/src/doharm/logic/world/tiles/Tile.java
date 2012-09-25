@@ -1,9 +1,10 @@
-package doharm.logic.world;
+package doharm.logic.world.tiles;
 
 import doharm.logic.physics.Vector;
+import doharm.logic.world.Layer;
 import doharm.storage.TileData;
 
-public class Tile 
+public class Tile implements Comparable<Tile>
 {
 	public TileData tileData;
 	Vector position;
@@ -50,6 +51,16 @@ public class Tile
 		return position.getYAsInt();
 	}
 	
+	public int getMidX()
+	{
+		return position.getXAsInt()+width/2;
+	}
+	
+	public int getMidY()
+	{
+		return position.getYAsInt()+height/2;
+	}
+	
 	public int getWidth()
 	{
 		return width;
@@ -82,4 +93,14 @@ public class Tile
 	{
 		return tileData.getType() != 0; //TODO
 	}
+	
+	
+	
+	@Override
+	public int compareTo(Tile t)
+	{
+		return 0;
+	}
+	
+	
 }
