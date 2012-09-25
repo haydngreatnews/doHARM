@@ -51,7 +51,7 @@ public class MouseManager implements MouseListener, MouseMotionListener
 		
 		Tile tile = game.getWorld().getTile(rgb);
 		
-		game.getWorld().getHumanPlayer().moveTo(tile.getX(),tile.getY());
+		game.getWorld().getHumanPlayer().moveTo(tile);
 		
 	}
 

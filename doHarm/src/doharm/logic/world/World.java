@@ -77,17 +77,6 @@ public class World
 		return Collections.unmodifiableCollection(players);
 	}
 	
-	
-	
-	public void moveHumanPlayer(float x, float y) 
-	{
-		if (humanPlayer == null)
-			return;
-		
-		
-		humanPlayer.moveTo(x, y);
-		
-	}
 
 	public WorldLoader getWorldLoader() 
 	{

@@ -4,7 +4,7 @@ import doharm.logic.physics.Vector;
 import doharm.logic.world.Layer;
 import doharm.storage.TileData;
 
-public class Tile 
+public class Tile implements Comparable<Tile>
 {
 	public TileData tileData;
 	Vector position;
@@ -93,4 +93,14 @@ public class Tile
 	{
 		return tileData.getType() != 0; //TODO
 	}
+	
+	
+	
+	@Override
+	public int compareTo(Tile t)
+	{
+		return 0;
+	}
+	
+	
 }
