@@ -97,15 +97,28 @@ public class Client {
 		;
 	}
 	
-	public void buildCommandPacket()
+	public void dispatchCommand()
 	{
-		byte[] temp = new byte[1024];
-		temp[0] = 1;	// This is a Command Packet.
-		// temp[1-4] server time of last snapshot/gamestate we received.
-		// my desired viewing direction
-		// my desired movement
-		// my selected weapon
-		// my commands
+
+	}
+	
+	// Fake main method, placeholder used so coding on the flow of operations can be done.
+	private void main()
+	{
+		while (true)
+		{
+			// process incoming packets
+			processIncomingPackets();
+			
+			// perform client-side game logics
+			
+			// render
+			
+			// create then send snapshots
+			dispatchCommand();
+			
+			// wait for next tick
+		}
 	}
 
 }

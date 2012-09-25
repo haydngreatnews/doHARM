@@ -18,10 +18,21 @@ public class Command {
 	 */
 	public byte[] convertToBytes()
 	{
+		byte[] temp = new byte[1024];
+		temp[0] = 1;	// This is a Command Packet.
+		// temp[1-4] server time of last snapshot/gamestate we received.
+		// my desired viewing direction
+		// my desired movement
+		// my selected weapon
+		// my commands
 		return null;
 	}
 	
-	/** Extracts the timestamp from the byte array form of a Command */
+	/**
+	 * Extracts the timestamp from the byte-array form of a Command packet.
+	 * @param data Command byte-array packet.
+	 * @return
+	 */
 	public static int getTimestamp(byte[] data)
 	{
 		return 8*((int)data[1]) + 4*((int)data[2]) + 2*((int)data[3]) + ((int)data[4]);

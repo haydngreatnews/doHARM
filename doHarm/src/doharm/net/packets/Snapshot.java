@@ -30,7 +30,7 @@ public class Snapshot implements Cloneable {
 	public byte[] convertToBytes()
 	{
 		byte[] temp = new byte[1024];
-		temp[0] = 1;	// 1 = Snapshot for Server packets
+		temp[0] = 1;	// S->C Packet Type; 1 = Snapshot
 		byte[] serverTimeBytes = ByteBuffer.allocate(4).putInt(serverTime).array();
 		return null;
 	}
@@ -52,8 +52,7 @@ public class Snapshot implements Cloneable {
 	 * @param next
 	 */
 	public void addMissing(Snapshot next) {
-		// TODO Auto-generated method stub
-		
+		// TODO Auto-generated method stub		
 	}
 
 }

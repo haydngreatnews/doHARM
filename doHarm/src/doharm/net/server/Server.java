@@ -83,7 +83,7 @@ public class Server {
 				for (ConnectedClient c : clients)
 					if ( c.getAddress().equals(packet.getSocketAddress()) )
 					{
-						c.setState(ClientState.READY);
+						// ready state transition?
 						// send gamestate
 					}
 			}
@@ -118,6 +118,8 @@ public class Server {
 	private void dispatchSnapshots()
 	{	
 		// get game changes.
+		
+		
 		Snapshot snap = null;
 		
 		for (ConnectedClient c : clients)
