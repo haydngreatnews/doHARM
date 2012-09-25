@@ -34,6 +34,10 @@ public class TilesetLoader
 		}
 	}
 	
+	private void loadFloorTiles(){
+		
+	}
+	
 	
 	/*public List<TileData> getTileData()
 	{
