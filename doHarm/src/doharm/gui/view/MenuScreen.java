@@ -13,6 +13,8 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import doharm.gui.input.MenuButtonListener;
+
 import net.miginfocom.layout.LC;
 import net.miginfocom.swing.MigLayout;
 
@@ -42,9 +44,12 @@ public class MenuScreen extends JPanel {
 		menu.setLayout(new MigLayout(constraints));
 		menu.setOpaque(false);
 		System.out.printf("menu w=%d, menu h=%d\n", menu.getWidth(),menu.getHeight());
-		JButton b1 = new PictureButton("res/menu/joingame.png");
-		JButton b2 = new PictureButton("res/menu/runserver.png");
-		JButton b3 = new PictureButton("res/menu/quitgame.png");
+		JButton b1 = new PictureButton("res/menu/joingame.png", "join");
+		JButton b2 = new PictureButton("res/menu/runserver.png", "runserver");
+		JButton b3 = new PictureButton("res/menu/quitgame.png", "quit");
+		b1.addActionListener(new MenuButtonListener());
+		b2.addActionListener(new MenuButtonListener());
+		b3.addActionListener(new MenuButtonListener());
 		System.out.println("Created buttons");
 		menu.add(new JLabel(new ImageIcon("res/menu/header.png")),"align center, gaptop 100");
 		//menu.add(new JLabel(), "h 60");
