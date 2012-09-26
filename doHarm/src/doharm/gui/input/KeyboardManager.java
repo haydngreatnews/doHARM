@@ -30,7 +30,7 @@ public class KeyboardManager implements KeyListener
 			main.toggleSize();
 			break;
 		case KeyEvent.VK_F10:
-			main.showMenu();
+			main.toggleMenu();
 			break;
 		}
 			

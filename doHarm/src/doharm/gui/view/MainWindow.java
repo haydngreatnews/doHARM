@@ -4,7 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 
-import javax.swing.JButton;
 import javax.swing.JFrame;
 
 import doharm.gui.input.KeyboardManager;
@@ -67,13 +66,22 @@ public class MainWindow{
 		frame.setVisible(true);
 	}
 	
-	public void showMenu(){
+	public void toggleMenu(){
 		if (menu == null){
 			//Make only one menu, so we don't end up with lots
 			menu = new MenuScreen();
 		}
-		canvas.add(menu, BorderLayout.CENTER);
-		menu.requestFocusInWindow();
+		if(menu.isShowing()){
+			canvas.remove(menu);
+			canvas.requestFocusInWindow();
+			canvas.addKeyListener(keyboardManager);
+			canvas.addMouseListener(mouseManager);
+		} else {
+			canvas.add(menu, BorderLayout.CENTER);
+			menu.requestFocusInWindow();
+			menu.addKeyListener(keyboardManager);
+			frame.removeMouseListener(mouseManager);
+		}
 		canvas.revalidate();
 	}
 
