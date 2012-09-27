@@ -79,12 +79,13 @@ public class Snapshot implements Cloneable {
 		}
 	}
 	
-	
+	/** Holds changes in player state */
 	private class PlayerState
 	{
 		
 	}
 	
+	/** Holds changes in entity state */
 	private class EntityInfo
 	{
 		public final int id;

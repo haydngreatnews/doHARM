@@ -4,10 +4,13 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
+import java.net.SocketAddress;
+import java.net.SocketException;
 import java.util.Queue;
 
 import doharm.net.ClientState;
 import doharm.net.UDPReceiver;
+import doharm.net.packets.Command;
 import doharm.net.packets.ServerPacket;
 import doharm.net.packets.Snapshot;
 
@@ -15,6 +18,8 @@ public class Client {
 	
 	private UDPReceiver receiver;
 	private DatagramSocket udpSock;
+	
+	private SocketAddress serverAddress;
 	
 	private ClientState state;
 	
@@ -41,6 +46,11 @@ public class Client {
 		while (!receiver.isEmpty())
 		{
 			DatagramPacket packet = receiver.poll();
+			
+			// If the packet isn't from the game server we are connected/talking to, discard.
+			if (packet.getSocketAddress() != serverAddress)
+				continue;
+			
 			byte[] data = packet.getData();
 			
 			// Check what type of packet it is.
@@ -97,9 +107,41 @@ public class Client {
 		;
 	}
 	
+	/**
+	 * Builds a new Command and sends it out to the server.
+	 */
 	public void dispatchCommand()
 	{
-
+		Command cmd = new Command(snapNext.serverTime);
+		// TODO
+		transmit(cmd.convertToBytes());
+	}
+	
+	/**
+	 * Sends a UDP Packet out.
+	 * @param data Packet contents.
+	 * @param address IP and Port to send to.
+	 * @return
+	 */
+	public boolean transmit(byte[] data, SocketAddress address)
+	{
+		try {
+			udpSock.send(new DatagramPacket(data, data.length, address));
+			return true;
+		}
+		catch (SocketException e) { e.printStackTrace(); }
+		catch (IOException e) {	e.printStackTrace(); }
+		return false;
+	}
+	
+	/**
+	 * Sends a UDP Packet to the server we are connected to.
+	 * @param data Packet contents.
+	 * @return
+	 */
+	public boolean transmit(byte[] data)
+	{
+		return transmit(data, serverAddress);
 	}
 	
 	// Fake main method, placeholder used so coding on the flow of operations can be done.

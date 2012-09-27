@@ -10,6 +10,11 @@ public class Command {
 	public final int serverTimeAckd;
 	public int repeat;	// Number of times we've sent a packet with this serverTimeAck already.
 	
+	public Command(int time)
+	{
+		serverTimeAckd = time;
+	}
+	
 	public Command(byte[] packet)
 	{		
 		ByteBuffer buff = ByteBuffer.wrap(packet);
