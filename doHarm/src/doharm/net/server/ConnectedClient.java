@@ -30,10 +30,11 @@ public class ConnectedClient {
 		state = ClientState.LOADING;
 	}
 	
-	public SocketAddress getAddress()
-	{
-		return address;
-	}
+	public SocketAddress getAddress() {	return address; }
+	
+	public ClientState getState() { return state; }
+
+	public void setState(ClientState newState) { state = newState; }
 	
 	/**
 	 * Update what the latest command packet from the client is.
@@ -72,7 +73,7 @@ public class ConnectedClient {
 			snapsBuffer.poll();
 		}
 		
-		/* Build the snapshot.
+		/* Build the snapshot to send.
 		
 		So we use the latest snapshot as a base, and from there we go through the rest in order from newest to oldest,
 		and if fields from the snap we are looking at isnt in our transmission snap, add them.
@@ -80,23 +81,13 @@ public class ConnectedClient {
 		TODO not the most efficient way at the moment; eventually should keep the latest transmission packet 
 		and just make changes to it based on what has been removed and what has been added, not going thru all of them.
 		*/
-		
 		Iterator<Snapshot> iter = snapsBuffer.descendingIterator();
 		
-		Snapshot transSnap = iter.next().clone();
+		Snapshot transSnap = iter.next().clone();	// will never be null, a snapshot was just added in the parent method call.
 		
 		while (iter.hasNext())
 			transSnap.addMissing(iter.next());
 		
 		return transSnap;
-	}
-	
-	public ClientState getState()
-	{
-		return state;
-	}
-
-	public void setState(ClientState newState) {
-		state = newState;
 	}
 }

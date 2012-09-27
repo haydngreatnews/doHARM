@@ -1,15 +1,22 @@
 package doharm.net.packets;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.HashMap;
 
 /** Struct representing a Server Snapshot, which is then converted into a packet to send over the wire. */
 public class Snapshot implements Cloneable {
 
 	public final int serverTime;
+	public final PlayerState pState;
+	private final HashMap<Integer,EntityInfo> entities = new HashMap<Integer,EntityInfo>();
 	
 	public Snapshot(int serverTime)
 	{
 		this.serverTime = serverTime;
+		
+		pState = null;
 	}
 	
 	/**
@@ -18,8 +25,14 @@ public class Snapshot implements Cloneable {
 	 * @return
 	 */
 	public Snapshot(byte[] packet)
-	{
-		serverTime = 8*((int)packet[1]) + 4*((int)packet[2]) + 2*((int)packet[3]) + ((int)packet[4]);
+	{	
+		ByteBuffer buff = ByteBuffer.wrap(packet);
+		
+		buff.position(1);	// Skip packet type, as we obviously already know what it is.
+		
+		serverTime = buff.getInt();
+		
+		pState = null;
 	}
 	
 	/**
@@ -28,17 +41,23 @@ public class Snapshot implements Cloneable {
 	 * @return 
 	 */
 	public byte[] convertToBytes()
-	{
-		byte[] temp = new byte[1024];
-		temp[0] = (byte) ServerPacket.SNAPSHOT.ordinal();
-		byte[] serverTimeBytes = ByteBuffer.allocate(4).putInt(serverTime).array();
-		return null;
+	{	
+		ByteArrayOutputStream buff = new ByteArrayOutputStream();
+		// Packet type
+		buff.write((byte) ServerPacket.SNAPSHOT.ordinal());		// TODO Do we need the byte cast?
+		// Servertime
+		try { buff.write(ByteBuffer.allocate(4).putInt(serverTime).array()); }
+		catch (IOException e) {	e.printStackTrace(); }
+		
+		return buff.toByteArray();
 	}
 	
 	/** Extracts the timestamp from the byte array form of a Snapshot */
 	public static int getTimestamp(byte[] data)
 	{
-		return 8*((int)data[1]) + 4*((int)data[2]) + 2*((int)data[3]) + ((int)data[4]);
+		ByteBuffer buff = ByteBuffer.wrap(data);
+		buff.position(1);
+		return buff.getInt();
 	}
 	
 	public Snapshot clone()
@@ -47,13 +66,33 @@ public class Snapshot implements Cloneable {
 	}
 
 	/**
-	 * Add any fields that are in the given snapshot that are not present in this snapshot.
+	 * Adds any fields that are in the given snapshot that are not present in this snapshot.
 	 * This WILL NOT overwrite any fields that this snapshot already has (even if their values differ). 
-	 * @param next
+	 * @param other Snapshot to copy missing fields from.
 	 */
-	public void addMissing(Snapshot next) {
-		// TODO Auto-generated method stub		
+	public void addMissing(Snapshot other)
+	{
+		for (int eID : other.entities.keySet())
+		{
+			if (!entities.containsKey(eID))
+				entities.put(eID, other.entities.get(eID));
+		}
 	}
-
+	
+	
+	private class PlayerState
+	{
+		
+	}
+	
+	private class EntityInfo
+	{
+		public final int id;
+		
+		public EntityInfo()
+		{
+			id = 0;
+		}
+	}
 }
 

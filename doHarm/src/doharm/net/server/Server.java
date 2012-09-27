@@ -118,6 +118,8 @@ public class Server {
 	{	
 		// get game changes.
 		
+		// TODO temp setup is that the entire game change snap shot is sent to all clients, so only one snap gets built here, 
+		// eventually when we add local area only snapshots, will need to build independently.
 		
 		Snapshot snap = null;
 		

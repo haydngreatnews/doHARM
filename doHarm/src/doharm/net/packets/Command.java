@@ -1,5 +1,9 @@
 package doharm.net.packets;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.nio.ByteBuffer;
+
 /** Struct representing a Client Command, which is then converted into a packet to send over the wire. */
 public class Command {
 
@@ -7,8 +11,12 @@ public class Command {
 	public int repeat;	// Number of times we've sent a packet with this serverTimeAck already.
 	
 	public Command(byte[] packet)
-	{
-		serverTimeAckd = 8*((int)packet[1]) + 4*((int)packet[2]) + 2*((int)packet[3]) + ((int)packet[4]);
+	{		
+		ByteBuffer buff = ByteBuffer.wrap(packet);
+		
+		buff.position(1);	// Skip packet type, as we obviously already know what it is.
+		
+		serverTimeAckd = buff.getInt();
 	}
 	
 	/**
@@ -18,14 +26,19 @@ public class Command {
 	 */
 	public byte[] convertToBytes()
 	{
-		byte[] temp = new byte[1024];
-		temp[0] = (byte) ServerPacket.SNAPSHOT.ordinal();
-		// temp[1-4] server time of last snapshot/gamestate we received.
+		ByteArrayOutputStream buff = new ByteArrayOutputStream();
+		// Packet type
+		buff.write((byte) ClientPacket.COMMAND.ordinal());		// TODO Do we need the byte cast?
+		// ServertimeAckd
+		try { buff.write(ByteBuffer.allocate(4).putInt(serverTimeAckd).array()); }
+		catch (IOException e) {	e.printStackTrace(); }
+		
 		// my desired viewing direction
 		// my desired movement
 		// my selected weapon
 		// my commands
-		return null;
+		
+		return buff.toByteArray();
 	}
 	
 	/**
@@ -35,7 +48,9 @@ public class Command {
 	 */
 	public static int getTimestamp(byte[] data)
 	{
-		return 8*((int)data[1]) + 4*((int)data[2]) + 2*((int)data[3]) + ((int)data[4]);
+		ByteBuffer buff = ByteBuffer.wrap(data);
+		buff.position(1);
+		return buff.getInt();
 	}
 
 }

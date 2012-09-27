@@ -52,7 +52,6 @@ public class Client {
 				
 			case GAMESTATE:
 				updateGamestatePacket(data);
-				
 				break;
 				
 			case RESPONSE:
@@ -115,7 +114,7 @@ public class Client {
 			
 			// render
 			
-			// create then send snapshots
+			// create then send command packet
 			dispatchCommand();
 			
 			// wait for next tick
