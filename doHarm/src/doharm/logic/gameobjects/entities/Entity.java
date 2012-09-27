@@ -1,7 +1,12 @@
 package doharm.logic.gameobjects.entities;
 
 import java.awt.Dimension;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.PriorityQueue;
+import java.util.Queue;
+import java.util.Stack;
 
 import doharm.logic.gameobjects.GameObject;
 import doharm.logic.physics.Vector;
@@ -10,15 +15,20 @@ import doharm.logic.world.tiles.Tile;
 
 public abstract class Entity implements GameObject 
 {
+	private static final float MIN_DISTANCE = 2;
 	protected Vector position;
 	protected Vector destination;
 	protected Vector velocity;
 	private Dimension size;
 	private float angle;
-	private float friction = 0.98f;
+	private float friction = 0.6f;
+	private float movementSpeed = 1.7f;
+	private float stopFriction = 0.1f;
 	
 	private Layer currentLayer;
 	private Tile currentTile;
+	private Stack<Tile> path;
+	private Vector goal;
 	
 
 	public Entity(Tile spawnTile)
@@ -27,10 +37,21 @@ public abstract class Entity implements GameObject
 		currentLayer = currentTile.getLayer();
 		position = new Vector(spawnTile.getX(), spawnTile.getY());
 		
+		goal = new Vector(position);
 		destination = new Vector(position);
 		velocity = new Vector();
-		size = new Dimension(32,32); //urgh
+		size = new Dimension(32,32);
 		angle = 0;
+		path = new Stack<Tile>();
+	}
+	
+	public Stack<Tile> getPath()
+	{
+		Stack<Tile> temp = new Stack<Tile>();
+		for (Tile tile: path)
+			temp.push(tile);
+		
+		return temp;
 	}
 	
 	public Dimension getSize()
@@ -41,6 +62,11 @@ public abstract class Entity implements GameObject
 	public Vector getPosition() 
 	{
 		return new Vector(position);
+	}
+	
+	public Vector getGoal() 
+	{
+		return new Vector(goal);
 	}
 
 	public Vector getVelocity() 
@@ -64,24 +90,38 @@ public abstract class Entity implements GameObject
 		
 		
 		Vector direction = destination.subtract(position);
-		if (direction.getLength() > 3)
+		
+		float distanceToDestination = direction.getLength();
+		if (distanceToDestination > MIN_DISTANCE)
 		{
 			direction.normalize();
-			velocity.set(direction);
-			velocity.multiply(5);
+			direction.multiply(movementSpeed);
+			velocity.add(direction);
 		}
-		else //if (!position.equals(destination))
+		else
 		{
-			//position.set(destination);
-			velocity.reset();
+			if (!path.isEmpty())
+				nextNodeInPath();
+			else
+			{
+				velocity.multiply(stopFriction);
+			}
+			
+				
 		}
+		
+		
+		position.add(velocity);
 		
 		
 		
 		//Tile newTile = currentLayer.getTileAt(position.getX()+velocity.getX(),position.getY()+velocity.getY());
 		
 		
-		position.add(velocity);
+		
+			
+		
+			
 
 		currentTile = currentLayer.getTileAt(position.getX(), position.getY());
 		currentLayer = currentTile.getLayer();
@@ -89,6 +129,8 @@ public abstract class Entity implements GameObject
 		
 		checkCollisions();
 		
+		
+		velocity.multiply(friction);
 		
 		
 		/*if (newTile.isWalkable())
@@ -109,6 +151,15 @@ public abstract class Entity implements GameObject
 		
 	}
 	
+	private void nextNodeInPath() 
+	{
+		if (!path.isEmpty())
+		{
+			Tile next = path.pop();
+			destination.set(next.getX(), next.getY());
+		}
+	}
+
 	private void checkCollisions() 
 	{
 		
@@ -118,27 +169,108 @@ public abstract class Entity implements GameObject
 	protected abstract void abstractMove();
 	
 	
+	/**
+	 * move to a tile on the world
+	 * World.resetTiles(); must be called before this method so that the tiles haven't been visited!
+	 * @param goal the tile to move to
+	 */
 	public void moveTo(Tile goal) 
 	{
-		//calculate path...
-		PriorityQueue<Tile> queue = new PriorityQueue<Tile>();
-		
-		queue.add(currentTile);
-		
-		
-		
-		
-		while (!queue.isEmpty())
+		if (!goal.isWalkable())
 		{
-			Tile node = queue.poll();
+			int tries = 0;
+			//find closest walkable tile
+			Queue<Tile> possibilities = new LinkedList<Tile>();
 			
-			if (node == goal)
-				break;
-
+			possibilities.offer(goal);
+			
+			int maxTries = 100;
+			while(tries < maxTries)
+			{
+				Tile possibility = possibilities.poll();
+				
+				if (possibility.isWalkable())
+				{
+					goal = possibility;
+					break;
+				}
+				
+				for (Tile neighbour: possibility.getNeighbours())	
+					possibilities.offer(neighbour);
+				
+				
+				tries++;
+			}
+			
+		
+			
+			if (!goal.isWalkable())
+				return;
 		}
 		
 		
-		destination.set(goal.getMidX(),goal.getMidY());
+		//calculate path...
+		
+		
+		PriorityQueue<Tile> queue = new PriorityQueue<Tile>();
+		
+		queue.add(currentTile);
+
+		boolean foundGoal = false;
+		System.out.println("Goal: " + goal.getRow() +","+goal.getCol());
+		while (!queue.isEmpty())
+		{
+			Tile node = queue.poll();
+			System.out.println("Current: " + node.getRow()+","+node.getCol());
+			
+			/*System.out.println("Neighbours of " + node.getRow() +","+node.getCol()+":");
+			
+			for (Tile n: node.getNeighbours())
+			{
+				System.out.println(n.getRow() +","+n.getCol());
+			}*/
+			
+			
+			if (node == goal)
+			{
+				path.clear();
+				this.goal.set(goal.getX(), goal.getY());
+				foundGoal = true;
+				while (node != currentTile)
+				{
+					path.push(node);
+					node = node.getParent();
+				}
+				
+				break;
+			}
+			
+			
+
+
+			for (Tile neighbour: node.getNeighbours())
+			{
+				
+				if (!neighbour.isVisited() && neighbour.isWalkable() && !neighbour.isNextToWall())
+				{
+					
+					
+					neighbour.setVisited(true);
+					neighbour.setParent(node);
+					
+					neighbour.setPathLength(node.getPathLength() + node.distanceToTile(neighbour));
+					queue.offer(neighbour);
+				}
+			}
+			
+		}
+		System.out.println("Found goal: "+foundGoal);
+		
+
+		nextNodeInPath();
+		
+		
+		//destination.set(goal.getMidX(),goal.getMidY());
 	}
 	
 	public Layer getCurrentLayer()

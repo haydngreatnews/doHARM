@@ -5,7 +5,7 @@ For floor tiles
 tilesetname.png
 tile x
 tile y
-tile_name  (int 1= nor walkable|0=walkable)  (int type of tile? 0=wall, 1=grass, 2=nothing, 3=water)  (integers indicating which images belong to this tile in the tileset.png)
+tile_name  (int 1= walkable|0=not walkable) (num frames per sprite at 60fps) (int type of tile? 0=wall, 1=grass, 2=nothing, 3=water)  (integers indicating which images belong to this tile in the tileset.png)
 
 NOTE: exclude brackets from the above line when writting the tileset.txt, they are just to keep things tidy. .
 

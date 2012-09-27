@@ -3,11 +3,14 @@ package doharm.rendering;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
+import java.io.UnsupportedEncodingException;
+import java.util.Stack;
 
 import doharm.logic.Game;
 import doharm.logic.gameobjects.entities.characters.Character;
+import doharm.logic.gameobjects.entities.characters.players.Player;
+import doharm.logic.gameobjects.entities.characters.players.PlayerType;
 import doharm.logic.physics.Vector;
-import doharm.logic.world.Layer;
 import doharm.logic.world.World;
 import doharm.logic.world.tiles.Tile;
 
@@ -24,13 +27,13 @@ public class PlayerRenderer {
 
 	public void redraw(Graphics2D graphics, int imgIsoW, int imgIsoH) 
 	{
-		for (Character player: world.getPlayers())
+		for (Player player: world.getPlayers())
 		{
 			drawPlayer(player,graphics, imgIsoW, imgIsoH);
 		}
 	}
 
-	private void drawPlayer(Character player, Graphics2D graphics, int imgIsoW, int imgIsoH) 
+	private void drawPlayer(Player player, Graphics2D graphics, int imgIsoW, int imgIsoH) 
 	{
 		Dimension size = player.getSize();
 		//Tile tile = player.getCurrentTile();
@@ -42,8 +45,14 @@ public class PlayerRenderer {
 		
 		
 		
-		graphics.setColor(Color.white);
-		
+		if (player.getPlayerType() == PlayerType.HUMAN)
+			graphics.setColor(Color.white);
+		else if (player.getPlayerType() == PlayerType.AI)
+			graphics.setColor(Color.RED);
+		else if (player.getPlayerType() == PlayerType.NETWORK)
+			graphics.setColor(Color.GRAY);
+		else
+			throw new UnsupportedOperationException(player.getPlayerType() + " not implemented");
 		
 		Vector v = RenderUtil.convertCoordsToIso(col, row);
 		
@@ -54,13 +63,30 @@ public class PlayerRenderer {
 		
 		
 		
-		//TODO remove? 
+		
+		//Path
+		Stack<Tile> path = player.getPath();
+		graphics.setColor(Color.white);
+		while (!path.isEmpty())
+		{
+			Tile tile = path.pop();
+			row = tile.getY()/world.getTileHeight();
+			col = tile.getX()/world.getTileWidth();
+			v = RenderUtil.convertCoordsToIso(col, row);
+			graphics.fillOval((int)v.getX()-size.width/8, (int)v.getY()-size.height/16, size.width/4, size.height/8);
+		}
+		
+		
+		//Goal
 		graphics.setColor(Color.red);
-		Vector destination = player.getDestination();
-		row = destination.getY()/world.getTileHeight();
-		col = destination.getX()/world.getTileWidth();
+		Vector goal = player.getGoal();
+		row = goal.getY()/world.getTileHeight();
+		col = goal.getX()/world.getTileWidth();
 		v = RenderUtil.convertCoordsToIso(col, row);
 		graphics.fillOval((int)v.getX()-size.width/8, (int)v.getY()-size.height/16, size.width/4, size.height/8);
+		
+		
+		
 		
 		//graphics.fillOval(position.getXAsInt()-size.width/2, position.getYAsInt()-size.height/2, size.width, size.height/2);
 	}

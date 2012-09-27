@@ -155,7 +155,15 @@ public class WorldRenderer
 					
 					Vector v = RenderUtil.convertCoordsToIso(col, row);
 					
+					
+					
+					
+					
 					graphics.drawImage(image,v.getXAsInt(),v.getYAsInt(), null);
+					
+					
+					if (!tile.isWalkable()) //can't move to non walkable tiles
+						continue;
 					
 					int rgb = world.getColour(row, col, layerCount);
 					

@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 
 import javax.swing.JFrame;
+import javax.swing.JTextPane;
 
 import doharm.gui.input.KeyboardManager;
 import doharm.gui.input.MouseManager;
@@ -30,8 +31,12 @@ public class MainWindow{
 
 		WorldRenderer renderer = new WorldRenderer(game);
 		canvas = new WorldCanvas(game,renderer);
-
+		JTextPane tp = new JTextPane();
+		tp.setContentType("text/html");
+		tp.setOpaque(false);
+		tp.setText("<p style=\"color:red\">Words</p>");
 		canvas.setLayout(new BorderLayout());
+		canvas.add(tp, BorderLayout.EAST);
 		mouseManager = new MouseManager(game,renderer);
 
 		keyboardManager = new KeyboardManager(this);

@@ -20,7 +20,9 @@ public class MenuButtonListener implements ActionListener {
 			//TODO:Start a server
 		} else if (action.equals("join")){
 			//TODO:Join the given server
-		} else if (action.equals("quit")){
+		} else if (action.equals("resume")){
+			//TODO:Join the given server
+		}  else if (action.equals("quit")){
 			//TODO:Graceful exit
 			System.exit(0);
 		}
