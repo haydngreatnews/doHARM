@@ -19,7 +19,7 @@ public class Command {
 	public byte[] convertToBytes()
 	{
 		byte[] temp = new byte[1024];
-		temp[0] = 1;	// This is a Command Packet.
+		temp[0] = (byte) ServerPacket.SNAPSHOT.ordinal();
 		// temp[1-4] server time of last snapshot/gamestate we received.
 		// my desired viewing direction
 		// my desired movement

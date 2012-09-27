@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
-import java.net.ServerSocket;
-import java.net.Socket;
 import java.net.SocketAddress;
 import java.net.SocketException;
 import java.util.ArrayList;
@@ -13,6 +11,7 @@ import java.util.Queue;
 
 import doharm.net.ClientState;
 import doharm.net.UDPReceiver;
+import doharm.net.packets.ClientPacket;
 import doharm.net.packets.Snapshot;
 
 public class Server {
@@ -42,10 +41,10 @@ public class Server {
 			DatagramPacket packet = receiver.poll();
 			byte[] data = packet.getData();
 			
-			// Check what type of packet it is.
-			switch (data[0])
+			// Check what type of packet it is.			
+			switch (ClientPacket.values()[data[0]])
 			{
-			case 1:		// case CPK_COMMAND:
+			case COMMAND:
 				for (ConnectedClient c : clients)
 					if ( c.getAddress().equals(packet.getSocketAddress()) )
 					{
@@ -54,7 +53,7 @@ public class Server {
 					}
 				break;
 				
-			case 2:		// case CPK_JOIN:
+			case JOIN:
 				if (clients.size() < maxPlayers)
 				{
 					// TODO check if player is already connected with that address.
@@ -71,7 +70,7 @@ public class Server {
 				}
 				break;
 				
-			case 3:		// case CPK_OKACK:
+			case OKACK:
 				for (ConnectedClient c : clients)
 					if ( c.getAddress().equals(packet.getSocketAddress()) )
 					{
@@ -79,7 +78,7 @@ public class Server {
 					}
 				break;
 				
-			case 4:		// case CPK_READY:
+			case READY:
 				for (ConnectedClient c : clients)
 					if ( c.getAddress().equals(packet.getSocketAddress()) )
 					{

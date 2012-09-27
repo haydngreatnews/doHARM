@@ -30,7 +30,7 @@ public class Snapshot implements Cloneable {
 	public byte[] convertToBytes()
 	{
 		byte[] temp = new byte[1024];
-		temp[0] = 1;	// S->C Packet Type; 1 = Snapshot
+		temp[0] = (byte) ServerPacket.SNAPSHOT.ordinal();
 		byte[] serverTimeBytes = ByteBuffer.allocate(4).putInt(serverTime).array();
 		return null;
 	}

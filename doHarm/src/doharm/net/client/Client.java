@@ -8,6 +8,7 @@ import java.util.Queue;
 
 import doharm.net.ClientState;
 import doharm.net.UDPReceiver;
+import doharm.net.packets.ServerPacket;
 import doharm.net.packets.Snapshot;
 
 public class Client {
@@ -43,18 +44,18 @@ public class Client {
 			byte[] data = packet.getData();
 			
 			// Check what type of packet it is.
-			switch (data[0])
+			switch (ServerPacket.values()[data[0]])
 			{
-			case 1:		// case SPK_SNAPSHOT:
+			case SNAPSHOT:
 				updateSnapshotPacket(data);
 				break;
 				
-			case 2:		// case SPK_GAMESTATE:
+			case GAMESTATE:
 				updateGamestatePacket(data);
 				
 				break;
 				
-			case 3:		// case SPK_RESPONSE:
+			case RESPONSE:
 				// THIS CASE DOESN'T CHECK WHAT STATE WE ARE IN (ie we could be INGAME then get forced back into LOADING cause of receiving a packet of this type. This should be changed by only listening for certain packets at certain points of time, not sure how exactly want to do that at the mo.
 				// if OK, [create TCP connection] and then load the static game into memory.
 				if (data[1] == 0)	// response code 0 = OK
