@@ -12,7 +12,6 @@ public class Vector
 	{
 		this.x = x;
 		this.y = y;
-		updateLength();
 	}
 	
 	public Vector() 
@@ -29,9 +28,16 @@ public class Vector
 	{
 		this(d.width,d.height);
 	}
-
+	
+	
+	public float getLength() 
+	{
+		updateLength();
+		return length;
+	}
 	public void normalize()
 	{
+		updateLength();
 		set(x/length,y/length);
 	}
 
@@ -80,7 +86,6 @@ public class Vector
 	{
 		this.x = x;
 		this.y = y;
-		updateLength();
 	}
 	public void set(Vector v) 
 	{
@@ -96,10 +101,7 @@ public class Vector
 		set(this.x*x,this.y*y);
 	}
 
-	public float getLength() 
-	{
-		return length;
-	}
+	
 
 	public void add(Vector v) 
 	{
@@ -141,7 +143,6 @@ public class Vector
 	{
 		x = 0;
 		y = 0;
-		updateLength();
 	}
 
 	public void divide(float x, float y) {

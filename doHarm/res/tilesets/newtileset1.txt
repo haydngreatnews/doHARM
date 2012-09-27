@@ -5,7 +5,7 @@
 newtileset1.png
 wall 0 0 5
 grass 1 1
-nothing 1 2
-water 2 3
-tree 3 4
-wall2 1 5
+nothing 2 2
+water 3 3
+tree 4 4
+wall2 0 5
