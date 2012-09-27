@@ -35,13 +35,11 @@ public class Client {
 	}
 	
 	public void processIncomingPackets()
-	{
-		Queue<DatagramPacket> queue = receiver.getQueue();
-		
-		// Might want to eventually add to the condition "|| !runningLate" for if we're taking too long. Probably won't care about this for quite a while.
-		while (!queue.isEmpty())
+	{		
+		// TODO Might want to eventually add to the condition "|| !runningLate" for if we're taking too long. Probably won't care about this for quite a while.
+		while (!receiver.isEmpty())
 		{
-			DatagramPacket packet = queue.poll();
+			DatagramPacket packet = receiver.poll();
 			byte[] data = packet.getData();
 			
 			// Check what type of packet it is.
@@ -63,11 +61,10 @@ public class Client {
 				{
 					System.out.println("Server responded with OK, moving to LOADING state...");
 					state = ClientState.LOADING;
-					// Possibly run the loading in a separate thread so the queue continue to be looped thru.
-					// Then again, there is only one thing the client needs to be worrying about, 
-					// so he doesn't need to be listening for anything else at this point? 
-					// unless we want the server to ask us if were still here every once in a while..
-					
+					/* TODO Possibly run the loading in a separate thread so the queue continue to be looped thru.
+					Then again, there is only one thing the client needs to be worrying about, 
+					so he doesn't need to be listening for anything else at this point? 
+					unless we want the server to ask us if were still here every once in a while.. */
 				}
 				else	// it's an error, print the message and return to menu or w/e
 				{
@@ -76,7 +73,6 @@ public class Client {
 				break;
 			}
 		}
-		
 	}
 	
 	/**
@@ -101,15 +97,28 @@ public class Client {
 		;
 	}
 	
-	public void buildCommandPacket()
+	public void dispatchCommand()
 	{
-		byte[] temp = new byte[1024];
-		temp[0] = 1;	// This is a Command Packet.
-		// temp[1-4] server time of last snapshot/gamestate we received.
-		// my desired viewing direction
-		// my desired movement
-		// my selected weapon
-		// my commands
+
+	}
+	
+	// Fake main method, placeholder used so coding on the flow of operations can be done.
+	private void main()
+	{
+		while (true)
+		{
+			// process incoming packets
+			processIncomingPackets();
+			
+			// perform client-side game logics
+			
+			// render
+			
+			// create then send snapshots
+			dispatchCommand();
+			
+			// wait for next tick
+		}
 	}
 
 }
