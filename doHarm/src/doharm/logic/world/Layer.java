@@ -3,7 +3,7 @@ package doharm.logic.world;
 import doharm.logic.physics.Vector;
 import doharm.logic.world.tiles.Tile;
 import doharm.storage.LayerData;
-import doharm.storage.TileData;
+import doharm.storage.FloorTileData;
 import doharm.storage.TilesetLoader;
 import doharm.storage.WorldLoader;
 
@@ -28,7 +28,7 @@ public class Layer
 		{
 			for (int x= 0; x < tiles[0].length; x++)
 			{
-				TileData data = tileLoader.getTileData(layerData.getTileID(y,x));
+				FloorTileData data = tileLoader.getTileData(layerData.getTileID(y,x));
 				tiles[y][x] = new Tile(this, y,x,tileWidth,tileHeight,new Vector(x*tileWidth,y*tileHeight),data);
 			}
 		}

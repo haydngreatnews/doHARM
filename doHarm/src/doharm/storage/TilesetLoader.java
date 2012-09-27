@@ -9,66 +9,177 @@ import java.util.Scanner;
 
 public class TilesetLoader 
 {
-	private int tileWidth;
-	private int tileHeight;
-	private String tileSetImage;
-	private List<TileData> tileData;
-
+	private int floorTileWidth;
+	private int floorTileHeight;
+	
+	private int wallTileWidth;
+	private int wallTileHeight;
+	
+	private String floorTileSetImage;
+	private String wallTileSetImage;
+	
+	private List<FloorTileData> floorTileData;
+	private List<WallTileData> wallTileData;
+	
+	
 	public TilesetLoader(String filename) throws FileNotFoundException
 	{
 		Scanner scanner = new Scanner(new File("res/tilesets/"+filename));
-		tileWidth = Integer.parseInt(scanner.nextLine());
-		tileHeight = Integer.parseInt(scanner.nextLine());
-		int isowidth = Integer.parseInt(scanner.nextLine());
-		int isoheight = Integer.parseInt(scanner.nextLine());
 		
-		tileSetImage = scanner.nextLine().trim();
+		loadFloorTiles(scanner.nextLine().trim());
+		loadWallTiles(scanner.nextLine().trim());
 		
-		tileData = new ArrayList<TileData>();
+
+	}
+	
+	private void loadFloorTiles(String fname) throws FileNotFoundException{
+		Scanner scanner = new Scanner(new File("res/tilesets/"+fname));
+		floorTileSetImage = scanner.nextLine().trim();
+		System.out.println("Floor tile set image fname: " + floorTileSetImage);
 		
-		while (scanner.hasNextLine())
+		floorTileWidth = Integer.parseInt(scanner.nextLine());
+		floorTileHeight = Integer.parseInt(scanner.nextLine());
+		
+		floorTileData = new ArrayList<FloorTileData>();
+		
+		while(scanner.hasNextLine())
 		{
 			String line = scanner.nextLine();
 			if (line.trim().length() > 0)
-				tileData.add(new TileData(line));
+				floorTileData.add(new FloorTileData(line));
 		}
 	}
 	
-	private void loadFloorTiles(){
+	private void loadWallTiles(String fname) throws FileNotFoundException{
+		
+		Scanner scanner = new Scanner(new File("res/tilesets/"+fname));
+		wallTileSetImage = scanner.nextLine().trim();
+		System.out.println("Wall tile set image fname: " + wallTileSetImage);
+		
+		wallTileWidth = Integer.parseInt(scanner.nextLine());
+		wallTileHeight = Integer.parseInt(scanner.nextLine());
+		
+		wallTileData = new ArrayList<WallTileData>();
+		
+		while(scanner.hasNextLine())
+		{
+			String line = scanner.nextLine();
+			if (line.trim().length() > 0)
+				wallTileData.add(new WallTileData(line));
+		}
 		
 	}
 	
 	
-	/*public List<TileData> getTileData()
+	
+	
+	public List<FloorTileData> getFloorTileData()
 	{
-		return Collections.unmodifiableList(tileData);
-	}*/
+		return Collections.unmodifiableList(floorTileData);
+	}
+	public List<WallTileData> getWallTileData()
+	{
+		return Collections.unmodifiableList(wallTileData);
+	}
 
-
+	/**
+	 * 
+	 * @return
+	 * @deprecated use getFloorTileWidth() or getWallTileWidth()
+	 */
+	@Deprecated
 	public int getTileWidth() {
-		return tileWidth;
+		return floorTileWidth;
 	}
 
-
+	/**
+	 * 
+	 * @return
+	 * @deprecated use getFloorTileHeight() or getWallTileHeight()
+	 */
+	@Deprecated
 	public int getTileHeight() {
-		return tileHeight;
+		return floorTileHeight;
+	}
+	
+	
+	
+
+	
+	public int getFloorTileWidth() {
+		return floorTileWidth;
 	}
 
+	public int getFloorTileHeight() {
+		return floorTileHeight;
+	}
 
+	public int getWallTileWidth() {
+		return wallTileWidth;
+	}
+
+	public int getWallTileHeight() {
+		return wallTileHeight;
+	}
+
+	public String getFloorTileSetImage() {
+		return floorTileSetImage;
+	}
+
+	public String getWallTileSetImage() {
+		return wallTileSetImage;
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 * @deprecated use getFloorTileSetImage() or getWallTileSetImage()
+	 */
+	@Deprecated
 	public String getTileSetImage() {
-		return tileSetImage;
+		return floorTileSetImage;
 	}
 
-
-	public TileData getTileData(int tileID) 
+	
+	/**
+	 * 
+	 * @return
+	 * @deprecated use getFloorTileData(int tileID)  or getWallTileData(int tileID) 
+	 */
+	@Deprecated
+	public FloorTileData getTileData(int tileID) 
 	{
-		return tileData.get(tileID);
+		return floorTileData.get(tileID);
 	}
-
-
-	public int getNumTiles() 
+	
+	public FloorTileData getFloorTileData(int tileID) 
 	{
-		return tileData.size();
+		return floorTileData.get(tileID);
+	}
+	
+	public WallTileData getWallTileData(int tileID) 
+	{
+		return wallTileData.get(tileID);
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 * @deprecated use getFloorTileData(int tileID)  or getWallTileData(int tileID) 
+	 */
+	@Deprecated
+	public int getNumTiles(){
+		return floorTileData.size();
+	}
+	
+	public int getNumFloorTiles(){
+		return floorTileData.size();
+	}
+	
+	public int getNumWallTiles(){
+		return wallTileData.size();
 	}
 	
 	

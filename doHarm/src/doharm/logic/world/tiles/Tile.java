@@ -2,11 +2,13 @@ package doharm.logic.world.tiles;
 
 import doharm.logic.physics.Vector;
 import doharm.logic.world.Layer;
-import doharm.storage.TileData;
+import doharm.storage.FloorTileData;
 
 public class Tile implements Comparable<Tile>
 {
-	public TileData tileData;
+	
+	 
+	public FloorTileData tileData;
 	Vector position;
 	private Layer layer;
 	private int row;
@@ -16,7 +18,7 @@ public class Tile implements Comparable<Tile>
 	private int width;
 	private int height;
 	
-	public Tile(Layer layer, int row, int col, int width, int height, Vector position, TileData data) 
+	public Tile(Layer layer, int row, int col, int width, int height, Vector position, FloorTileData data) 
 	{
 		this.width = width;
 		this.height = height;
