@@ -118,7 +118,7 @@ public class Client {
 	}
 	
 	/**
-	 * Sends a UDP Packet out.
+	 * Sends a UDP Packet out to the desired address.
 	 * @param data Packet contents.
 	 * @param address IP and Port to send to.
 	 * @return
