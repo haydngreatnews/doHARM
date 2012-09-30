@@ -2,7 +2,10 @@ package doharm.logic.gameobjects.entities.characters;
 
 import doharm.logic.gameobjects.entities.Entity;
 import doharm.logic.gameobjects.entities.characters.attributes.Level;
-import doharm.logic.gameobjects.entities.characters.attributes.classes.CharacterClass;
+import doharm.logic.gameobjects.entities.characters.classes.CharacterClass;
+import doharm.logic.gameobjects.entities.characters.classes.CharacterClassType;
+import doharm.logic.gameobjects.entities.characters.classes.Warrior;
+import doharm.logic.gameobjects.entities.characters.players.PlayerType;
 import doharm.logic.world.tiles.Tile;
 
 public abstract class Character extends Entity
@@ -12,10 +15,21 @@ public abstract class Character extends Entity
 	private CharacterClass characterClass;
 	private Level level;
 	
-	protected Character(Tile spawnTile, String name, int id) 
+	protected Character(Tile spawnTile, String name, CharacterClassType classType, int id) 
 	{
 		super(spawnTile);
+		
+		switch(classType)
+		{
+		case WARRIOR:
+			characterClass = new Warrior();
+			break;
+		default:
+			throw new UnsupportedOperationException("Character class type not implemented: " + classType);
+		}
 	}
+
+	
 	
 	
 	

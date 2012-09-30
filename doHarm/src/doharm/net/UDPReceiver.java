@@ -35,9 +35,14 @@ public class UDPReceiver extends Thread {
 		}
 	}
 	
-	public Queue<DatagramPacket> getQueue()
+	public DatagramPacket poll()
 	{
-		return queue;
+		return queue.poll();
+	}
+	
+	public boolean isEmpty()
+	{
+		return queue.isEmpty();
 	}
 
 }

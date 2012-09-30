@@ -1,12 +1,5 @@
 package doharm.gui.view;
 
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Image;
-import java.io.File;
-import java.io.IOException;
-
-import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 
@@ -23,8 +16,8 @@ public class PictureButton extends JButton {
 	 *            would give: </br> new.png as the up image, new_ro.png as the
 	 *            roll-over image and new_pr.png as the pressed image
 	 */
-	public PictureButton(String fn) {
-		super(new ImageIcon(fn));
+	public PictureButton(String fn, String n) {
+		super(n, new ImageIcon(fn));
 		String[] name = fn.split("\\.");
 		setRolloverIcon(new ImageIcon(name[0] + "_ro." + name[1]));
 		setPressedIcon(new ImageIcon(name[0] + "_pr." + name[1]));

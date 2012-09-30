@@ -6,6 +6,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
 import doharm.logic.Game;
+import doharm.logic.world.World;
 import doharm.logic.world.tiles.Tile;
 import doharm.rendering.WorldRenderer;
 
@@ -49,9 +50,12 @@ public class MouseManager implements MouseListener, MouseMotionListener
 		if (rgb == 0)
 			return; //outside area
 		
-		Tile tile = game.getWorld().getTile(rgb);
+		World world = game.getWorld();
 		
-		game.getWorld().getHumanPlayer().moveTo(tile);
+		Tile tile = world.getTile(rgb);
+		
+		world.resetTiles(tile);
+		world.getHumanPlayer().moveTo(tile);
 		
 	}
 

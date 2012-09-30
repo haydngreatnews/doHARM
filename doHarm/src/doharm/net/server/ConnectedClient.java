@@ -1,6 +1,8 @@
 package doharm.net.server;
 
 import java.net.SocketAddress;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Queue;
 
 import doharm.net.ClientState;
@@ -13,11 +15,14 @@ import doharm.net.packets.Snapshot;
 public class ConnectedClient {
 	private SocketAddress address;
 	private Command latestCommandPacket;
+	
 	/** Last time we received a packet from this client. */
 	private int latestTime;
+	
 	private ClientState state;
+	
 	/** Holds on to all unack'd Snapshots we've sent the client. */
-	private Queue<Snapshot> snapsBuffer;
+	private LinkedList<Snapshot> snapsBuffer;
 	
 	public ConnectedClient(SocketAddress address)
 	{
@@ -25,10 +30,11 @@ public class ConnectedClient {
 		state = ClientState.LOADING;
 	}
 	
-	public SocketAddress getAddress()
-	{
-		return address;
-	}
+	public SocketAddress getAddress() {	return address; }
+	
+	public ClientState getState() { return state; }
+
+	public void setState(ClientState newState) { state = newState; }
 	
 	/**
 	 * Update what the latest command packet from the client is.
@@ -40,7 +46,7 @@ public class ConnectedClient {
 		int timestamp = Command.getTimestamp(data);
 		
 		// If this packet isn't more recent than the latest command we've received, discard.
-		// TODO needs to take into account the 2-B-Implemented repeat field. 
+		// TODO needs to take into account the 2-B-Implemented repeat field. SHOULD JUST REPLACE WITH "SEQUENCE NUMBER"
 		if ( timestamp <= latestTime )
 			return;
 		
@@ -48,8 +54,40 @@ public class ConnectedClient {
 		latestCommandPacket = new Command(data);
 	}
 	
-	public ClientState getState()
+	/** Add a new snapshot to the snap buffer. */
+	public void addSnapshot(Snapshot snap)
 	{
-		return state;
+		snapsBuffer.add(snap);
+	}
+	
+	/**
+	 * Builds the Snapshot to actually transmit to the client.
+	 * Combines all unack'd snapshots into one.
+	 * @return
+	 */
+	public Snapshot buildTransmissionSnapshot()
+	{
+		// Remove all acknowledged snaps from the Snapshot buffer.
+		while (snapsBuffer.peek().serverTime <= latestCommandPacket.serverTimeAckd)
+		{
+			snapsBuffer.poll();
+		}
+		
+		/* Build the snapshot to send.
+		
+		So we use the latest snapshot as a base, and from there we go through the rest in order from newest to oldest,
+		and if fields from the snap we are looking at isnt in our transmission snap, add them.
+		
+		TODO not the most efficient way at the moment; eventually should keep the latest transmission packet 
+		and just make changes to it based on what has been removed and what has been added, not going thru all of them.
+		*/
+		Iterator<Snapshot> iter = snapsBuffer.descendingIterator();
+		
+		Snapshot transSnap = iter.next().clone();	// will never be null, a snapshot was just added in the parent method call.
+		
+		while (iter.hasNext())
+			transSnap.addMissing(iter.next());
+		
+		return transSnap;
 	}
 }

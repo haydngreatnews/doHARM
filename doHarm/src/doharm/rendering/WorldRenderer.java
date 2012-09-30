@@ -150,24 +150,86 @@ public class WorldRenderer
 			//ie. the tile(s) obscuring view of the player, is not an invisible tile, make this entire layer transparent.
 			//and dont draw any subsequent layers.
 			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
 			for(int row = 0; row < tiles.length; row++)
 			{
 				for(int col = 0; col < tiles[0].length; col++)
 				{
 					Tile tile = tiles[row][col];
 					
-					
 					//TODO update since tile reading changed
 					BufferedImage image = floorImages[tile.getImageID()];
 					
 					Vector v = RenderUtil.convertCoordsToIso(col, row);
 					
+					
+					
+					if (!tile.isWalkable()) //can't move to non walkable tiles
+						continue;
+					
+					
+					if (!tile.isWalkable()) //can't move to non walkable tiles
+						continue;
+					
+					
+
 					//graphics.drawImage(image,v.getXAsInt(),v.getYAsInt(), null);
 					
 					int x = (-(col*(fTileW/2)))+(row*(fTileW/2));
 					int y = (col*(fTileH/2))+(row*(fTileH/2));
 					graphics.drawImage(image,x,y, null);
 					//Don't think walls can be drawn yet, need some changes to the Tile class
+
+					
+					
+					
+					
+					graphics.drawImage(image,v.getXAsInt(),v.getYAsInt(), null);
+					
+					
 					
 					int rgb = world.getColour(row, col, layerCount);
 					
