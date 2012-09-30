@@ -1,6 +1,6 @@
 20
 20
-newtileset1.txt
+tileset_new_format.txt
 ground.txt
 walls.txt
 

@@ -29,9 +29,10 @@ public class WorldRenderer
 	private Graphics2D pickGraphics;
 	
 	private Dimension canvasSize;
-	private BufferedImage[] images;
+	//private BufferedImage[] images;
 	
-	private BufferedImage[] imagesIso;//As images, but the isometric versions.
+	private BufferedImage[] floorImages;
+	private BufferedImage[] wallImages;
 	
 	private AffineTransform transform;
 	private Game game;
@@ -42,8 +43,11 @@ public class WorldRenderer
 	private int imgSize;//Tiles assumed to be square.
 	
 	
-	public final int imgIsoW;
-	public final int imgIsoH;
+	private  int fTileW;
+	private  int fTileH;
+
+	private int wTileW;
+	private  int wTileH;
 	
 	public WorldRenderer(Game game)
 	{
@@ -51,10 +55,10 @@ public class WorldRenderer
 		playerRenderer = new PlayerRenderer(game);
 		canvasSize = new Dimension();
 		transform = new AffineTransform();
-		Dimension d = newLoadTileSets();
-		imgIsoW = d.width;
-		imgIsoH = d.height;
-		RenderUtil.setImgDimensions(imgIsoW, imgIsoH);
+		
+		//TODO update for new tile reading.
+		RenderUtil.setImgDimensions(fTileW, wTileH);
+		
 		
 		newLoadTileSets();
 		
@@ -112,7 +116,7 @@ public class WorldRenderer
 		
 		renderWorldIso();
 	
-		playerRenderer.redraw(graphics, imgIsoW, imgIsoH);
+		playerRenderer.redraw(graphics, fTileW, fTileH);
 		
 		
 		//TODO REMOVE
@@ -146,15 +150,79 @@ public class WorldRenderer
 			//ie. the tile(s) obscuring view of the player, is not an invisible tile, make this entire layer transparent.
 			//and dont draw any subsequent layers.
 			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
 			for(int row = 0; row < tiles.length; row++)
 			{
 				for(int col = 0; col < tiles[0].length; col++)
 				{
 					Tile tile = tiles[row][col];
-					BufferedImage image = images[tile.getImageID()];
+					
+					//TODO update since tile reading changed
+					BufferedImage image = floorImages[tile.getImageID()];
 					
 					Vector v = RenderUtil.convertCoordsToIso(col, row);
 					
+					
+					
+					if (!tile.isWalkable()) //can't move to non walkable tiles
+						continue;
+					
+					
+					if (!tile.isWalkable()) //can't move to non walkable tiles
+						continue;
+					
+					
+
+					//graphics.drawImage(image,v.getXAsInt(),v.getYAsInt(), null);
+					
+					int x = (-(col*(fTileW/2)))+(row*(fTileW/2));
+					int y = (col*(fTileH/2))+(row*(fTileH/2));
+					graphics.drawImage(image,x,y, null);
+					//Don't think walls can be drawn yet, need some changes to the Tile class
+
 					
 					
 					
@@ -162,8 +230,6 @@ public class WorldRenderer
 					graphics.drawImage(image,v.getXAsInt(),v.getYAsInt(), null);
 					
 					
-					if (!tile.isWalkable()) //can't move to non walkable tiles
-						continue;
 					
 					int rgb = world.getColour(row, col, layerCount);
 					
@@ -187,7 +253,7 @@ public class WorldRenderer
 					
 					
 					Color colour = new Color(red,green,blue);
-					//
+					
 					pickGraphics.setColor(colour);
 					pickGraphics.fillRect(v.getXAsInt(),v.getYAsInt(),image.getWidth(), image.getHeight());
 				
@@ -199,63 +265,77 @@ public class WorldRenderer
 	}
 	
 	
-	private Dimension newLoadTileSets(){
+	private void newLoadTileSets(){
 		World world = game.getWorld();
 		BufferedImage tileSet = null;
 		WorldLoader wl = world.getWorldLoader();
 		
 		
 		TilesetLoader tsl = wl.getTilesetLoader();
-		imgSize = tsl.getTileWidth();
-		int x = tsl.getTileWidth();
-		int y = 23;
+		
+		fTileW = tsl.getFloorTileWidth();
+		fTileH = tsl.getFloorTileHeight();
+		
+		wTileW = tsl.getWallTileWidth();
+		wTileH = tsl.getWallTileHeight();
 		
 		
-		images = new BufferedImage[tsl.getNumTiles()];
 		
-		int width = tsl.getTileWidth();
-		int height = tsl.getTileHeight();
+		floorImages = new BufferedImage[tsl.getNumFloorTiles()];
+		wallImages = new BufferedImage[tsl.getNumWallTiles()];
 		
 		try{
-			tileSet = ImageIO.read(new File("res/tilesets/"+tsl.getTileSetImage()));
+			tileSet = ImageIO.read(new File("res/tilesets/"+tsl.getFloorTileSetImage()));
 			
 			
 			/*
-			BufferedImage transparentImage = new BufferedImage(tileSet.getWidth(),tileSet.getHeight(),BufferedImage.TYPE_INT_ARGB);
-			Graphics2D transparentGraphics = transparentImage.createGraphics();
-			transparentGraphics.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.1f));
-			transparentGraphics.drawImage(tileSet, 0,0,null);
+				BufferedImage transparentImage = new BufferedImage(tileSet.getWidth(),tileSet.getHeight(),BufferedImage.TYPE_INT_ARGB);
+				Graphics2D transparentGraphics = transparentImage.createGraphics();
+				transparentGraphics.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.1f));
+				transparentGraphics.drawImage(tileSet, 0,0,null);
 			*/
-			
 			/*
 			 * 
-			 * 
-			 * 
-			 * 
-			 * Composite old = backbufferGraphics.getComposite();
-			backbufferGraphics.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.1f));
-			//backbufferGraphics.drawImage(boardImage, 0, 0,boardImage.getWidth(),boardImage.getHeight(),null);	
-			//backbufferGraphics.setComposite(old);
-			drawBoard();
-			backbufferGraphics.setComposite(old);
+			 * 	Composite old = backbufferGraphics.getComposite();
+				backbufferGraphics.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.1f));
+				backbufferGraphics.drawImage(boardImage, 0, 0,boardImage.getWidth(),boardImage.getHeight(),null);	
+				backbufferGraphics.setComposite(old);
+				drawBoard();
+				backbufferGraphics.setComposite(old);
 			 * 
 			 * 
 			 */
 			
-			for(int r = 0; r < tileSet.getHeight()/height; r++)
+			for(int r = 0; r < tileSet.getHeight()/fTileH; r++)
 			{
-				for(int c = 0; c < tileSet.getWidth()/width; c++)
+				for(int c = 0; c < tileSet.getWidth()/fTileW; c++)
 				{
-					BufferedImage n = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+					BufferedImage n = new BufferedImage(fTileW, fTileH, BufferedImage.TYPE_INT_ARGB);
 					Graphics2D g = n.createGraphics();
-					g.drawImage(tileSet,0, 0,width, height,	c*width, r*height, width*(c+1), (r+1)*height, null);
+					g.drawImage(tileSet,0, 0,fTileW, fTileH, c*fTileW, r*fTileH, fTileW*(c+1), (r+1)*fTileH, null);
 					
-					images[((tileSet.getHeight()/height)*r) + c] = n;
+					floorImages[((tileSet.getHeight()/fTileH)*r) + c] = n;
+				}
+			}
+			
+			
+			//load the wall tiles
+			tileSet = ImageIO.read(new File("res/tilesets/"+tsl.getWallTileSetImage()));
+			
+			for(int r = 0; r < tileSet.getHeight()/wTileH; r++)
+			{
+				for(int c = 0; c < tileSet.getWidth()/wTileW; c++)
+				{
+					BufferedImage n = new BufferedImage(wTileH, wTileW, BufferedImage.TYPE_INT_ARGB);
+					Graphics2D g = n.createGraphics();
+					g.drawImage(tileSet,0, 0,wTileW, wTileH, c*wTileW, r*wTileH, wTileW*(c+1), (r+1)*wTileH, null);
+					
+					floorImages[((tileSet.getHeight()/wTileH)*r) + c] = n;
 				}
 			}
 			
 		}catch(Exception e){}
-		return new Dimension(x, y);
+		
 	}
 
 	
