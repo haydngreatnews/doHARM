@@ -40,8 +40,6 @@ public class WorldRenderer
 	private PlayerRenderer playerRenderer;
 	
 	
-	private int imgSize;//Tiles assumed to be square.
-	
 	
 	private  int fTileW;
 	private  int fTileH;
@@ -56,11 +54,9 @@ public class WorldRenderer
 		canvasSize = new Dimension();
 		transform = new AffineTransform();
 		
-		//TODO update for new tile reading.
-		RenderUtil.setImgDimensions(fTileW, wTileH);
-		
-		
 		newLoadTileSets();
+		RenderUtil.setImgDimensions(fTileW, fTileH);
+		
 		
 	}
 	
@@ -174,12 +170,15 @@ public class WorldRenderer
 					
 					
 
-					//graphics.drawImage(image,v.getXAsInt(),v.getYAsInt(), null);
+				
 					
-					int x = (-(col*(fTileW/2)))+(row*(fTileW/2));
-					int y = (col*(fTileH/2))+(row*(fTileH/2));
+					
+					
+					Vector vector = RenderUtil.convertCoordsToIso(col, row);
+					int x = vector.getXAsInt();
+					int y = vector.getYAsInt();
 					graphics.drawImage(image,x,y, null);
-					//Don't think walls can be drawn yet, need some changes to the Tile class
+					
 
 					
 					
@@ -212,6 +211,7 @@ public class WorldRenderer
 		
 		fTileW = tsl.getFloorTileWidth();
 		fTileH = tsl.getFloorTileHeight();
+		
 		
 		wTileW = tsl.getWallTileWidth();
 		wTileH = tsl.getWallTileHeight();

@@ -8,10 +8,10 @@ import java.awt.image.BufferedImage;
 import doharm.logic.physics.Vector;
 
 public class RenderUtil {
-	
+
 	private static int imgIsoW = 0;
 	private static int imgIsoH = 0;
-	
+
 	/**
 	 * Scales the img parameter to the specified width and height.
 	 * @param width
@@ -26,12 +26,13 @@ public class RenderUtil {
 		g.drawImage(img, 0, 0, width, height, null);
 		return scaled;
 	}
-	
+
 	/**
 	 * A world renderer must have been initialized before this method is called, to yield valid results.
 	 * converts "square" world coordinates to their corresponding isometric coordinates.
 	 * 
 	 * This does not currently work
+	 * 
 	 * 
 	 * @param col
 	 * @param row
@@ -39,13 +40,13 @@ public class RenderUtil {
 	 */
 	public static Vector convertCoordsToIso(float col, float row){
 		//TODO FIX THIS
-		float x = (-(col*(imgIsoW/2-1)))+(row*(imgIsoW/2-1));
-		float y = (col*(imgIsoH/2-1))+(row*(imgIsoH/2-1));
+		float x = (-(col*(imgIsoW/2)))+(row*(imgIsoW/2));
+		float y = (col*(imgIsoH/2))+(row*(imgIsoH/2));
 		return new Vector(x, y);
-		
+
 	}
-	
-	
+
+
 	/**
 	 * 
 	 * 
@@ -60,27 +61,32 @@ public class RenderUtil {
 		Graphics2D g = (Graphics2D)img.getGraphics();
 		g.setColor(c);
 		int lineLength = 2;
-		
+		int x = width/2;
 		for(int row = 0; row < height/2; row++){
-			for(int col = width/2; col >0; col-=2){
-				g.drawLine(col, row, col+lineLength, row);
-			}
+
+			g.drawLine(x, row, x+lineLength, row);
+			x-=2;
 			lineLength+=4;
 		}
-		
-		for(int row = (height/2)+1; row < height; row++){
-			for(int col = 1; col < width-1; col+=2){
-				g.drawLine(col, row, col+lineLength, row);
-			}
+
+		lineLength-=4;
+		x+=2;
+		for(int row = (height/2); row < height; row++){
+
+			g.drawLine(x, row, x+lineLength, row);
+
+			x+=2;
 			lineLength-=4;
 		}
-		
-		
+
+
 		return img;
 	}
-	
+
 	static void setImgDimensions(int imgW, int imgH){
 		imgIsoW = imgW;
 		imgIsoH = imgH;
+	
+		
 	}
 }
