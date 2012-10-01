@@ -55,7 +55,7 @@ public class RenderUtil {
 	 * @param height
 	 * @return
 	 */
-	public BufferedImage generateIsoImage(Color c, int width, int height){
+	public static BufferedImage generateIsoImage(Color c, int width, int height){
 		BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g = (Graphics2D)img.getGraphics();
 		g.setColor(c);

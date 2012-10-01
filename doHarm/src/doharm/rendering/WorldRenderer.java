@@ -189,7 +189,7 @@ public class WorldRenderer
 					
 					
 
-					pickGraphics.drawImage(tile.getPickImage(), v.getXAsInt(),v.getYAsInt(),null);
+					pickGraphics.drawImage(tile.getPickImage(), x,y,null);
 
 				
 					

@@ -51,7 +51,7 @@ public class Tile implements Comparable<Tile>
 
 		Color color = new Color(red,green,blue);
 		
-		//this.pickImage = RenderUtil.generateIsoImage(color, width,height);
+		this.pickImage = RenderUtil.generateIsoImage(color, width,height);
 		
 		switchImageTimer = floorData.getNumFramesPerImage();
 		neighbours = new ArrayList<Tile>();
