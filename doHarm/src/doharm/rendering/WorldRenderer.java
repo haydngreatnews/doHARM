@@ -150,50 +150,7 @@ public class WorldRenderer
 			//ie. the tile(s) obscuring view of the player, is not an invisible tile, make this entire layer transparent.
 			//and dont draw any subsequent layers.
 			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
+	
 			for(int row = 0; row < tiles.length; row++)
 			{
 				for(int col = 0; col < tiles[0].length; col++)
@@ -227,7 +184,7 @@ public class WorldRenderer
 					
 					
 					
-					graphics.drawImage(image,v.getXAsInt(),v.getYAsInt(), null);
+					//graphics.drawImage(image,v.getXAsInt(),v.getYAsInt(), null);
 					
 					
 					
@@ -246,10 +203,6 @@ public class WorldRenderer
 					//int argb = (alpha << 24) | (red << 16 ) | (green<<8) | blue;
 
 
-					
-					
-					
-					
 					
 					
 					Color colour = new Color(red,green,blue);

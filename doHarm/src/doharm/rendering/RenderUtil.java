@@ -1,5 +1,6 @@
 package doharm.rendering;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
@@ -26,7 +27,11 @@ public class RenderUtil {
 		return scaled;
 	}
 	
-	/**convers "square" world coordinates to their corresponding isometric coordinates.
+	/**
+	 * A world renderer must have been initialized before this method is called, to yield valid results.
+	 * converts "square" world coordinates to their corresponding isometric coordinates.
+	 * 
+	 * This does not currently work
 	 * 
 	 * @param col
 	 * @param row
@@ -38,6 +43,40 @@ public class RenderUtil {
 		float y = (col*(imgIsoH/2-1))+(row*(imgIsoH/2-1));
 		return new Vector(x, y);
 		
+	}
+	
+	
+	/**
+	 * 
+	 * 
+	 * 
+	 * @param c
+	 * @param width
+	 * @param height
+	 * @return
+	 */
+	public BufferedImage generateIsoImage(Color c, int width, int height){
+		BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g = (Graphics2D)img.getGraphics();
+		g.setColor(c);
+		int lineLength = 2;
+		
+		for(int row = 0; row < height/2; row++){
+			for(int col = width/2; col >0; col-=2){
+				g.drawLine(col, row, col+lineLength, row);
+			}
+			lineLength+=4;
+		}
+		
+		for(int row = (height/2)+1; row < height; row++){
+			for(int col = 1; col < width-1; col+=2){
+				g.drawLine(col, row, col+lineLength, row);
+			}
+			lineLength-=4;
+		}
+		
+		
+		return img;
 	}
 	
 	static void setImgDimensions(int imgW, int imgH){
