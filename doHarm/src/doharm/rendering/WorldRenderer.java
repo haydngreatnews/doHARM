@@ -40,8 +40,6 @@ public class WorldRenderer
 	private PlayerRenderer playerRenderer;
 	
 	
-	private int imgSize;//Tiles assumed to be square.
-	
 	
 	private  int fTileW;
 	private  int fTileH;
@@ -56,11 +54,9 @@ public class WorldRenderer
 		canvasSize = new Dimension();
 		transform = new AffineTransform();
 		
-		//TODO update for new tile reading.
-		RenderUtil.setImgDimensions(fTileW, wTileH);
-		
-		
 		newLoadTileSets();
+		RenderUtil.setImgDimensions(fTileW, fTileH);
+		
 		
 	}
 	
@@ -150,50 +146,7 @@ public class WorldRenderer
 			//ie. the tile(s) obscuring view of the player, is not an invisible tile, make this entire layer transparent.
 			//and dont draw any subsequent layers.
 			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
+	
 			for(int row = 0; row < tiles.length; row++)
 			{
 				for(int col = 0; col < tiles[0].length; col++)
@@ -216,47 +169,29 @@ public class WorldRenderer
 					
 					
 
+				
+					
+					
+					
+					Vector vector = RenderUtil.convertCoordsToIso(col, row);
+					int x = vector.getXAsInt();
+					int y = vector.getYAsInt();
+					graphics.drawImage(image,x,y, null);
+					
+
+					
+					
+					
+					
 					//graphics.drawImage(image,v.getXAsInt(),v.getYAsInt(), null);
 					
-					int x = (-(col*(fTileW/2)))+(row*(fTileW/2));
-					int y = (col*(fTileH/2))+(row*(fTileH/2));
-					graphics.drawImage(image,x,y, null);
-					//Don't think walls can be drawn yet, need some changes to the Tile class
-
 					
-					
-					
-					
-					graphics.drawImage(image,v.getXAsInt(),v.getYAsInt(), null);
-					
-					
-					
-					int rgb = world.getColour(row, col, layerCount);
-					
-					
-					// to extract the components into individual ints.
-					
-					int red = 0xFF & ( rgb >> 16);
-					int green = 0xFF & (rgb >> 8 );
-					int blue = 0xFF & (rgb >> 0 );
 					
 
-					//System.out.println("row="+row +", col="+col + ", layer="+layerCount +", r="+red+", g="+green+", b="+blue);
-					// to recreate the argb
-					//int argb = (alpha << 24) | (red << 16 ) | (green<<8) | blue;
+					pickGraphics.drawImage(tile.getPickImage(), x,y,null);
 
-
-					
-					
-					
-					
-					
-					
-					Color colour = new Color(red,green,blue);
-					
-					pickGraphics.setColor(colour);
-					pickGraphics.fillRect(v.getXAsInt(),v.getYAsInt(),image.getWidth(), image.getHeight());
 				
+					
 				}
 			}
 		
@@ -275,6 +210,7 @@ public class WorldRenderer
 		
 		fTileW = tsl.getFloorTileWidth();
 		fTileH = tsl.getFloorTileHeight();
+		
 		
 		wTileW = tsl.getWallTileWidth();
 		wTileH = tsl.getWallTileHeight();

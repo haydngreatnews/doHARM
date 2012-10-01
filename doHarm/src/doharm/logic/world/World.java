@@ -1,6 +1,5 @@
 package doharm.logic.world;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
@@ -13,7 +12,6 @@ import doharm.logic.gameobjects.entities.characters.players.AIPlayer;
 import doharm.logic.gameobjects.entities.characters.players.HumanPlayer;
 import doharm.logic.gameobjects.entities.characters.players.Player;
 import doharm.logic.gameobjects.entities.characters.players.PlayerFactory;
-import doharm.logic.physics.Vector;
 import doharm.logic.world.tiles.Tile;
 import doharm.storage.TilesetLoader;
 import doharm.storage.WorldLoader;
@@ -21,8 +19,11 @@ import doharm.storage.WorldLoader;
 
 public class World 
 {
-	Layer[] layers;  
+	private Layer[] layers;  
 	private Set<Player> players;
+	private Set<Character> characters;
+	
+	
 	private HumanPlayer humanPlayer;
 	private Camera camera;
 	private WorldLoader worldLoader;
@@ -48,14 +49,14 @@ public class World
 		}
 		
 		TilesetLoader tsl = worldLoader.getTilesetLoader();
-		this.tileWidth = tsl.getTileWidth();
-		this.tileHeight = tsl.getTileWidth();
+		this.tileWidth = tsl.getFloorTileWidth();
+		this.tileHeight = tsl.getFloorTileHeight();
 		
 		camera = new Camera(tileWidth, tileHeight);
 		
 		layers = new Layer[worldLoader.getNumLayers()];
 		for (int i = 0; i < layers.length; i++)
-			layers[i] = new Layer(worldLoader, i);
+			layers[i] = new Layer(this, i);
 		
 		linkTiles();
 		

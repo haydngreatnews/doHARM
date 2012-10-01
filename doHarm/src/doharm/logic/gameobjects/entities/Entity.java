@@ -1,8 +1,6 @@
 package doharm.logic.gameobjects.entities;
 
 import java.awt.Dimension;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.PriorityQueue;
 import java.util.Queue;
@@ -20,6 +18,7 @@ public abstract class Entity implements GameObject
 	protected Vector destination;
 	protected Vector velocity;
 	private Dimension size;
+	/** Angle this entity is facing */
 	private float angle;
 	private float friction = 0.6f;
 	private float movementSpeed = 1.7f;
@@ -155,14 +154,38 @@ public abstract class Entity implements GameObject
 	{
 		if (!path.isEmpty())
 		{
-			Tile next = path.pop();
-			destination.set(next.getX(), next.getY());
+			
+			if (path.size()== 1)
+			{
+				Tile next = path.pop();
+				destination.set(next.getX(), next.getY());
+			}
+			else if (path.size()== 2)
+			{
+				//average between next target and the one after
+				Tile next = path.pop();
+				Tile nextNext = path.peek();
+				float x = (next.getX()+nextNext.getX())*0.5f;
+				float y = (next.getY()+nextNext.getY())*0.5f;
+				destination.set(x, y);
+			}
+			else
+			{
+				//average between next target and the one after
+				Tile next = path.pop();
+				Tile nextNext = path.pop();
+				Tile nextNextNext = path.peek();
+				float x = (next.getX()+nextNext.getX() + nextNextNext.getX())/3;
+				float y = (next.getY()+nextNext.getY() + nextNextNext.getY())/3;
+				destination.set(x, y);
+				path.push(nextNext);
+			}
 		}
 	}
 
 	private void checkCollisions() 
 	{
-		
+		//TODO
 		
 	}
 
@@ -216,12 +239,12 @@ public abstract class Entity implements GameObject
 		
 		queue.add(currentTile);
 
-		boolean foundGoal = false;
-		System.out.println("Goal: " + goal.getRow() +","+goal.getCol());
+		//boolean foundGoal = false;
+		//System.out.println("Goal: " + goal.getRow() +","+goal.getCol());
 		while (!queue.isEmpty())
 		{
 			Tile node = queue.poll();
-			System.out.println("Current: " + node.getRow()+","+node.getCol());
+			//System.out.println("Current: " + node.getRow()+","+node.getCol());
 			
 			/*System.out.println("Neighbours of " + node.getRow() +","+node.getCol()+":");
 			
@@ -235,7 +258,7 @@ public abstract class Entity implements GameObject
 			{
 				path.clear();
 				this.goal.set(goal.getX(), goal.getY());
-				foundGoal = true;
+				//foundGoal = true;
 				while (node != currentTile)
 				{
 					path.push(node);
@@ -264,7 +287,7 @@ public abstract class Entity implements GameObject
 			}
 			
 		}
-		System.out.println("Found goal: "+foundGoal);
+		//System.out.println("Found goal: "+foundGoal);
 		
 
 		nextNodeInPath();
