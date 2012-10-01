@@ -188,28 +188,11 @@ public class WorldRenderer
 					
 					
 					
-					int rgb = world.getColour(row, col, layerCount);
-					
-					
-					// to extract the components into individual ints.
-					
-					int red = 0xFF & ( rgb >> 16);
-					int green = 0xFF & (rgb >> 8 );
-					int blue = 0xFF & (rgb >> 0 );
-					
 
-					//System.out.println("row="+row +", col="+col + ", layer="+layerCount +", r="+red+", g="+green+", b="+blue);
-					// to recreate the argb
-					//int argb = (alpha << 24) | (red << 16 ) | (green<<8) | blue;
+					pickGraphics.drawImage(tile.getPickImage(), v.getXAsInt(),v.getYAsInt(),null);
 
-
-					
-					
-					Color colour = new Color(red,green,blue);
-					
-					pickGraphics.setColor(colour);
-					pickGraphics.fillRect(v.getXAsInt(),v.getYAsInt(),image.getWidth(), image.getHeight());
 				
+					
 				}
 			}
 		

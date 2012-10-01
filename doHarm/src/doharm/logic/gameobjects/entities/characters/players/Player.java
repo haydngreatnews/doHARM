@@ -8,6 +8,10 @@ import doharm.logic.world.tiles.Tile;
 public abstract class Player extends Character
 {
 	private PlayerType playerType;
+	
+	
+	
+	
 	protected Player(Tile spawnTile, String name, int id, CharacterClassType classType, PlayerType playerType)
 	{
 		super(spawnTile, name,classType, id);
@@ -24,5 +28,13 @@ public abstract class Player extends Character
 	public PlayerType getPlayerType()
 	{
 		return playerType;
+	}
+	
+	
+	public void Process()
+	{
+		
+		
+		
 	}
 }

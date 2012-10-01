@@ -82,26 +82,6 @@ public class TilesetLoader
 		return Collections.unmodifiableList(wallTileData);
 	}
 
-	/**
-	 * 
-	 * @return
-	 * @deprecated use getFloorTileWidth() or getWallTileWidth()
-	 */
-	@Deprecated
-	public int getTileWidth() {
-		return floorTileWidth;
-	}
-
-	/**
-	 * 
-	 * @return
-	 * @deprecated use getFloorTileHeight() or getWallTileHeight()
-	 */
-	@Deprecated
-	public int getTileHeight() {
-		return floorTileHeight;
-	}
-	
 	
 	
 
@@ -130,29 +110,6 @@ public class TilesetLoader
 		return wallTileSetImage;
 	}
 	
-	
-	/**
-	 * 
-	 * @return
-	 * @deprecated use getFloorTileSetImage() or getWallTileSetImage()
-	 */
-	@Deprecated
-	public String getTileSetImage() {
-		return floorTileSetImage;
-	}
-
-	
-	/**
-	 * 
-	 * @return
-	 * @deprecated use getFloorTileData(int tileID)  or getWallTileData(int tileID) 
-	 */
-	@Deprecated
-	public FloorTileData getTileData(int tileID) 
-	{
-		return floorTileData.get(tileID);
-	}
-	
 	public FloorTileData getFloorTileData(int tileID) 
 	{
 		return floorTileData.get(tileID);
@@ -161,17 +118,6 @@ public class TilesetLoader
 	public WallTileData getWallTileData(int tileID) 
 	{
 		return wallTileData.get(tileID);
-	}
-	
-	
-	/**
-	 * 
-	 * @return
-	 * @deprecated use getFloorTileData(int tileID)  or getWallTileData(int tileID) 
-	 */
-	@Deprecated
-	public int getNumTiles(){
-		return floorTileData.size();
 	}
 	
 	public int getNumFloorTiles(){
