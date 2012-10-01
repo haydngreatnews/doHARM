@@ -23,6 +23,10 @@ public class Inventory
 	}
 	
 	
+	/**
+	 * @param item
+	 * @return true if the item was picked up. Otherwise print inventory full!
+	 */
 	public boolean pickup(Item item)
 	{
 		//First check if can add to a slot.

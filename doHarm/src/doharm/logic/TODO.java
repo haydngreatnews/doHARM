@@ -3,11 +3,17 @@ package doharm.logic;
 public class TODO {
 	/**
 	 * 
+	 * picking up items
+	 * attacking
 	 * fix collision detection
-	 * A*
-	 * Basic AI character
+	 * Basic AI character states
+	 * distribute dragonballs
+	 * monsters
 	 * 
-	 * multiple spawn positions (need seperate file for each layer containing objects etc...)
+	 * 
+	 * 
+	 * 
+	 * multiple spawn positions (need seperate file for world containing objects etc... x,y,layer)
 	 * 
 	 * 
 	 * 
@@ -49,6 +55,19 @@ public class TODO {
 	 * 
 	 * fall damage
 	 * mining?
+	 * 
+	 * 
+	 * 
+	 * COMPOSITE
+		VISITOR
+		FACADE
+		FLYWEIGHT
+		OBSERVER
+		STRATEGY
+		NULL OBJECT
+		STATE
+		DECORATOR
+		ADAPTER
 	 */
 
 }

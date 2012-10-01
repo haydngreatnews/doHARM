@@ -1,19 +1,24 @@
 package doharm.logic.world.tiles;
 
+import java.awt.Color;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import doharm.logic.physics.Vector;
 import doharm.logic.world.Layer;
+import doharm.rendering.RenderUtil;
 import doharm.storage.FloorTileData;
+import doharm.storage.WallTileData;
 
 public class Tile implements Comparable<Tile>
 {
+	private FloorTileData floorData;
+	private WallTileData[] wallData;
+	private BufferedImage pickImage;
 	
-	 
-	public FloorTileData tileData;
-	Vector position;
+	private Vector position;
 	private Layer layer;
 	private int row;
 	private int col;
@@ -28,7 +33,7 @@ public class Tile implements Comparable<Tile>
 	private float pathLength;
 	private boolean nextToWall;
 	
-	public Tile(Layer layer, int row, int col, int width, int height, Vector position, FloorTileData data) 
+	public Tile(Layer layer, int row, int col, int width, int height, Vector position, FloorTileData data, int colour) 
 	{
 		this.width = width;
 		this.height = height;
@@ -36,23 +41,41 @@ public class Tile implements Comparable<Tile>
 		this.col = col;
 		this.layer = layer;
 		this.position = position;
-		this.tileData = data;
-		switchImageTimer = tileData.getNumFramesPerImage();
+		this.floorData = data;
+		
+		
+		int red = 0xFF & ( colour >> 16);
+		int green = 0xFF & (colour >> 8 );
+		int blue = 0xFF & (colour >> 0 );
+		
+
+		Color color = new Color(red,green,blue);
+		
+		//this.pickImage = RenderUtil.generateIsoImage(color, width,height);
+		
+		switchImageTimer = floorData.getNumFramesPerImage();
 		neighbours = new ArrayList<Tile>();
 	}
+	
+	
+	public BufferedImage getPickImage()
+	{
+		return pickImage;
+	}
+	
 
 	public int getImageID() 
 	{
 		if (switchImageTimer == 0)
 		{
-			switchImageTimer = tileData.getNumFramesPerImage();
-			imageNumber = (imageNumber + 1) % tileData.getNumImages();
+			switchImageTimer = floorData.getNumFramesPerImage();
+			imageNumber = (imageNumber + 1) % floorData.getNumImages();
 		}
 		else
 			switchImageTimer--;
 		
 		
-		return tileData.getImageID(imageNumber); //TODO
+		return floorData.getImageID(imageNumber); //TODO
 	}
 
 	public int getX()
@@ -104,7 +127,7 @@ public class Tile implements Comparable<Tile>
 	
 	public boolean isWalkable()
 	{
-		return tileData.getType() == 1; //TODO
+		return floorData.getType() == 1; //TODO
 	}
 	
 	

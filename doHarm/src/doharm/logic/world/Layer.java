@@ -14,22 +14,26 @@ public class Layer
 	private int tileWidth;
 	private int tileHeight;
 	
-	public Layer(WorldLoader worldLoader, int layerNumber)
+	public Layer(World world, int layerNumber)
 	{
 		this.layerNumber = layerNumber;
+		WorldLoader worldLoader = world.getWorldLoader();
 		tiles = new Tile[worldLoader.getNumTilesY()][worldLoader.getNumTilesX()];
 		TilesetLoader tileLoader = worldLoader.getTilesetLoader();
 		LayerData layerData = worldLoader.getLayerData(layerNumber);
 		
-		this.tileWidth = tileLoader.getTileWidth();
-		this.tileHeight = tileLoader.getTileHeight();
+		
+		
+		this.tileWidth = tileLoader.getFloorTileWidth();
+		this.tileHeight = tileLoader.getFloorTileHeight();
 		
 		for (int y= 0; y < tiles.length; y++)
 		{
 			for (int x= 0; x < tiles[0].length; x++)
 			{
-				FloorTileData data = tileLoader.getTileData(layerData.getTileID(y,x));
-				tiles[y][x] = new Tile(this, y,x,tileWidth,tileHeight,new Vector(x*tileWidth,y*tileHeight),data);
+				FloorTileData data = tileLoader.getFloorTileData().get(layerData.getTileID(y,x));
+						
+				tiles[y][x] = new Tile(this, y,x,tileWidth,tileHeight,new Vector(x*tileWidth,y*tileHeight),data, world.getColour(y, x, layerNumber));
 			}
 		}
 	}
