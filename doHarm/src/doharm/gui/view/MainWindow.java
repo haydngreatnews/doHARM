@@ -8,6 +8,7 @@ import javax.swing.JFrame;
 import javax.swing.JTextPane;
 
 import doharm.gui.input.KeyboardManager;
+import doharm.gui.input.MenuButtonListener;
 import doharm.gui.input.MouseManager;
 import doharm.logic.Game;
 import doharm.rendering.WorldRenderer;
@@ -35,6 +36,7 @@ public class MainWindow{
 		tp.setContentType("text/html");
 		tp.setOpaque(false);
 		tp.setText("<p style=\"color:red\">Words</p>");
+		tp.setFocusable(false);
 		canvas.setLayout(new BorderLayout());
 		canvas.add(tp, BorderLayout.EAST);
 		mouseManager = new MouseManager(game,renderer);
@@ -47,6 +49,7 @@ public class MainWindow{
 		state = MAXIMIZED;
 		
 		toggleSize();
+		canvas.requestFocusInWindow();
 	}
 
 	public void toggleSize() {
@@ -69,12 +72,13 @@ public class MainWindow{
 
 		addListeners();
 		frame.setVisible(true);
+		
 	}
 	
 	public void toggleMenu(){
 		if (menu == null){
 			//Make only one menu, so we don't end up with lots
-			menu = new MenuScreen();
+			menu = new MenuScreen(new MenuButtonListener(this));
 		}
 		if(menu.isShowing()){
 			canvas.remove(menu);
@@ -85,16 +89,15 @@ public class MainWindow{
 			canvas.add(menu, BorderLayout.CENTER);
 			menu.requestFocusInWindow();
 			menu.addKeyListener(keyboardManager);
-			frame.removeMouseListener(mouseManager);
+			canvas.removeMouseListener(mouseManager);
 		}
 		canvas.revalidate();
 	}
 
 	private void addListeners() {
-		frame.addMouseListener(mouseManager);
-		frame.addMouseMotionListener(mouseManager);
-		frame.addKeyListener(keyboardManager);
-		
+		canvas.addMouseListener(mouseManager);
+		canvas.addMouseMotionListener(mouseManager);
+		canvas.addKeyListener(keyboardManager);
 	}
 
 	public JFrame getFrame(){
@@ -102,6 +105,7 @@ public class MainWindow{
 	}
 	public void repaint(){
 		frame.repaint();
+		//System.out.println(frame.getFocusOwner());
 	}
 
 }

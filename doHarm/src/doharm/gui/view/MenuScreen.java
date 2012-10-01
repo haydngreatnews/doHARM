@@ -21,19 +21,7 @@ import net.miginfocom.swing.MigLayout;
 public class MenuScreen extends JPanel {
 	Image background = null;
 
-	//Testing method for menuscreen
-	public static void main(String[] args) {
-		JFrame frame;
-		(frame = new JFrame()).add(new MenuScreen(new File(
-				"res/menu/background.png")));
-		frame.setUndecorated(false);
-		frame.setBounds(0, 0, 800, 600);
-		// frame.pack();
-		frame.setVisible(true);
-		int i = 1;
-	}
-
-	public MenuScreen() {
+	public MenuScreen(MenuButtonListener mb) {
 		super();
 		// setLayout(new BorderLayout());
 		setLayout(new FlowLayout());
@@ -48,7 +36,6 @@ public class MenuScreen extends JPanel {
 		JButton bJoin = new PictureButton("res/menu/joingame.png", "join");
 		JButton bRun = new PictureButton("res/menu/runserver.png", "runserver");
 		JButton bQuit = new PictureButton("res/menu/quitgame.png", "quit");
-		MenuButtonListener mb = new MenuButtonListener();
 		bResume.addActionListener(mb);
 		bJoin.addActionListener(mb);
 		bRun.addActionListener(mb);
@@ -62,9 +49,9 @@ public class MenuScreen extends JPanel {
 		menu.add(bQuit, "align center, gaptop 40");
 		add(menu);
 	}
-
-	public MenuScreen(File img) {
-		this();
+	
+	public MenuScreen(File img, MenuButtonListener mb) {
+		this(mb);
 		try {
 			background = ImageIO.read(img);
 		} catch (IOException e) {

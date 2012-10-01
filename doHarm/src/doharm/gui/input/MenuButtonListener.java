@@ -15,6 +15,11 @@ import doharm.gui.view.PictureButton;
  * 
  */
 public class MenuButtonListener implements ActionListener {
+	MainWindow parent = null;
+	public MenuButtonListener(MainWindow p){
+		super();
+		parent=p;
+	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -29,6 +34,7 @@ public class MenuButtonListener implements ActionListener {
 			//TODO:Join the given server
 		} else if (action.equals("resume")){
 			//TODO:remove the menu screen
+			parent.toggleMenu();
 		}  else if (action.equals("quit")){
 			//TODO:Graceful exit
 			System.exit(0);
