@@ -11,4 +11,9 @@ public class NetworkPlayer extends Player
 		super(spawnTile, name, id,classType, PlayerType.AI);
 	}
 	
+	@Override
+	public void move()
+	{
+		super.move();
+	}
 }

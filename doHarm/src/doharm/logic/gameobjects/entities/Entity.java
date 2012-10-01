@@ -30,7 +30,14 @@ public abstract class Entity implements GameObject
 	private Vector goal;
 	
 
-	public Entity(Tile spawnTile)
+	public Entity()
+	{
+		
+		size = new Dimension(32,32); //hmm..
+		
+	}
+	
+	public void spawn(Tile spawnTile)
 	{
 		this.currentTile = spawnTile;
 		currentLayer = currentTile.getLayer();
@@ -39,7 +46,6 @@ public abstract class Entity implements GameObject
 		goal = new Vector(position);
 		destination = new Vector(position);
 		velocity = new Vector();
-		size = new Dimension(32,32);
 		angle = 0;
 		path = new Stack<Tile>();
 	}
@@ -85,9 +91,6 @@ public abstract class Entity implements GameObject
 	
 	public void move()
 	{
-		abstractMove();
-		
-		
 		Vector direction = destination.subtract(position);
 		
 		float distanceToDestination = direction.getLength();
@@ -188,8 +191,6 @@ public abstract class Entity implements GameObject
 		//TODO
 		
 	}
-
-	protected abstract void abstractMove();
 	
 	
 	/**

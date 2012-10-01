@@ -16,7 +16,7 @@ public abstract class Character extends Entity
 	private Level level;
 	private Inventory inventory;
 	
-	protected Character(Tile spawnTile, String name, CharacterClassType classType, int id) 
+	protected Character() 
 	{
 		super(spawnTile);
 		
@@ -38,10 +38,10 @@ public abstract class Character extends Entity
 		return inventory;
 	}
 	
-	
-	public void Process()
+	@Override
+	public void move()
 	{
-		
+		super.move();
 	}
 	
 	

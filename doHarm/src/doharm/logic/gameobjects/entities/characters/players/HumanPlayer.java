@@ -13,4 +13,10 @@ public class HumanPlayer extends Player
 	{
 		super(spawnTile, name, id, type, PlayerType.HUMAN);
 	}
+	
+	@Override
+	public void move()
+	{
+		super.move();
+	}
 }
