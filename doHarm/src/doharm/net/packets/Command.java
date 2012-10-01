@@ -7,11 +7,12 @@ import java.nio.ByteBuffer;
 /** Struct representing a Client Command, which is then converted into a packet to send over the wire. */
 public class Command {
 
+	public int seqNum;	// Number of times we've sent a packet with this serverTimeAck already.
 	public final int serverTimeAckd;
-	public int repeat;	// Number of times we've sent a packet with this serverTimeAck already.
 	
-	public Command(int time)
+	public Command(int seq, int time)
 	{
+		seqNum = seq;
 		serverTimeAckd = time;
 	}
 	
@@ -21,6 +22,7 @@ public class Command {
 		
 		buff.position(1);	// Skip packet type, as we obviously already know what it is.
 		
+		seqNum = buff.getInt();
 		serverTimeAckd = buff.getInt();
 	}
 	
@@ -33,7 +35,10 @@ public class Command {
 	{
 		ByteArrayOutputStream buff = new ByteArrayOutputStream();
 		// Packet type
-		buff.write((byte) ClientPacket.COMMAND.ordinal());		// TODO Do we need the byte cast?
+		buff.write((byte) ClientPacket.COMMAND.ordinal());		// Need the byte cast otherwise it'll write it as a 4-byte int
+		// SeqNum
+		try { buff.write(ByteBuffer.allocate(4).putInt(seqNum).array()); }
+		catch (IOException e) {	e.printStackTrace(); }
 		// ServertimeAckd
 		try { buff.write(ByteBuffer.allocate(4).putInt(serverTimeAckd).array()); }
 		catch (IOException e) {	e.printStackTrace(); }
@@ -51,7 +56,7 @@ public class Command {
 	 * @param data Command byte-array packet.
 	 * @return
 	 */
-	public static int getTimestamp(byte[] data)
+	public static int getSeqNum(byte[] data)
 	{
 		ByteBuffer buff = ByteBuffer.wrap(data);
 		buff.position(1);

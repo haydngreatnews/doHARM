@@ -14,7 +14,7 @@ import doharm.net.packets.Snapshot;
  */
 public class ConnectedClient {
 	private SocketAddress address;
-	private Command latestCommandPacket;
+	public Command latestCommandPacket;
 	
 	/** Last time we received a packet from this client. */
 	private int latestTime;
@@ -43,7 +43,7 @@ public class ConnectedClient {
 	public void updateClientCommandPacket(byte[] data)
 	{
 		// Extract the timestamp from the packet.
-		int timestamp = Command.getTimestamp(data);
+		int timestamp = Command.getSeqNum(data);
 		
 		// If this packet isn't more recent than the latest command we've received, discard.
 		// TODO needs to take into account the 2-B-Implemented repeat field. SHOULD JUST REPLACE WITH "SEQUENCE NUMBER"
@@ -69,9 +69,7 @@ public class ConnectedClient {
 	{
 		// Remove all acknowledged snaps from the Snapshot buffer.
 		while (snapsBuffer.peek().serverTime <= latestCommandPacket.serverTimeAckd)
-		{
 			snapsBuffer.poll();
-		}
 		
 		/* Build the snapshot to send.
 		
