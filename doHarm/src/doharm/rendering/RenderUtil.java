@@ -33,14 +33,15 @@ public class RenderUtil {
 	 * 
 	 * This does not currently work
 	 * 
+	 * 
 	 * @param col
 	 * @param row
 	 * @return
 	 */
 	public static Vector convertCoordsToIso(float col, float row){
 		//TODO FIX THIS
-		float x = (-(col*(imgIsoW/2-1)))+(row*(imgIsoW/2-1));
-		float y = (col*(imgIsoH/2-1))+(row*(imgIsoH/2-1));
+		float x = (-(col*(imgIsoW/2)))+(row*(imgIsoW/2));
+		float y = (col*(imgIsoH/2))+(row*(imgIsoH/2));
 		return new Vector(x, y);
 
 	}
@@ -85,5 +86,7 @@ public class RenderUtil {
 	static void setImgDimensions(int imgW, int imgH){
 		imgIsoW = imgW;
 		imgIsoH = imgH;
+	
+		
 	}
 }
