@@ -35,7 +35,7 @@ public class TilesetLoader
 	private void loadFloorTiles(String fname) throws FileNotFoundException{
 		Scanner scanner = new Scanner(new File("res/tilesets/"+fname));
 		floorTileSetImage = scanner.nextLine().trim();
-		System.out.println("Floor tile set image fname: " + floorTileSetImage);
+		
 		
 		floorTileWidth = Integer.parseInt(scanner.nextLine());
 		floorTileHeight = Integer.parseInt(scanner.nextLine());
@@ -54,7 +54,7 @@ public class TilesetLoader
 		
 		Scanner scanner = new Scanner(new File("res/tilesets/"+fname));
 		wallTileSetImage = scanner.nextLine().trim();
-		System.out.println("Wall tile set image fname: " + wallTileSetImage);
+		
 		
 		wallTileWidth = Integer.parseInt(scanner.nextLine());
 		wallTileHeight = Integer.parseInt(scanner.nextLine());

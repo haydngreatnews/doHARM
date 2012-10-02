@@ -226,6 +226,12 @@ public class Tile implements Comparable<Tile>
 		walls[direction.ordinal()] = data;
 	}
 
+
+	public int getWallImageID(Direction direction) 
+	{
+		return 0;//walls[direction.ordinal()].;
+	}
+
 	
 
 	

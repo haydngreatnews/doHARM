@@ -8,6 +8,7 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
@@ -16,6 +17,7 @@ import doharm.logic.camera.Camera;
 import doharm.logic.physics.Vector;
 import doharm.logic.world.Layer;
 import doharm.logic.world.World;
+import doharm.logic.world.tiles.Direction;
 import doharm.logic.world.tiles.Tile;
 import doharm.storage.TilesetLoader;
 import doharm.storage.WorldLoader;
@@ -59,6 +61,7 @@ public class WorldRenderer
 		
 		newLoadTileSets();
 		RenderUtil.setImgDimensions(fTileW, fTileH);
+		System.out.println("Wall tile width:"+ wTileW+ "    wall tile height: "+wTileH);
 		
 		
 	}
@@ -163,13 +166,37 @@ public class WorldRenderer
 					Vector vector = RenderUtil.convertCoordsToIso(col, row, layerCount);
 					int x = vector.getXAsInt();
 					int y = vector.getYAsInt();
-					
 					graphics.drawImage(image,x,y, null);
 					
-					if(!tile.isWalkable())continue;
+					
+
+					if(tile.isWalkable() && layerCount==0){
+						
+						
+						pickGraphics.drawImage(tile.getPickImage(), x,y,null);
 					
 					
-					pickGraphics.drawImage(tile.getPickImage(), x,y,null);
+					}
+					
+					if(tile.getImageID() != 2 ){
+
+						int imgID = 2;//tile.getWallImageID(Direction.UP);
+						
+						
+						image = wallImages[imgID++];
+						y+=fTileH/2;
+						x+=1;
+						graphics.drawImage(image,x,y, null);
+						image = wallImages[imgID];
+						x+=wTileW;
+						graphics.drawImage(image,x,y, null);
+					}
+					
+					
+				
+					
+					
+					
 					
 				}
 			}
@@ -199,6 +226,9 @@ public class WorldRenderer
 		 */
 		
 		
+		
+		
+		
 	}
 	
 	
@@ -206,7 +236,8 @@ public class WorldRenderer
 		World world = game.getWorld();
 		BufferedImage tileSet = null;
 		WorldLoader wl = world.getWorldLoader();
-		
+		//TODO remove
+	
 		
 		TilesetLoader tsl = wl.getTilesetLoader();
 		
@@ -218,44 +249,47 @@ public class WorldRenderer
 		wTileH = tsl.getWallTileHeight();
 		
 		
-		
-		floorImages = new BufferedImage[tsl.getNumFloorTiles()];
-		wallImages = new BufferedImage[tsl.getNumWallTiles()];
+		//TODO not right
+		floorImages = new BufferedImage[10];
+		wallImages = new BufferedImage[20];
 		
 		try{
 			tileSet = ImageIO.read(new File("res/tilesets/"+tsl.getFloorTileSetImage()));
 			
 		
 			
-			for(int r = 0; r < tileSet.getHeight()/fTileH; r++)
-			{
+			for(int r = 0; r < tileSet.getHeight()/fTileH; r++){
 				for(int c = 0; c < tileSet.getWidth()/fTileW; c++)
 				{
+			
+					
 					BufferedImage n = new BufferedImage(fTileW, fTileH, BufferedImage.TYPE_INT_ARGB);
 					Graphics2D g = n.createGraphics();
 					g.drawImage(tileSet,0, 0,fTileW, fTileH, c*fTileW, r*fTileH, fTileW*(c+1), (r+1)*fTileH, null);
-					
 					floorImages[((tileSet.getHeight()/fTileH)*r) + c] = n;
 				}
 			}
 			
 			
 			//load the wall tiles
+		
 			tileSet = ImageIO.read(new File("res/tilesets/"+tsl.getWallTileSetImage()));
-			
+		
 			for(int r = 0; r < tileSet.getHeight()/wTileH; r++)
 			{
 				for(int c = 0; c < tileSet.getWidth()/wTileW; c++)
 				{
-					BufferedImage n = new BufferedImage(wTileH, wTileW, BufferedImage.TYPE_INT_ARGB);
+					BufferedImage n = new BufferedImage(wTileW, wTileH, BufferedImage.TYPE_INT_ARGB);
 					Graphics2D g = n.createGraphics();
 					g.drawImage(tileSet,0, 0,wTileW, wTileH, c*wTileW, r*wTileH, wTileW*(c+1), (r+1)*wTileH, null);
 					
-					floorImages[((tileSet.getHeight()/wTileH)*r) + c] = n;
+					wallImages[((tileSet.getHeight()/wTileH)*r) + c] = n;
 				}
 			}
 			
-		}catch(Exception e){}
+		}catch(IOException e){
+			System.out.println(e);
+		}
 		
 	}
 
