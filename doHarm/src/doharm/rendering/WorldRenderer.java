@@ -34,6 +34,9 @@ public class WorldRenderer
 	private BufferedImage[] floorImages;
 	private BufferedImage[] wallImages;
 	
+	private BufferedImage[] floorImagesTrans;//transparent versions of flootImages and wallImages.
+	private BufferedImage[] wallImagesTrans;
+	
 	private AffineTransform transform;
 	private Game game;
 
@@ -174,6 +177,29 @@ public class WorldRenderer
 		
 	}
 	
+	private void createTransparentImages(){
+		
+		/*
+			BufferedImage transparentImage = new BufferedImage(tileSet.getWidth(),tileSet.getHeight(),BufferedImage.TYPE_INT_ARGB);
+			Graphics2D transparentGraphics = transparentImage.createGraphics();
+			transparentGraphics.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.1f));
+			transparentGraphics.drawImage(tileSet, 0,0,null);
+		*/
+		/*
+		 * 
+		 * 	Composite old = backbufferGraphics.getComposite();
+			backbufferGraphics.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.1f));
+			backbufferGraphics.drawImage(boardImage, 0, 0,boardImage.getWidth(),boardImage.getHeight(),null);	
+			backbufferGraphics.setComposite(old);
+			drawBoard();
+			backbufferGraphics.setComposite(old);
+		 * 
+		 * 
+		 */
+		
+		
+	}
+	
 	
 	private void newLoadTileSets(){
 		World world = game.getWorld();
@@ -198,24 +224,7 @@ public class WorldRenderer
 		try{
 			tileSet = ImageIO.read(new File("res/tilesets/"+tsl.getFloorTileSetImage()));
 			
-			
-			/*
-				BufferedImage transparentImage = new BufferedImage(tileSet.getWidth(),tileSet.getHeight(),BufferedImage.TYPE_INT_ARGB);
-				Graphics2D transparentGraphics = transparentImage.createGraphics();
-				transparentGraphics.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.1f));
-				transparentGraphics.drawImage(tileSet, 0,0,null);
-			*/
-			/*
-			 * 
-			 * 	Composite old = backbufferGraphics.getComposite();
-				backbufferGraphics.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.1f));
-				backbufferGraphics.drawImage(boardImage, 0, 0,boardImage.getWidth(),boardImage.getHeight(),null);	
-				backbufferGraphics.setComposite(old);
-				drawBoard();
-				backbufferGraphics.setComposite(old);
-			 * 
-			 * 
-			 */
+		
 			
 			for(int r = 0; r < tileSet.getHeight()/fTileH; r++)
 			{
