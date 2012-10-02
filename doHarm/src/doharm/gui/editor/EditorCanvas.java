@@ -12,7 +12,7 @@ import javax.swing.JPanel;
 import doharm.rendering.RenderUtil;
 
 public class EditorCanvas extends JPanel{
-	ArrayList<int[][]> layers = new ArrayList<int[][]>();
+	ArrayList<char[][]> layers = new ArrayList<char[][]>();
 	int currentLayer = 0;
 	public EditorCanvas(){
 		super();
@@ -30,12 +30,14 @@ public class EditorCanvas extends JPanel{
 		//Do scaling
 		if (below != null){
 			RenderUtil.scaleImage(below, (int)(getWidth()*.9), (int) (getHeight()*.9));
+			g.drawImage(below, (int) (getWidth()*.05), (int) (getHeight()*.05), null);
 		}
-		//g.
+		drawLayer(layers.get(currentLayer), (Graphics2D) g);
 	}
 
-	private void drawLayer(int[][] layer, Graphics2D g) {
+	private void drawLayer(char[][] layer, Graphics2D g) {
 		// TODO Auto-generated method stub
 		
-	}	
+	}
+	
 }
