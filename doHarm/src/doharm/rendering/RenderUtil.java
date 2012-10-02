@@ -38,10 +38,10 @@ public class RenderUtil {
 	 * @param row
 	 * @return
 	 */
-	public static Vector convertCoordsToIso(float col, float row){
+	public static Vector convertCoordsToIso(float col, float row, float layer){
 		//TODO FIX THIS
 		float x = (-(col*(imgIsoW/2)))+(row*(imgIsoW/2));
-		float y = (col*(imgIsoH/2))+(row*(imgIsoH/2));
+		float y = (col*(imgIsoH/2))+(row*(imgIsoH/2)) +layer*imgIsoH;
 		return new Vector(x, y);
 
 	}
