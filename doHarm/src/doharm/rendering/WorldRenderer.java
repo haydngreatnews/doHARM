@@ -108,6 +108,7 @@ public class WorldRenderer
 		
 		//transform.translate(v.getX(),v.getY());
 		transform.translate(-camera.getRenderPosition().getX(), -camera.getRenderPosition().getY());
+		
 		graphics.setTransform(transform);
 		pickGraphics.setTransform(transform);
 		//draw the current game, based on the camera, etc.

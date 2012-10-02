@@ -108,7 +108,7 @@ public class Vector
 		add(v.x,v.y);
 	}
 	
-	private void add(float x, float y) 
+	public void add(float x, float y) 
 	{
 		set(this.x+x,this.y+y);
 	}
