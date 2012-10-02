@@ -4,12 +4,13 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.io.UnsupportedEncodingException;
+import java.util.Collection;
 import java.util.Stack;
 
 import doharm.logic.Game;
-import doharm.logic.gameobjects.entities.characters.Character;
-import doharm.logic.gameobjects.entities.characters.players.Player;
-import doharm.logic.gameobjects.entities.characters.players.PlayerType;
+import doharm.logic.entities.characters.Character;
+import doharm.logic.entities.characters.players.Player;
+import doharm.logic.entities.characters.players.PlayerType;
 import doharm.logic.physics.Vector;
 import doharm.logic.world.World;
 import doharm.logic.world.tiles.Tile;
@@ -65,11 +66,10 @@ public class PlayerRenderer {
 		
 		
 		//Path
-		Stack<Tile> path = player.getPath();
+		Collection<Tile> path = player.getPath();
 		graphics.setColor(Color.white);
-		while (!path.isEmpty())
+		for (Tile tile: path)
 		{
-			Tile tile = path.pop();
 			row = tile.getY()/world.getTileHeight();
 			col = tile.getX()/world.getTileWidth();
 			v = RenderUtil.convertCoordsToIso(col, row);

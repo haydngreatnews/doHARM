@@ -7,11 +7,12 @@ import java.util.HashSet;
 import java.util.Set;
 
 import doharm.logic.camera.Camera;
-import doharm.logic.gameobjects.entities.characters.classes.CharacterClassType;
-import doharm.logic.gameobjects.entities.characters.players.AIPlayer;
-import doharm.logic.gameobjects.entities.characters.players.HumanPlayer;
-import doharm.logic.gameobjects.entities.characters.players.Player;
-import doharm.logic.gameobjects.entities.characters.players.PlayerFactory;
+import doharm.logic.entities.characters.classes.CharacterClassType;
+import doharm.logic.entities.characters.players.AIPlayer;
+import doharm.logic.entities.characters.players.HumanPlayer;
+import doharm.logic.entities.characters.players.Player;
+import doharm.logic.entities.characters.players.PlayerFactory;
+import doharm.logic.entities.characters.players.PlayerType;
 import doharm.logic.world.tiles.Tile;
 import doharm.storage.TilesetLoader;
 import doharm.storage.WorldLoader;
@@ -22,6 +23,8 @@ public class World
 	private Layer[] layers;  
 	private Set<Player> players;
 	private Set<Character> characters;
+	
+	private PlayerFactory playerFactory;
 	
 	
 	private HumanPlayer humanPlayer;
@@ -34,6 +37,7 @@ public class World
 	
 	public World(String worldName)
 	{
+		playerFactory = new PlayerFactory(this);
 		
 		players = new HashSet<Player>();
 		try 
@@ -63,10 +67,11 @@ public class World
 		
 		
 		//TEST STUFF TODO REMOVE
-		humanPlayer = PlayerFactory.createHumanPlayer(layers[0].getTiles()[5][5],"Test player",CharacterClassType.WARRIOR, 0);
+		humanPlayer = (HumanPlayer)playerFactory.createPlayer(layers[0].getTiles()[5][5],"Test player",CharacterClassType.WARRIOR, 0,PlayerType.HUMAN);
 		players.add(humanPlayer);
 		
 		
+		//Add some noob AIs
 		for (int i = 0; i < 3; i++)
 		{
 			Tile tile = null;
@@ -80,9 +85,13 @@ public class World
 			} while(!tile.isWalkable());
 			
 			
-			AIPlayer ai = PlayerFactory.createAIPlayer(tile, "AI"+(i+1), CharacterClassType.WARRIOR, i+1);
+			AIPlayer ai = (AIPlayer)playerFactory.createPlayer(tile, "AI"+(i+1), CharacterClassType.WARRIOR, i+1,PlayerType.AI);
 			players.add(ai);
 		}
+		
+		
+		//add some random items
+		
 		
 		
 		
