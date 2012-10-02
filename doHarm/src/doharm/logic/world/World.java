@@ -7,14 +7,19 @@ import java.util.HashSet;
 import java.util.Set;
 
 import doharm.logic.camera.Camera;
+import doharm.logic.entities.Entity;
 import doharm.logic.entities.characters.classes.CharacterClassType;
 import doharm.logic.entities.characters.players.AIPlayer;
 import doharm.logic.entities.characters.players.HumanPlayer;
 import doharm.logic.entities.characters.players.Player;
 import doharm.logic.entities.characters.players.PlayerFactory;
 import doharm.logic.entities.characters.players.PlayerType;
+import doharm.logic.entities.items.Item;
+import doharm.logic.world.tiles.Direction;
 import doharm.logic.world.tiles.Tile;
+import doharm.storage.FloorTileData;
 import doharm.storage.TilesetLoader;
+import doharm.storage.WallTileData;
 import doharm.storage.WorldLoader;
 
 
@@ -23,6 +28,8 @@ public class World
 	private Layer[] layers;  
 	private Set<Player> players;
 	private Set<Character> characters;
+	private Set<Entity> entities;
+	private Set<Item> items;
 	
 	private PlayerFactory playerFactory;
 	
@@ -90,16 +97,34 @@ public class World
 		}
 		
 		
-		//add some random items
+		//TODO add some random items!!!!!!!!
 		
 		
-		
+		for (int i = 0; i < 3; i++)
+		{
+			Tile tile = null;
+			do
+			{
+				int r = (int)(Math.random()*numRows-2);
+				int c = (int)(Math.random()*numCols-2);
+				if (r < 2) r = 2;
+				if (c < 2) c = 2;
+				tile = layers[0].getTiles()[r][c];
+			} while(!tile.isWalkable());
+			
+			
+			
+			//players.add(ai);
+		}
 		
 		
 	}
 
 	private void linkTiles() 
 	{
+		TilesetLoader tilesetLoader = worldLoader.getTilesetLoader();
+		WallTileData tempWallData = tilesetLoader.getWallTileData(0);
+		
 		for (Layer layer: layers)
 		{
 			Tile[][] tiles = layer.getTiles();
@@ -111,6 +136,16 @@ public class World
 					{
 						for (int y = -1; y <= 1; y++)
 						{
+							//if (layer == 0)
+							{
+								tiles[row][col].setWall(Direction.UP, tempWallData);
+								tiles[row][col].setWall(Direction.RIGHT, tempWallData);
+								tiles[row][col].setWall(Direction.DOWN, tempWallData);
+								tiles[row][col].setWall(Direction.LEFT, tempWallData);
+								
+							}
+							
+							
 							if (x == 0 && y == 0)
 								continue; //TODO check upper/lower levels
 							
