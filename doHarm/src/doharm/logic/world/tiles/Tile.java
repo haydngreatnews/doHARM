@@ -10,12 +10,14 @@ import doharm.logic.physics.Vector;
 import doharm.logic.world.Layer;
 import doharm.rendering.RenderUtil;
 import doharm.storage.FloorTileData;
+import doharm.storage.TileData;
 import doharm.storage.WallTileData;
 
 public class Tile implements Comparable<Tile>
 {
 	private FloorTileData floorData;
-	private WallTileData[] wallData;
+	private WallTileData[] walls;
+	
 	private BufferedImage pickImage;
 	
 	private Vector position;
@@ -26,6 +28,10 @@ public class Tile implements Comparable<Tile>
 	private int switchImageTimer;
 	private int width;
 	private int height;
+	
+	
+	
+	//Pathfinding variables
 	private boolean visited;
 	private float heuristic;
 	private List<Tile> neighbours;
@@ -55,6 +61,8 @@ public class Tile implements Comparable<Tile>
 		
 		switchImageTimer = floorData.getNumFramesPerImage();
 		neighbours = new ArrayList<Tile>();
+		
+		walls = new WallTileData[Direction.values().length];
 	}
 	
 	
@@ -210,6 +218,12 @@ public class Tile implements Comparable<Tile>
 	public void setPathLength(float pathLength) 
 	{
 		this.pathLength = pathLength;
+	}
+
+
+	public void setWall(Direction direction, WallTileData data) 
+	{
+		walls[direction.ordinal()] = data;
 	}
 
 	

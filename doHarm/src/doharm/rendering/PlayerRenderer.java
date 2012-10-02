@@ -4,12 +4,13 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.io.UnsupportedEncodingException;
+import java.util.Collection;
 import java.util.Stack;
 
 import doharm.logic.Game;
-import doharm.logic.gameobjects.entities.characters.Character;
-import doharm.logic.gameobjects.entities.characters.players.Player;
-import doharm.logic.gameobjects.entities.characters.players.PlayerType;
+import doharm.logic.entities.characters.Character;
+import doharm.logic.entities.characters.players.Player;
+import doharm.logic.entities.characters.players.PlayerType;
 import doharm.logic.physics.Vector;
 import doharm.logic.world.World;
 import doharm.logic.world.tiles.Tile;
@@ -33,15 +34,15 @@ public class PlayerRenderer {
 		}
 	}
 
-	private void drawPlayer(Player player, Graphics2D graphics, int imgIsoW, int imgIsoH) 
+	private void drawPlayer(Player player, Graphics2D graphics, int tileW, int tileH) 
 	{
 		Dimension size = player.getSize();
 		//Tile tile = player.getCurrentTile();
 		//Layer layer = player.getCurrentLayer();
 		//Vector relative = player.getPositionRelativeToTile();
 		Vector position = player.getPosition();
-		float row = position.getY()/world.getTileHeight();
-		float col = position.getX()/world.getTileWidth();
+		float row = position.getY()/tileH;
+		float col = position.getX()/tileW;
 		
 		
 		
@@ -54,7 +55,9 @@ public class PlayerRenderer {
 		else
 			throw new UnsupportedOperationException(player.getPlayerType() + " not implemented");
 		
-		Vector v = RenderUtil.convertCoordsToIso(col, row);
+		
+		//TODO
+		Vector v = RenderUtil.convertCoordsToIso(col, row, player.getCurrentLayer().getLayerNumber());
 		
 		//float x = (-(row*(imgIsoW/2-1)))+(col*(imgIsoW/2-1));
 		//float y = (row*(imgIsoH/2-1))+(col*(imgIsoH/2-1))-(layer.getLayerNumber()*imgIsoH);
@@ -65,14 +68,13 @@ public class PlayerRenderer {
 		
 		
 		//Path
-		Stack<Tile> path = player.getPath();
+		Collection<Tile> path = player.getPath();
 		graphics.setColor(Color.white);
-		while (!path.isEmpty())
+		for (Tile tile: path)
 		{
-			Tile tile = path.pop();
 			row = tile.getY()/world.getTileHeight();
 			col = tile.getX()/world.getTileWidth();
-			v = RenderUtil.convertCoordsToIso(col, row);
+			v = RenderUtil.convertCoordsToIso(col, row, player.getCurrentLayer().getLayerNumber());
 			graphics.fillOval((int)v.getX()-size.width/8, (int)v.getY()-size.height/16, size.width/4, size.height/8);
 		}
 		
@@ -82,7 +84,7 @@ public class PlayerRenderer {
 		Vector goal = player.getGoal();
 		row = goal.getY()/world.getTileHeight();
 		col = goal.getX()/world.getTileWidth();
-		v = RenderUtil.convertCoordsToIso(col, row);
+		v = RenderUtil.convertCoordsToIso(col, row, player.getCurrentLayer().getLayerNumber());
 		graphics.fillOval((int)v.getX()-size.width/8, (int)v.getY()-size.height/16, size.width/4, size.height/8);
 		
 		

@@ -105,6 +105,7 @@ public class WorldRenderer
 		
 		//transform.translate(v.getX(),v.getY());
 		transform.translate(-camera.getRenderPosition().getX(), -camera.getRenderPosition().getY());
+		
 		graphics.setTransform(transform);
 		pickGraphics.setTransform(transform);
 		//draw the current game, based on the camera, etc.
@@ -134,9 +135,10 @@ public class WorldRenderer
 	
 	private void renderWorldIso(){
 		World world = game.getWorld();
-		
+	
 		Layer[] layers = world.getLayers();
 		for(int layerCount = 0; layerCount < layers.length; layerCount++){
+			
 
 			Tile[][] tiles = layers[layerCount].getTiles();
 			
@@ -147,50 +149,24 @@ public class WorldRenderer
 			//and dont draw any subsequent layers.
 			
 	
-			for(int row = 0; row < tiles.length; row++)
-			{
-				for(int col = 0; col < tiles[0].length; col++)
-				{
+			for(int row = 0; row < tiles.length; row++){
+				
+				for(int col = 0; col < tiles[row].length; col++){
 					Tile tile = tiles[row][col];
 					
-					//TODO update since tile reading changed
 					BufferedImage image = floorImages[tile.getImageID()];
-					
-					Vector v = RenderUtil.convertCoordsToIso(col, row);
-					
-					
-					
-					if (!tile.isWalkable()) //can't move to non walkable tiles
-						continue;
-					
-					
-					if (!tile.isWalkable()) //can't move to non walkable tiles
-						continue;
-					
-					
 
-				
 					
-					
-					
-					Vector vector = RenderUtil.convertCoordsToIso(col, row);
+					Vector vector = RenderUtil.convertCoordsToIso(col, row, layerCount);
 					int x = vector.getXAsInt();
 					int y = vector.getYAsInt();
+					
 					graphics.drawImage(image,x,y, null);
 					
-
+					if(!tile.isWalkable())continue;
 					
 					
-					
-					
-					//graphics.drawImage(image,v.getXAsInt(),v.getYAsInt(), null);
-					
-					
-					
-
 					pickGraphics.drawImage(tile.getPickImage(), x,y,null);
-
-				
 					
 				}
 			}
