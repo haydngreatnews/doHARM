@@ -6,6 +6,7 @@ import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.net.SocketException;
+import java.util.LinkedList;
 import java.util.Queue;
 
 import doharm.net.ClientState;
@@ -24,6 +25,11 @@ public class Client {
 	private ClientState state;
 	
 	private Snapshot snapCurrent, snapNext;
+	
+	private int latestSeqSent;
+	
+	/** Holds on to all unack'd Commands we've sent the server. */
+	private LinkedList<Command> cmdsBuffer;
 	
 	public Client(int port) throws IOException
 	{
@@ -108,12 +114,18 @@ public class Client {
 	}
 	
 	/**
-	 * Builds a new Command and sends it out to the server.
+	 * Builds a new Command and sends it out to the server we're connected to.
 	 */
 	public void dispatchCommand()
 	{
-		Command cmd = new Command(snapNext.serverTime);
+		// Remove all acknowledged commands from the Command buffer.
+		while (cmdsBuffer.peek().seqNum <= snapNext.seqAckd)
+			cmdsBuffer.poll();
+		
+		Command cmd = new Command(++latestSeqSent, snapNext.serverTime);
+		
 		// TODO
+		
 		transmit(cmd.convertToBytes());
 	}
 	
@@ -136,6 +148,7 @@ public class Client {
 	
 	/**
 	 * Sends a UDP Packet to the server we are connected to.
+	 * REQUIRES: serverAddress equals valid address.
 	 * @param data Packet contents.
 	 * @return
 	 */

@@ -52,7 +52,7 @@ public class Camera
 		
 		
 		
-		renderPosition = RenderUtil.convertCoordsToIso(renderPosition.getX(), renderPosition.getY());
+		renderPosition = RenderUtil.convertCoordsToIso(renderPosition.getX(), renderPosition.getY(), 0);
 		
 		
 		renderPosition.addX(-canvasDimensions.width/2);

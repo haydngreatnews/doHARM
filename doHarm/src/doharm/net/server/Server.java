@@ -12,6 +12,7 @@ import java.util.Queue;
 import doharm.net.ClientState;
 import doharm.net.UDPReceiver;
 import doharm.net.packets.ClientPacket;
+import doharm.net.packets.ServerPacket;
 import doharm.net.packets.Snapshot;
 
 public class Server {
@@ -20,6 +21,7 @@ public class Server {
 	private ArrayList<ConnectedClient> clients;
 	private UDPReceiver receiver;
 	private DatagramSocket udpSock;
+	private int serverTime;
 	
 	public Server(int port) throws IOException
 	{
@@ -64,7 +66,7 @@ public class Server {
 				{
 					// Reject, inform them so.
 					byte[] response = new byte[1];
-					response[0] = 3;	// 3 is a Server Response packet.
+					response[0] = (byte) ServerPacket.RESPONSE.ordinal();
 					response[1] = 1;	// 1 = NO at this point in time.
 					transmit(response, packet.getSocketAddress());
 				}
@@ -121,12 +123,18 @@ public class Server {
 		// TODO temp setup is that the entire game change snap shot is sent to all clients, so only one snap gets built here, 
 		// eventually when we add local area only snapshots, will need to build independently.
 		
-		Snapshot snap = null;
+		Snapshot snap = new Snapshot(serverTime);
+		
+//		for (Entity e : entities)
+//		{
+//			snap.add;
+//		}
 		
 		for (ConnectedClient c : clients)
 		{
 			if (c.getState() == ClientState.INGAME)
 			{
+				snap.seqAckd = c.latestCommandPacket.seqNum;
 				// add snapshot to client
 				c.addSnapshot(snap);
 				// build n send

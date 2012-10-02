@@ -4,6 +4,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 
 public class PictureButton extends JButton {
+	
+	private String name = "";
 	/**
 	 * This class builds a JButton with a set of icons for up, roll-over and
 	 * down, and none of the normal background features or colouring of the
@@ -17,13 +19,18 @@ public class PictureButton extends JButton {
 	 *            roll-over image and new_pr.png as the pressed image
 	 */
 	public PictureButton(String fn, String n) {
-		super(n, new ImageIcon(fn));
+		super(new ImageIcon(fn));
+		this.name = n;
 		String[] name = fn.split("\\.");
 		setRolloverIcon(new ImageIcon(name[0] + "_ro." + name[1]));
 		setPressedIcon(new ImageIcon(name[0] + "_pr." + name[1]));
 		setBorderPainted(false);
 		setFocusable(false);
 		setContentAreaFilled(false);
+	}
+	
+	public String getName(){
+		return  name;
 	}
 
 }

@@ -9,6 +9,7 @@ import java.util.HashMap;
 public class Snapshot implements Cloneable {
 
 	public final int serverTime;
+	public int seqAckd;
 	public final PlayerState pState;
 	private final HashMap<Integer,EntityInfo> entities = new HashMap<Integer,EntityInfo>();
 	
@@ -31,6 +32,8 @@ public class Snapshot implements Cloneable {
 		buff.position(1);	// Skip packet type, as we obviously already know what it is.
 		
 		serverTime = buff.getInt();
+		
+		seqAckd = buff.getInt();
 		
 		pState = null;
 	}
