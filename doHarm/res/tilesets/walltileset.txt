@@ -1,6 +1,6 @@
-walltileset.png
-15
-24
+latestWallTileSet.png
+16
+25
 wall 0 0 1
 grass 1 2 3
 nothing 2 4 5

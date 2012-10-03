@@ -185,7 +185,7 @@ public class WorldRenderer
 						
 						image = wallImages[imgID++];
 						y+=fTileH/2;
-						x+=1;
+						
 						graphics.drawImage(image,x,y, null);
 						image = wallImages[imgID];
 						x+=wTileW;
