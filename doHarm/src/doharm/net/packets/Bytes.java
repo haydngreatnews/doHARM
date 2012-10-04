@@ -11,7 +11,7 @@ public class Bytes {
 		if (count == 0)
 			return null;
 		byte[] array = new byte[count];
-		buff.get(array, buff.position(), count);
+		buff.get(array);
 		return new String(array);	
 	}
 }
