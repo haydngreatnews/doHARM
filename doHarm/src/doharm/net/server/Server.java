@@ -7,11 +7,12 @@ import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.net.SocketException;
 import java.util.ArrayList;
-import java.util.Queue;
+import java.util.HashMap;
 
 import doharm.net.ClientState;
 import doharm.net.UDPReceiver;
 import doharm.net.packets.ClientPacket;
+import doharm.net.packets.EntityInfo;
 import doharm.net.packets.ServerPacket;
 import doharm.net.packets.Snapshot;
 
@@ -120,19 +121,38 @@ public class Server {
 	{	
 		// get game changes.
 		
-		// TODO temp setup is that the entire game change snap shot is sent to all clients, so only one snap gets built here, 
-		// eventually when we add local area only snapshots, will need to build independently.
+//		HashMap<Integer,EntityUpdate> entityUpdates = new HashMap<Integer,EntityUpdate>();
+//		HashMap<Integer,EntityCreate> entityCreates = new HashMap<Integer,EntityCreate>();
+		ArrayList<Integer> entityDeletes = new ArrayList<Integer>();
 		
-//		for (Entity e : entities)
-//		{
-//			snap.add;
-//		}
 		
 		for (ConnectedClient c : clients)
 		{
 			if (c.getState() == ClientState.INGAME)
 			{
 				Snapshot snap = new Snapshot(serverTime, c.latestCommandPacket.seqNum);
+				
+				// TODO temp setup is that the entire game change snap shot is sent to all clients, 
+				// eventually when we add local area only snapshots, will need to build independently.
+				
+				for (int eID : entityDeletes)
+				{
+					// if (relavent)
+					snap.addEDelete(eID);
+				}
+				
+//				for (int eID : entityCreates.keySet())
+//				{
+//					// if (relavent)
+//					snap.addECreate(entityCreates.get(eID));
+//				}
+//				
+//				for (int eID : entityUpdates.keySet())
+//				{
+//					// if (relavent)
+//					snap.addEUpdate(entityUpdates.get(eID));
+//				}
+				
 				// add snapshot to client
 				c.addSnapshot(snap);
 				// build n send

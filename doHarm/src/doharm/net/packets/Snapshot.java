@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 
 /** Struct representing a Server Snapshot, which is then converted into a packet to send over the wire. */
@@ -118,9 +119,34 @@ public class Snapshot {
 		return buff.getInt();
 	}
 	
-	public Snapshot clone()
+	public void addECreate(EntityCreate ent)
 	{
-		return this.clone();
+		entityCreates.put(ent.id, ent);
+	}
+	
+	public void addEDelete(int entID)
+	{
+		entityDeletes.add(entID);
+	}
+	
+	public void addEUpdate(EntityUpdate ent)
+	{
+		entityUpdates.put(ent.id, ent);
+	}
+	
+	public ArrayList<Integer> getEDeletes()
+	{
+		return (ArrayList<Integer>) Collections.unmodifiableList(entityDeletes);
+	}
+	
+	public HashMap<Integer,EntityCreate> getECreates()
+	{
+		return (HashMap<Integer,EntityCreate>) Collections.unmodifiableMap(entityCreates);
+	}
+	
+	public HashMap<Integer,EntityUpdate> getEUpdates()
+	{
+		return (HashMap<Integer,EntityUpdate>) Collections.unmodifiableMap(entityUpdates);
 	}
 
 	/**
