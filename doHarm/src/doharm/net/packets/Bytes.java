@@ -14,4 +14,17 @@ public class Bytes {
 		buff.get(array);
 		return new String(array);	
 	}
+	
+	public static byte[] setString(String string)
+	{
+		byte[] temp = string.getBytes();
+		if (temp.length > 255)
+			return null;
+		
+		byte[] real = new byte[temp.length+1];
+		ByteBuffer buff = ByteBuffer.wrap(real);
+		buff.put((byte) temp.length);
+		buff.put(temp);
+		return real;
+	}
 }
