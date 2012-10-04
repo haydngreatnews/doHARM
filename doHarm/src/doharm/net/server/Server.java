@@ -123,8 +123,6 @@ public class Server {
 		// TODO temp setup is that the entire game change snap shot is sent to all clients, so only one snap gets built here, 
 		// eventually when we add local area only snapshots, will need to build independently.
 		
-		Snapshot snap = new Snapshot(serverTime);
-		
 //		for (Entity e : entities)
 //		{
 //			snap.add;
@@ -134,7 +132,7 @@ public class Server {
 		{
 			if (c.getState() == ClientState.INGAME)
 			{
-				snap.seqAckd = c.latestCommandPacket.seqNum;
+				Snapshot snap = new Snapshot(serverTime, c.latestCommandPacket.seqNum);
 				// add snapshot to client
 				c.addSnapshot(snap);
 				// build n send

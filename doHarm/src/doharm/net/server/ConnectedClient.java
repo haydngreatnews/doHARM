@@ -81,7 +81,7 @@ public class ConnectedClient {
 		*/
 		Iterator<Snapshot> iter = snapsBuffer.descendingIterator();
 		
-		Snapshot transSnap = iter.next().clone();	// will never be null, a snapshot was just added in the parent method call.
+		Snapshot transSnap = new Snapshot(iter.next());	// will never be null, a snapshot was just added in the parent method call.
 		
 		while (iter.hasNext())
 			transSnap.addMissing(iter.next());

@@ -7,19 +7,19 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 /** Struct representing a Server Snapshot, which is then converted into a packet to send over the wire. */
-public class Snapshot implements Cloneable {
+public class Snapshot {
 
 	public final int serverTime;
-	public int seqAckd;
+	public final int seqAckd;
 	public final PlayerState pState;
 	private final HashMap<Integer,EntityUpdate> entityUpdates = new HashMap<Integer,EntityUpdate>();
 	private final HashMap<Integer,EntityCreate> entityCreates = new HashMap<Integer,EntityCreate>();
 	private final ArrayList<Integer> entityDeletes = new ArrayList<Integer>();
 	
-	public Snapshot(int serverTime)
+	public Snapshot(int serverTime, int seqAckd)
 	{
 		this.serverTime = serverTime;
-		
+		this.seqAckd = seqAckd;
 		pState = null;
 	}
 	
@@ -46,8 +46,6 @@ public class Snapshot implements Cloneable {
 		for (int i=0; i<count; ++i)
 			entityDeletes.add(buff.getInt());
 		
-		CharacterCreate c = new CharacterCreate(count, buff);
-		
 		// Read creates
 		count = (int) buff.get();
 		for (int i=0; i<count; ++i)
@@ -66,6 +64,17 @@ public class Snapshot implements Cloneable {
 		
 	}
 	
+	/** Creates a Snapshot that is a copy of the given snapshot */
+	public Snapshot(Snapshot other)
+	{
+		serverTime = other.serverTime;
+		seqAckd = other.seqAckd;
+		pState = null;
+		entityDeletes.addAll(other.entityDeletes);
+		entityCreates.putAll(other.entityCreates);
+		entityUpdates.putAll(other.entityUpdates);
+	}
+	
 	/**
 	 * Translates the Snapshot object into a byte-array for transmission.
 	 * @param snap Snapshot object to convert
@@ -80,8 +89,12 @@ public class Snapshot implements Cloneable {
 		try { buff.write(ByteBuffer.allocate(4).putInt(serverTime).array()); }
 		catch (IOException e) {	e.printStackTrace(); }
 		
-		if (entityDeletes.size() > 255 || entityCreates.size() > 255 || entityUpdates.size() > 255)
-			throw new RuntimeException("Entity deletes or creates or updates was over the 255 limit!");
+		if (entityDeletes.size() > 255)
+			throw new RuntimeException("Entity deletes was over the 255 limit!");
+		if (entityCreates.size() > 255)
+			throw new RuntimeException("Entity creates was over the 255 limit!");
+		if (entityUpdates.size() > 255)
+			throw new RuntimeException("Entity updates was over the 255 limit!");
 		
 		// Write the entity deletes.
 		buff.write((byte) entityDeletes.size());
