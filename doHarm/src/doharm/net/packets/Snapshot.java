@@ -3,6 +3,7 @@ package doharm.net.packets;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /** Struct representing a Server Snapshot, which is then converted into a packet to send over the wire. */
@@ -11,7 +12,9 @@ public class Snapshot implements Cloneable {
 	public final int serverTime;
 	public int seqAckd;
 	public final PlayerState pState;
-	private final HashMap<Integer,EntityInfo> entities = new HashMap<Integer,EntityInfo>();
+	private final HashMap<Integer,EntityInfo> entityUpdates = new HashMap<Integer,EntityInfo>();
+	private final HashMap<Integer,EntityInfo> entityCreates = new HashMap<Integer,EntityInfo>();
+	private final ArrayList<Integer> entityDeletes = new ArrayList<Integer>();
 	
 	public Snapshot(int serverTime)
 	{
@@ -75,11 +78,19 @@ public class Snapshot implements Cloneable {
 	 */
 	public void addMissing(Snapshot other)
 	{
-		for (int eID : other.entities.keySet())
-		{
-			if (!entities.containsKey(eID))
-				entities.put(eID, other.entities.get(eID));
-		}
+		// add deletes first, as we'll want to check when adding creates/updates
+		// if it's already been deleted, in which case shouldn't bother adding it. 
+		for (int eID : other.entityDeletes)
+			if (!entityDeletes.contains(eID))
+				entityDeletes.add(eID);
+		
+		for (int eID : other.entityCreates.keySet())
+			if (!entityCreates.containsKey(eID) && !entityDeletes.contains(eID))
+				entityCreates.put(eID, other.entityCreates.get(eID));
+		
+		for (int eID : other.entityUpdates.keySet())
+			if (!entityUpdates.containsKey(eID) && !entityDeletes.contains(eID))
+				entityUpdates.put(eID, other.entityUpdates.get(eID));
 	}
 	
 	/** Holds changes in player state */
@@ -91,12 +102,9 @@ public class Snapshot implements Cloneable {
 	/** Holds changes in entity state */
 	private class EntityInfo
 	{
-		public final int id;
-		
-		public EntityInfo()
-		{
-			id = 0;
-		}
+		public int id;
 	}
+	
+	
 }
 
