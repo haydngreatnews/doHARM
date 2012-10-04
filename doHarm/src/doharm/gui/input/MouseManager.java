@@ -1,6 +1,5 @@
 package doharm.gui.input;
 
-import java.awt.Color;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -20,32 +19,11 @@ public class MouseManager implements MouseListener, MouseMotionListener
 		this.game = game;
 		this.renderer = renderer;
 	}
-
-	@Override
-	public void mouseDragged(MouseEvent e) 
+	
+	
+	private void hover(int x, int y) 
 	{
-		
-	}
-
-	@Override
-	public void mouseMoved(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mouseClicked(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mousePressed(MouseEvent e) 
-	{
-		int imageRGB = renderer.getPickColourAt(e.getX(), e.getY());
-		Color colour = new Color(imageRGB);
-		
-		int rgb = (colour.getRed() << 16 ) | (colour.getGreen()<<8) | colour.getBlue();
+		int rgb = renderer.getPickColourAt(x, y);
 		
 		if (rgb == 0)
 			return; //outside area
@@ -54,15 +32,49 @@ public class MouseManager implements MouseListener, MouseMotionListener
 		
 		Tile tile = world.getTile(rgb);
 		
-		world.resetTiles(tile);
-		world.getHumanPlayer().moveTo(tile);
+		world.getHumanPlayer().hover(tile);
+	}
+	
+	private void click(int button, boolean down)
+	{
+		World world = game.getWorld();
+		world.getHumanPlayer().click(button,down);
+	}
+	
+	
+
+	@Override
+	public void mouseDragged(MouseEvent e) 
+	{
+		hover(e.getX(),e.getY());
+		click(e.getButton(),true);
 		
 	}
 
 	@Override
-	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
+	public void mouseMoved(MouseEvent e) {
 		
+		hover(e.getX(),e.getY());
+		
+	}
+
+	
+
+	@Override
+	public void mouseClicked(MouseEvent e) 
+	{
+		
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) 
+	{
+		click(e.getButton(),true);
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		click(e.getButton(),false);
 	}
 
 	@Override

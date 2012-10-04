@@ -26,6 +26,8 @@ public class Alliance {
 		//TODO create message "... joined an alliance!"
 		
 	}
+	
+	
 }
 
 

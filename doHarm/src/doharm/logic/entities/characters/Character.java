@@ -5,10 +5,11 @@ import java.util.Collections;
 import java.util.Stack;
 
 import doharm.logic.entities.AbstractEntity;
-import doharm.logic.entities.characters.attributes.Level;
+import doharm.logic.entities.EntityType;
+import doharm.logic.entities.characters.alliances.Alliance;
 import doharm.logic.entities.characters.classes.CharacterClass;
 import doharm.logic.entities.characters.classes.CharacterClassType;
-import doharm.logic.entities.characters.classes.Warrior;
+import doharm.logic.entities.characters.classes.warrior.Warrior;
 import doharm.logic.entities.inventory.Inventory;
 import doharm.logic.physics.Vector;
 import doharm.logic.world.tiles.PathFinder;
@@ -19,7 +20,7 @@ public abstract class Character extends AbstractEntity
 	private static final float MIN_DISTANCE = 2;
 	private String name;
 	private CharacterClass characterClass;
-	private Level level;
+
 	private Inventory inventory;
 	private Stack<Tile> path;
 	
@@ -29,9 +30,15 @@ public abstract class Character extends AbstractEntity
 	private float movementSpeed = 1.7f;
 	private float stopFriction = 0.1f;
 	
+	private float health;
+	private float mana;
+	private float rage;
+	private Alliance alliance;
+	
 	
 	protected Character() 
 	{
+		super(EntityType.CHARACTER);
 		inventory = new Inventory();
 	}
 	
@@ -40,7 +47,7 @@ public abstract class Character extends AbstractEntity
 		switch(classType)
 		{
 		case WARRIOR:
-			characterClass = new Warrior();
+			characterClass = new Warrior(this,classType);
 			break;
 		default:
 			throw new UnsupportedOperationException("Character class type not implemented: " + classType);
@@ -57,24 +64,28 @@ public abstract class Character extends AbstractEntity
 	public void move()
 	{
 		Vector direction = destination.subtract(getPosition());
+		
 		Vector velocity = getVelocity();
 		
 		float distanceToDestination = direction.getLength();
 		
+		if (distanceToDestination < MIN_DISTANCE)
+		{
+			if (!path.isEmpty())
+				nextNodeInPath();
+		}
+		
+		
 		if (distanceToDestination > MIN_DISTANCE)
 		{
+			direction.multiply(1, 2);
 			direction.normalize();
 			direction.multiply(movementSpeed);
 			velocity.add(direction);
 		}
-		else
+		else if (path.isEmpty())
 		{
-			if (!path.isEmpty())
-				nextNodeInPath();
-			else
-			{
-				velocity.multiply(stopFriction);
-			}	
+			velocity.multiply(stopFriction);
 		}
 		
 		setVelocity(velocity);
@@ -99,6 +110,7 @@ public abstract class Character extends AbstractEntity
 		goal = new Vector(position);
 		destination = new Vector(position);
 		path = new Stack<Tile>();
+		health = getMaxHealth();
 	}
 	
 	public Collection<Tile> getPath()
@@ -108,7 +120,8 @@ public abstract class Character extends AbstractEntity
 	
 	public void moveTo(Tile goal) 
 	{
-		Stack<Tile> path = PathFinder.calculatePath(getCurrentTile(), goal);
+		
+		Stack<Tile> path = PathFinder.calculatePath(getWorld(), getCurrentTile(), goal);
 		if (path == null)
 			return;
 		
@@ -124,12 +137,12 @@ public abstract class Character extends AbstractEntity
 		if (!path.isEmpty())
 		{
 			
-			if (path.size()== 1)
+			//if (path.size()== 1)
 			{
 				Tile next = path.pop();
 				destination.set(next.getX(), next.getY());
 			}
-			else if (path.size()== 2)
+			/*else// if (path.size()== 2)
 			{
 				//average between next target and the one after
 				Tile next = path.pop();
@@ -137,18 +150,18 @@ public abstract class Character extends AbstractEntity
 				float x = (next.getX()+nextNext.getX())*0.5f;
 				float y = (next.getY()+nextNext.getY())*0.5f;
 				destination.set(x, y);
-			}
-			else
+			}*/
+			/*else
 			{
 				//average between next target and the one after
 				Tile next = path.pop();
 				Tile nextNext = path.pop();
 				Tile nextNextNext = path.peek();
-				float x = (next.getX()+nextNext.getX() + nextNextNext.getX())/3;
-				float y = (next.getY()+nextNext.getY() + nextNextNext.getY())/3;
+				float x = (next.getX()+nextNext.getX()*2 + nextNextNext.getX())/4;
+				float y = (next.getY()+nextNext.getY()*2 + nextNextNext.getY())/4;
 				destination.set(x, y);
 				path.push(nextNext);
-			}
+			}*/
 		}
 	}
 	
@@ -156,4 +169,38 @@ public abstract class Character extends AbstractEntity
 	{
 		return new Vector(destination);
 	}
+	
+	public float getHealth()
+	{
+		return health;
+	}
+	
+	public float getHealthRatio() 
+	{
+		return health / getMaxHealth();
+	}
+	
+	public float getMaxHealth()
+	{
+		return characterClass.getAttributes().getMaxHealth();
+	}
+	
+	public float getRage() {
+		return rage;
+	}
+	
+	public float getMana() {
+		return mana;
+	}
+	
+	public void attack(AbstractEntity e)
+	{
+		//getW
+	}
+
+	public Alliance getAlliance() {
+		return alliance;
+	}
+	
+	
 }

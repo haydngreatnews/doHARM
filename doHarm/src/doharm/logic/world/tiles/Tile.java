@@ -4,13 +4,15 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import doharm.logic.entities.AbstractEntity;
 import doharm.logic.physics.Vector;
 import doharm.logic.world.Layer;
 import doharm.rendering.RenderUtil;
 import doharm.storage.FloorTileData;
-import doharm.storage.TileData;
 import doharm.storage.WallTileData;
 
 public class Tile implements Comparable<Tile>
@@ -38,6 +40,7 @@ public class Tile implements Comparable<Tile>
 	private Tile parent;
 	private float pathLength;
 	private boolean nextToWall;
+	private Set<AbstractEntity> entities;
 	
 	public Tile(Layer layer, int row, int col, int width, int height, Vector position, FloorTileData data, int colour) 
 	{
@@ -63,6 +66,7 @@ public class Tile implements Comparable<Tile>
 		neighbours = new ArrayList<Tile>();
 		
 		walls = new WallTileData[Direction.values().length];
+		entities = new HashSet<AbstractEntity>();
 	}
 	
 	
@@ -179,7 +183,13 @@ public class Tile implements Comparable<Tile>
 	
 	public float distanceToTile(Tile goal)
 	{
-		return (float)Math.hypot(goal.getX()-getX(), goal.getY()-getY());
+		int r = goal.row-row;
+		int c = goal.col-col;
+		int l = goal.layer.getLayerNumber() - layer.getLayerNumber();
+		
+		return (float) Math.sqrt(r*r + c*c + l*l);
+				
+				//(float)Math.hypot(goal.getX()-getX(), goal.getY()-getY());
 	}
 
 	public List<Tile> getNeighbours() 
@@ -194,7 +204,7 @@ public class Tile implements Comparable<Tile>
 				return;
 		}
 		
-		if (!neighbour.isWalkable())
+		if (!neighbour.isWalkable())// && neighbour.col == col && neighbour.row == row)
 			nextToWall = true;
 		
 		neighbours.add(neighbour);
@@ -217,7 +227,8 @@ public class Tile implements Comparable<Tile>
 
 	public void setPathLength(float pathLength) 
 	{
-		this.pathLength = pathLength;
+		if (pathLength == 0 || pathLength < this.pathLength)
+			this.pathLength = pathLength;
 	}
 
 
@@ -230,6 +241,12 @@ public class Tile implements Comparable<Tile>
 	public int getWallImageID(Direction direction) 
 	{
 		return 0;//walls[direction.ordinal()].;
+	}
+
+
+	public Set<AbstractEntity> getEntities() 
+	{
+		return entities;
 	}
 
 	

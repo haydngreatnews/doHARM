@@ -1,7 +1,8 @@
 package doharm.logic.entities.items;
 
 import doharm.logic.entities.AbstractEntity;
-import doharm.logic.entities.characters.attributes.Attributes;
+import doharm.logic.entities.EntityType;
+import doharm.logic.entities.characters.classes.attributes.Attributes;
 
 /**
  * 
@@ -28,8 +29,9 @@ public abstract class Item extends AbstractEntity
 		
 	}*/
 	
-	public Item(ItemType type, int width, int height, int imageID)
+	protected Item(ItemType type, int width, int height, int imageID)
 	{
+		super(EntityType.ITEM);
 		this.itemType = type;
 		this.width = width;
 		this.height = height;

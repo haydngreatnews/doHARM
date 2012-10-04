@@ -1,23 +1,23 @@
 package doharm.logic.world;
 
+import java.awt.Color;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
 
 import doharm.logic.camera.Camera;
-import doharm.logic.entities.Entity;
+import doharm.logic.entities.AbstractEntity;
+import doharm.logic.entities.EntityFactory;
+import doharm.logic.entities.IDManager;
 import doharm.logic.entities.characters.classes.CharacterClassType;
-import doharm.logic.entities.characters.players.AIPlayer;
 import doharm.logic.entities.characters.players.HumanPlayer;
 import doharm.logic.entities.characters.players.Player;
 import doharm.logic.entities.characters.players.PlayerFactory;
 import doharm.logic.entities.characters.players.PlayerType;
 import doharm.logic.entities.items.Item;
+import doharm.logic.entities.items.ItemFactory;
 import doharm.logic.world.tiles.Direction;
 import doharm.logic.world.tiles.Tile;
-import doharm.storage.FloorTileData;
 import doharm.storage.TilesetLoader;
 import doharm.storage.WallTileData;
 import doharm.storage.WorldLoader;
@@ -26,13 +26,10 @@ import doharm.storage.WorldLoader;
 public class World 
 {
 	private Layer[] layers;  
-	private Set<Player> players;
-	private Set<Character> characters;
-	private Set<Entity> entities;
-	private Set<Item> items;
 	
+	private EntityFactory entityFactory;
 	private PlayerFactory playerFactory;
-	
+	private ItemFactory itemFactory;
 	
 	private HumanPlayer humanPlayer;
 	private Camera camera;
@@ -41,12 +38,17 @@ public class World
 	private int tileHeight;
 	private int numRows;
 	private int numCols;
+
+	private IDManager idManager;
 	
 	public World(String worldName)
 	{
-		playerFactory = new PlayerFactory(this);
+		idManager = new IDManager();
+		entityFactory = new EntityFactory(this,idManager);
+		playerFactory = new PlayerFactory(this,entityFactory);
+		itemFactory = new ItemFactory(this, entityFactory);
 		
-		players = new HashSet<Player>();
+		
 		try 
 		{
 			worldLoader = new WorldLoader(worldName);
@@ -75,7 +77,7 @@ public class World
 		
 		//TEST STUFF TODO REMOVE
 		humanPlayer = (HumanPlayer)playerFactory.createPlayer(layers[0].getTiles()[5][5],"Test player",CharacterClassType.WARRIOR, 0,PlayerType.HUMAN);
-		players.add(humanPlayer);
+		
 		
 		
 		//Add some noob AIs
@@ -92,8 +94,8 @@ public class World
 			} while(!tile.isWalkable());
 			
 			
-			AIPlayer ai = (AIPlayer)playerFactory.createPlayer(tile, "AI"+(i+1), CharacterClassType.WARRIOR, i+1,PlayerType.AI);
-			players.add(ai);
+			playerFactory.createPlayer(tile, "AI"+(i+1), CharacterClassType.WARRIOR, i+1,PlayerType.AI);
+			
 		}
 		
 		
@@ -115,6 +117,8 @@ public class World
 			
 			
 			//players.add(ai);
+			//
+			
 		}
 		
 		
@@ -145,9 +149,13 @@ public class World
 								
 							}
 							
+							//if (x != 0 && y != 0) 
+								//continue;
 							
-							if (x == 0 && y == 0)
-								continue; //TODO check upper/lower levels
+							if (x == 0 && y == 0) //can never teleport up/down layers
+								continue; 
+							
+							//TODO check upper/lower levels
 							
 							if (row + y >= 0 && row + y < tiles.length && 
 								col + x >= 0 && col + x < tiles[0].length)
@@ -168,7 +176,7 @@ public class World
 
 	public void moveEntities() 
 	{
-		for (Player p: players)
+		for (Player p: playerFactory.getEntities())
 		{
 			p.move();
 		}
@@ -180,7 +188,17 @@ public class World
 	
 	public Collection<Player> getPlayers()
 	{
-		return Collections.unmodifiableCollection(players);
+		return Collections.unmodifiableCollection(playerFactory.getEntities());
+	}
+	
+	public Collection<Item> getItems()
+	{
+		return Collections.unmodifiableCollection(itemFactory.getEntities());
+	}
+	
+	public Collection<AbstractEntity> getEntities()
+	{
+		return Collections.unmodifiableCollection(entityFactory.getEntities());
 	}
 	
 
@@ -235,6 +253,12 @@ public class World
 		colour -= row*numRows;
 		int col = colour;
 		
+		//col++;
+		
+		if (row < 0) row = 0;
+		if (col < 0) col = 0;
+		if (row > numRows-1) row = numRows-1;
+		if (col > numCols-1) col = numCols-1;
 		
 		Layer layer = getLayer(layerNumber);
 		return layer.getTiles()[row][col];
@@ -270,5 +294,13 @@ public class World
 			}
 		}
 		
+	}
+
+	public int pickRGBToTileRGB(int imageRGB) 
+	{
+		Color colour = new Color(imageRGB);
+		
+		int rgb = (colour.getRed() << 16 ) | (colour.getGreen()<<8) | colour.getBlue();
+		return rgb;
 	}
 }

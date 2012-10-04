@@ -24,4 +24,7 @@ public abstract class Player extends Character
 	{
 		super.move();
 	}
+
+
+	
 }

@@ -17,6 +17,7 @@ public class TODO {
 	 * 
 	 * 
 	 * 
+	 * factory method pattern - for creating players, items, etc.
 	 * 
 	 * Composite pattern - Hierarchy of entities that have different versions of the same method
 	 * 

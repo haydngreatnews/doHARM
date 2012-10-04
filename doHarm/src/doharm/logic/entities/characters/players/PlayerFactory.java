@@ -1,8 +1,8 @@
 package doharm.logic.entities.characters.players;
 
-import doharm.logic.entities.AbstractEntity;
+import doharm.logic.entities.AbstractEntityFactory;
+import doharm.logic.entities.EntityFactory;
 import doharm.logic.entities.characters.classes.CharacterClassType;
-import doharm.logic.entities.characters.Character;
 import doharm.logic.world.World;
 import doharm.logic.world.tiles.Tile;
 
@@ -11,15 +11,13 @@ import doharm.logic.world.tiles.Tile;
  * 
  * @author bewickrola
  */
-public class PlayerFactory 
+public class PlayerFactory extends AbstractEntityFactory<Player>
 {	
-	private World world;
-
-	public PlayerFactory(World world)
+	public PlayerFactory(World world, EntityFactory entityFactory) 
 	{
-		this.world = world;
+		super(world,entityFactory);
 	}
-	
+
 	public Player createPlayer(Tile spawnTile, String name, CharacterClassType classType, int id, PlayerType playerType)
 	{
 		Player player = null;
@@ -35,13 +33,21 @@ public class PlayerFactory
 			player = new NetworkPlayer();
 		}
 		
-		((Character)player).setName(name);
+		player.setName(name);
+		player.setWorld(getWorld());
+		player.setCharacterClass(classType);
+		
+		
 		player.spawn(spawnTile);
-		((AbstractEntity)player).setWorld(world);
-		player.setID(id);
 		
-		
+		addEntity(player,id);
 		return player;
 	}
 
+	public void removePlayer(Player player)
+	{
+		
+		removeEntity(player);
+	}
+	
 }

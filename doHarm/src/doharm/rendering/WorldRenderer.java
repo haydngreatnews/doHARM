@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
+import javax.print.attribute.standard.MediaSize.ISO;
 
 import doharm.logic.Game;
 import doharm.logic.camera.Camera;
@@ -135,7 +136,12 @@ public class WorldRenderer
 
 	public int getPickColourAt(int mouseX, int mouseY)
 	{
-		return pickImage.getRGB(mouseX, mouseY);
+		if (mouseX < 0) mouseX = 0;
+		if (mouseY < 0) mouseY = 0;
+		if (mouseX > pickImage.getWidth()-1) mouseX = pickImage.getWidth()-1;
+		if (mouseY > pickImage.getHeight()-1) mouseY = pickImage.getHeight()-1;
+		
+		return game.getWorld().pickRGBToTileRGB(pickImage.getRGB(mouseX, mouseY));
 	}
 	
 	
@@ -154,7 +160,7 @@ public class WorldRenderer
 			//ie. the tile(s) obscuring view of the player, is not an invisible tile, make this entire layer transparent.
 			//and dont draw any subsequent layers.
 			
-	
+			graphics.setColor(new Color(1,0,1,0.4f));
 			for(int row = 0; row < tiles.length; row++){
 				
 				for(int col = 0; col < tiles[row].length; col++){
@@ -164,9 +170,13 @@ public class WorldRenderer
 
 					
 					Vector vector = RenderUtil.convertCoordsToIso(col, row, layerCount);
-					int x = vector.getXAsInt();
-					int y = vector.getYAsInt();
+					int x = vector.getXAsInt() - fTileW/2; //fTileW/2 added PLEASE leave in here
+					int y = vector.getYAsInt() - fTileH/2; //fTileH/2 added PLEASE leave in here
 					graphics.drawImage(image,x,y, null);
+					
+					if (tile.isWalkable()) //TODO remove
+						graphics.fillRect(x-1+fTileW/2, y-1+fTileH/2, 2, 2);
+					
 					
 					
 

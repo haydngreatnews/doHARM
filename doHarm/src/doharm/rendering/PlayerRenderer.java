@@ -9,6 +9,7 @@ import java.util.Stack;
 
 import doharm.logic.Game;
 import doharm.logic.entities.characters.Character;
+import doharm.logic.entities.characters.players.HumanPlayer;
 import doharm.logic.entities.characters.players.Player;
 import doharm.logic.entities.characters.players.PlayerType;
 import doharm.logic.physics.Vector;
@@ -62,9 +63,15 @@ public class PlayerRenderer {
 		//float x = (-(row*(imgIsoW/2-1)))+(col*(imgIsoW/2-1));
 		//float y = (row*(imgIsoH/2-1))+(col*(imgIsoH/2-1))-(layer.getLayerNumber()*imgIsoH);
 		
-		graphics.fillOval((int)v.getX()-size.width/2, (int)v.getY()-size.height/4, size.width, size.height/2);
+		int x = (int)v.getX()-size.width/2;
+		int y = (int)v.getY()-size.height/4;
+		
+		graphics.fillOval(x, y, size.width, size.height/2);
 		
 		
+		
+		graphics.setColor(new Color(1-player.getHealthRatio(),player.getHealthRatio(),0,1));
+		graphics.fillRect(x, y-5, (int)(size.width*player.getHealthRatio()), 3);
 		
 		
 		//Path
@@ -86,6 +93,23 @@ public class PlayerRenderer {
 		col = goal.getX()/world.getTileWidth();
 		v = RenderUtil.convertCoordsToIso(col, row, player.getCurrentLayer().getLayerNumber());
 		graphics.fillOval((int)v.getX()-size.width/8, (int)v.getY()-size.height/16, size.width/4, size.height/8);
+		
+		
+		if (player.getPlayerType() == PlayerType.HUMAN)
+		{
+			
+			graphics.setColor(Color.orange);
+			Tile t = ((HumanPlayer)player).getHoverTile();
+			if (t != null)
+			{
+				row = t.getY()/world.getTileHeight();
+				col = t.getX()/world.getTileWidth();
+				v = RenderUtil.convertCoordsToIso(col, row, player.getCurrentLayer().getLayerNumber());
+				graphics.fillOval((int)v.getX()-size.width/8, (int)v.getY()-size.height/16, size.width/4, size.height/8);
+			}
+			
+		}
+		
 		
 		
 		

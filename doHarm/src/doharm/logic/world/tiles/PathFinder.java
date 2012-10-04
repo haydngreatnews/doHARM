@@ -1,23 +1,30 @@
 package doharm.logic.world.tiles;
 
-import java.util.LinkedList;
 import java.util.PriorityQueue;
-import java.util.Queue;
 import java.util.Stack;
+
+import doharm.logic.world.World;
 
 public class PathFinder 
 {
 	/**
 	 * move to a tile on the world
 	 * World.resetTiles(); must be called before this method so that the tiles haven't been visited!
+	 * @param world 
 	 * @param start the current position
 	 * @param goal the tile to move to
 	 * @return a path to move along, or null if the goal was not found. The goal will be added to the first
 	 * node in the path, as the goal can change.
 	 */
-	public static Stack<Tile> calculatePath(Tile start, Tile goal) 
+	public static Stack<Tile> calculatePath(World world, Tile start, Tile goal) 
 	{
-		if (!goal.isWalkable())
+		if (start == null || goal == null)
+		{
+			return null;
+		}
+		
+		world.resetTiles(goal);
+		/*if (!goal.isWalkable())
 		{
 			int tries = 0;
 			//find closest walkable tile
@@ -47,7 +54,7 @@ public class PathFinder
 			
 			if (!goal.isWalkable())
 				return null;
-		}
+		}*/
 		
 		
 		//calculate path...
@@ -87,17 +94,17 @@ public class PathFinder
 				return path;
 			}
 			
-			
+			node.setVisited(true);
 
 
 			for (Tile neighbour: node.getNeighbours())
 			{
 				
-				if (!neighbour.isVisited() && neighbour.isWalkable() && !neighbour.isNextToWall())
+				if (!neighbour.isVisited() && neighbour.isWalkable())// && !neighbour.isNextToWall())
 				{
 					
 					
-					neighbour.setVisited(true);
+					
 					neighbour.setParent(node);
 					
 					neighbour.setPathLength(node.getPathLength() + node.distanceToTile(neighbour));

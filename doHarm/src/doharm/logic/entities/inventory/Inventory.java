@@ -3,20 +3,22 @@ package doharm.logic.entities.inventory;
 import doharm.logic.entities.items.Item;
 import doharm.logic.entities.items.ItemType;
 import doharm.logic.entities.items.wearable.WearableItem;
+import doharm.logic.world.tiles.Tile;
 
-public class Inventory 
+public class Inventory implements ItemContainer
 {
 	public static final int STASH_ROWS = 6;
 	public static final int STASH_COLS = 10;
 	
 	private Item[] slots;
-	private Item[][] stash;
+	private Stash stash;
+	
 	
 
 	public Inventory()
 	{
 		slots= new Item[SlotType.values().length];
-		stash = new Item[STASH_ROWS][STASH_COLS];
+		stash = new Stash(STASH_ROWS, STASH_COLS);
 	}
 	
 	
@@ -34,46 +36,12 @@ public class Inventory
 			return true;
 		}
 		
-		return addItemToStash(item);
+		return stash.pickup(item);
 	}
 
-	public void reorderStash()
-	{
-		//TODO
-	}
+	
 
-	private boolean addItemToStash(Item item) 
-	{
-		
-		for (int row = 0; row < STASH_ROWS; row++)
-		{
-			for (int col = 0; col < STASH_COLS; col++)
-			{
-				if (addItemToStash(item, row,col))
-					return true;
-			}
-		}
-		
-		return false;
-	}
-
-
-	private boolean addItemToStash(Item item, int row, int col) 
-	{
-		for (int y = row; y < row+item.getHeight(); y++)
-		{
-			for (int x = col; x < col+item.getWidth(); x++)
-			{
-				if (y >= STASH_ROWS || x >= STASH_COLS)
-					return false;
-				if (stash[y][x] != null)
-					return false;
-			}
-		}
-		
-		stash[row][col] = item;
-		return true;
-	}
+	
 
 
 	private boolean addItemToSlot(WearableItem item) 
@@ -115,6 +83,13 @@ public class Inventory
 		
 		
 		return false;
+	}
+
+
+	@Override
+	public void drop(Item item, Tile tile) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }

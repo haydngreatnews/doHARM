@@ -13,7 +13,7 @@ import doharm.logic.world.Layer;
 import doharm.logic.world.World;
 import doharm.logic.world.tiles.Tile;
 
-public abstract class AbstractEntity implements Entity
+public abstract class AbstractEntity
 {
 	
 	private Vector position;
@@ -24,18 +24,18 @@ public abstract class AbstractEntity implements Entity
 	private float angle;
 	private float friction = 0.6f;
 	
-	
-	
-	
 	private Layer currentLayer;
 	private Tile currentTile;
 	
 	private int id; //unique id used for networking
 	private World world;
+
+	private final EntityType entityType;
 	
 
-	public AbstractEntity()
+	public AbstractEntity(EntityType entityType)
 	{
+		this.entityType = entityType;
 		size = new Dimension(32,32); //hmm..	
 	}
 	
@@ -53,12 +53,20 @@ public abstract class AbstractEntity implements Entity
 	
 	
 	
-	
+	public World getWorld()
+	{
+		return world;
+	}
 	
 	public void setID(int id)
 	{
 		this.id = id;
 	}
+	public int getID()
+	{
+		return this.id;
+	}
+	
 	
 	public Dimension getSize()
 	{
@@ -132,6 +140,11 @@ public abstract class AbstractEntity implements Entity
 	public void setWorld(World world) 
 	{
 		this.world = world;
+	}
+
+	public EntityType getEntityType() 
+	{
+		return entityType;
 	}
 	
 	

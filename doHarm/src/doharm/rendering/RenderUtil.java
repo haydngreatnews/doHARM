@@ -43,6 +43,8 @@ public class RenderUtil {
 //		float x = ((col*(imgIsoW/2)))+(row*(imgIsoW/2));
 //		float y = (-col*(imgIsoH/2))+(row*(imgIsoH/2)) +layer*imgIsoH;
 		
+		
+		
 		float x = -((row*(imgIsoW/2)))+(col*(imgIsoW/2));
 		float y = (row*(imgIsoH/2))+(col*(imgIsoH/2)) -layer*imgIsoH ;
 		
