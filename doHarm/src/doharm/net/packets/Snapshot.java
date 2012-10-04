@@ -12,8 +12,8 @@ public class Snapshot implements Cloneable {
 	public final int serverTime;
 	public int seqAckd;
 	public final PlayerState pState;
-	private final HashMap<Integer,EntityInfo> entityUpdates = new HashMap<Integer,EntityInfo>();
-	private final HashMap<Integer,EntityInfo> entityCreates = new HashMap<Integer,EntityInfo>();
+	private final HashMap<Integer,EntityUpdate> entityUpdates = new HashMap<Integer,EntityUpdate>();
+	private final HashMap<Integer,EntityCreate> entityCreates = new HashMap<Integer,EntityCreate>();
 	private final ArrayList<Integer> entityDeletes = new ArrayList<Integer>();
 	
 	public Snapshot(int serverTime)
@@ -38,7 +38,32 @@ public class Snapshot implements Cloneable {
 		
 		seqAckd = buff.getInt();
 		
+		// Read playerstate
 		pState = null;
+		
+		// Read deletes
+		int count = (int) buff.get();
+		for (int i=0; i<count; ++i)
+			entityDeletes.add(buff.getInt());
+		
+		CharacterCreate c = new CharacterCreate(count, buff);
+		
+		// Read creates
+		count = (int) buff.get();
+		for (int i=0; i<count; ++i)
+		{
+			int id = buff.getInt();
+			//entityCreates.put(id, new EntityCreate(id, buff));
+		}
+		
+		// Read updates
+		count = (int) buff.get();
+		for (int i=0; i<count; ++i)
+		{
+			int id = buff.getInt();
+			//entityUpdates.put(id, new EntityUpdate(id, buff));
+		}
+		
 	}
 	
 	/**
@@ -54,6 +79,20 @@ public class Snapshot implements Cloneable {
 		// Servertime
 		try { buff.write(ByteBuffer.allocate(4).putInt(serverTime).array()); }
 		catch (IOException e) {	e.printStackTrace(); }
+		
+		if (entityDeletes.size() > 255 || entityCreates.size() > 255 || entityUpdates.size() > 255)
+			throw new RuntimeException("Entity deletes or creates or updates was over the 255 limit!");
+		
+		// Write the entity deletes.
+		buff.write((byte) entityDeletes.size());
+		for (int eID : entityDeletes)
+			buff.write(eID);	// TODO MAKE SURE IT WRITES FOUR BYTES
+		
+		// Write the entity creates.
+		buff.write((byte) entityCreates.size());
+		
+		// Write the entity updates.
+		buff.write((byte) entityUpdates.size());
 		
 		return buff.toByteArray();
 	}
@@ -98,13 +137,5 @@ public class Snapshot implements Cloneable {
 	{
 		
 	}
-	
-	/** Holds changes in entity state */
-	private class EntityInfo
-	{
-		public int id;
-	}
-	
-	
 }
 
