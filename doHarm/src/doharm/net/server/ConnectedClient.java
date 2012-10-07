@@ -27,7 +27,8 @@ public class ConnectedClient {
 	public ConnectedClient(SocketAddress address)
 	{
 		this.address = address;
-		state = ClientState.LOADING;
+		//state = ClientState.LOADING;
+		state = ClientState.INGAME;
 	}
 	
 	public SocketAddress getAddress() {	return address; }

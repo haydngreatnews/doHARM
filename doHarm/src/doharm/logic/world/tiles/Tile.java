@@ -228,8 +228,7 @@ public class Tile implements Comparable<Tile>
 
 	public void setPathLength(float pathLength) 
 	{
-		if (pathLength == 0 || pathLength < this.pathLength)
-			this.pathLength = pathLength;
+		this.pathLength = pathLength;
 	}
 
 

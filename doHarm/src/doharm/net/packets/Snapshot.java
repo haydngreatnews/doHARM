@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
+import doharm.net.packets.entityinfo.CharacterCreate;
+import doharm.net.packets.entityinfo.CharacterUpdate;
 import doharm.net.packets.entityinfo.EntityCreate;
 import doharm.net.packets.entityinfo.EntityUpdate;
 
@@ -56,6 +58,7 @@ public class Snapshot {
 		{
 			int id = buff.getInt();
 			//entityCreates.put(id, new EntityCreate(id, buff));
+			entityCreates.put(id, new CharacterCreate(id, buff));
 		}
 		
 		// Read updates
@@ -64,8 +67,8 @@ public class Snapshot {
 		{
 			int id = buff.getInt();
 			//entityUpdates.put(id, new EntityUpdate(id, buff));
+			entityUpdates.put(id, new CharacterUpdate(id, buff));
 		}
-		
 	}
 	
 	/** Creates a Snapshot that is a copy of the given snapshot */
@@ -87,11 +90,13 @@ public class Snapshot {
 	public byte[] convertToBytes()
 	{	
 		ByteArrayOutputStream buff = new ByteArrayOutputStream();
+		
+		try { 
+		
 		// Packet type
 		buff.write((byte) ServerPacket.SNAPSHOT.ordinal());		// TODO Do we need the byte cast?
 		// Servertime
-		try { buff.write(ByteBuffer.allocate(4).putInt(serverTime).array()); }
-		catch (IOException e) {	e.printStackTrace(); }
+		buff.write(ByteBuffer.allocate(4).putInt(serverTime).array()); 
 		
 		if (entityDeletes.size() > 255)
 			throw new RuntimeException("Entity deletes was over the 255 limit!");
@@ -103,13 +108,19 @@ public class Snapshot {
 		// Write the entity deletes.
 		buff.write((byte) entityDeletes.size());
 		for (int eID : entityDeletes)
-			buff.write(eID);	// TODO MAKE SURE IT WRITES FOUR BYTES
+			buff.write(ByteBuffer.allocate(4).putInt(eID).array());	// TODO MAKE SURE IT WRITES FOUR BYTES
 		
 		// Write the entity creates.
 		buff.write((byte) entityCreates.size());
+		for ( EntityCreate c : entityCreates.values() )
+			buff.write(c.toBytes());
 		
 		// Write the entity updates.
 		buff.write((byte) entityUpdates.size());
+		for ( EntityUpdate u : entityUpdates.values() )
+			buff.write(u.toBytes());
+		
+		} catch (IOException e) {	e.printStackTrace(); }
 		
 		return buff.toByteArray();
 	}

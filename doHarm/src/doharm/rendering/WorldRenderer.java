@@ -110,6 +110,28 @@ public class WorldRenderer
 		graphics.fillRect(0, 0, canvasSize.width, canvasSize.height);
 
 
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		//clear the mouse pick image
 		pickGraphics.setColor(Color.black);
 		pickGraphics.fillRect(0, 0, canvasSize.width, canvasSize.height);
@@ -139,6 +161,13 @@ public class WorldRenderer
 		//		graphics.drawImage(pickImage, 0, 0, null);
 		//		graphics.setComposite(old);
 		//////////////////////////////////////////////////////////////////////////////////////////
+		
+		
+		transform.setToIdentity();
+		graphics.setTransform(transform);
+		
+		graphics.setColor(Color.white);
+		graphics.drawString("Direction: " + camera.getDirection().toString(), 10, 10);
 	}
 
 	public int getPickColourAt(int mouseX, int mouseY)
