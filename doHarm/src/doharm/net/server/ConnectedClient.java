@@ -43,14 +43,13 @@ public class ConnectedClient {
 	public void updateClientCommandPacket(byte[] data)
 	{
 		// Extract the timestamp from the packet.
-		int timestamp = Command.getSeqNum(data);
+		int seqnum = Command.getSeqNum(data);
 		
 		// If this packet isn't more recent than the latest command we've received, discard.
-		// TODO needs to take into account the 2-B-Implemented repeat field. SHOULD JUST REPLACE WITH "SEQUENCE NUMBER"
-		if ( timestamp <= latestTime )
+		if ( seqnum <= latestTime )
 			return;
 		
-		latestTime = timestamp;
+		latestTime = seqnum;
 		latestCommandPacket = new Command(data);
 	}
 	
@@ -74,14 +73,14 @@ public class ConnectedClient {
 		/* Build the snapshot to send.
 		
 		So we use the latest snapshot as a base, and from there we go through the rest in order from newest to oldest,
-		and if fields from the snap we are looking at isnt in our transmission snap, add them.
+		and if entities from the snap we are looking at aren't in our transmission snap, add them.
 		
 		TODO not the most efficient way at the moment; eventually should keep the latest transmission packet 
 		and just make changes to it based on what has been removed and what has been added, not going thru all of them.
 		*/
 		Iterator<Snapshot> iter = snapsBuffer.descendingIterator();
 		
-		Snapshot transSnap = new Snapshot(iter.next());	// will never be null, a snapshot was just added in the parent method call.
+		Snapshot transSnap = new Snapshot(iter.next());	// will never be null, a snapshot was just added earlier in the thread of execution
 		
 		while (iter.hasNext())
 			transSnap.addMissing(iter.next());
