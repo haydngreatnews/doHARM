@@ -20,10 +20,10 @@ public class ItemFactory extends AbstractEntityFactory<Item>
 	 * @param type
 	 * @param container
 	 */
-	public void AddItem(ItemType type, int id, ItemContainer container)
+	public void AddItem(ItemType type, int id, ItemContainer container, boolean fromNetwork)
 	{
 		Item item = new Sword();
-		addEntity(item, id);
+		addEntity(item, id,fromNetwork);
 	}
 	
 	public void RemoveItem(Item item)

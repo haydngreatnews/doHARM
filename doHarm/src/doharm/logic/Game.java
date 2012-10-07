@@ -3,18 +3,20 @@ package doharm.logic;
 import doharm.logic.camera.Camera;
 import doharm.logic.physics.Vector;
 import doharm.logic.world.World;
+import doharm.net.NetworkMode;
 
 public class Game 
 {
 	private Camera camera;
 	private World world;
+	private NetworkMode networkMode;
 	
 	
-	public Game()
+	public Game(NetworkMode mode)
 	{
-				
+		this.networkMode = mode;
 		String worldName = "world1";
-		world = new World(worldName);
+		world = new World(worldName, networkMode);
 		camera = world.getCamera();
 	}
 	
@@ -34,5 +36,8 @@ public class Game
 		return world;
 	}
 
-	
+	public NetworkMode getNetworkMode()
+	{
+		return networkMode;
+	}
 }

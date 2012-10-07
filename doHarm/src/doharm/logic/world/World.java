@@ -2,11 +2,8 @@ package doharm.logic.world;
 
 import java.awt.Color;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.Collections;
 
 import doharm.logic.camera.Camera;
-import doharm.logic.entities.AbstractEntity;
 import doharm.logic.entities.EntityFactory;
 import doharm.logic.entities.IDManager;
 import doharm.logic.entities.characters.classes.CharacterClassType;
@@ -14,10 +11,10 @@ import doharm.logic.entities.characters.players.HumanPlayer;
 import doharm.logic.entities.characters.players.Player;
 import doharm.logic.entities.characters.players.PlayerFactory;
 import doharm.logic.entities.characters.players.PlayerType;
-import doharm.logic.entities.items.Item;
 import doharm.logic.entities.items.ItemFactory;
 import doharm.logic.world.tiles.Direction;
 import doharm.logic.world.tiles.Tile;
+import doharm.net.NetworkMode;
 import doharm.storage.TilesetLoader;
 import doharm.storage.WallTileData;
 import doharm.storage.WorldLoader;
@@ -40,9 +37,12 @@ public class World
 	private int numCols;
 
 	private IDManager idManager;
+
+	private NetworkMode networkMode;
 	
-	public World(String worldName)
+	public World(String worldName, NetworkMode networkMode)
 	{
+		this.networkMode = networkMode;
 		idManager = new IDManager();
 		entityFactory = new EntityFactory(this,idManager);
 		playerFactory = new PlayerFactory(this,entityFactory);
@@ -76,7 +76,7 @@ public class World
 		
 		
 		//TEST STUFF TODO REMOVE
-		humanPlayer = (HumanPlayer)playerFactory.createPlayer(layers[0].getTiles()[5][5],"Test player",CharacterClassType.WARRIOR, 0,PlayerType.HUMAN);
+		humanPlayer = (HumanPlayer)playerFactory.createPlayer(layers[0].getTiles()[5][5],"Test player",CharacterClassType.WARRIOR, 0,PlayerType.HUMAN,false);
 		
 		
 		
@@ -94,7 +94,7 @@ public class World
 			} while(!tile.isWalkable());
 			
 			
-			playerFactory.createPlayer(tile, "AI"+(i+1), CharacterClassType.WARRIOR, i+1,PlayerType.AI);
+			playerFactory.createPlayer(tile, "AI"+(i+1), CharacterClassType.WARRIOR, i+1,PlayerType.AI,false);
 			
 		}
 		
@@ -316,5 +316,10 @@ public class World
 			if (tile.isWalkable() && tile.isEmpty())
 				return tile;
 		}
+	}
+	
+	public NetworkMode getNetworkMode()
+	{
+		return networkMode;
 	}
 }

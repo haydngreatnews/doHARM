@@ -8,9 +8,18 @@ public class Clock extends Thread
 	private static final int CLOCK_INTERVAL = 30;
 	
 	private MainWindow window;
+
+	private Game game;
 	
-	public Clock(MainWindow window)
+	
+	public Clock(Game game)
 	{
+		this(game,null);
+	}
+			
+	public Clock(Game game, MainWindow window)
+	{
+		this.game = game;
 		this.window = window;
 	}
 	
@@ -18,7 +27,9 @@ public class Clock extends Thread
 	{
 		while(true)
 		{
-			window.repaint();
+			game.run();
+			if (window != null)
+				window.repaint();
 			try 
 			{
 				Thread.sleep(CLOCK_INTERVAL);

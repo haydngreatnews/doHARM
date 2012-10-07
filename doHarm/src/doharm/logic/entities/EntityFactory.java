@@ -28,9 +28,10 @@ public class EntityFactory extends AbstractEntityFactory<AbstractEntity>
 		removedEntities.add(entity);
 	}
 	@Override
-	public void addEntity(AbstractEntity entity, int id)
+	public void addEntity(AbstractEntity entity, int id, boolean fromNetwork)
 	{
 		entity.setID(id);
+		entity.setFromNetwork(fromNetwork);
 		addedEntities.add(entity);
 	}
 	

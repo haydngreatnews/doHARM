@@ -25,11 +25,11 @@ public abstract class AbstractEntityFactory<T extends AbstractEntity>
 		return world;
 	}
 	
-	public void addEntity(T entity, int id)
+	public void addEntity(T entity, int id, boolean fromNetwork)
 	{
 		entities.put(id, entity);
 		if (observer != null)
-			observer.addEntity(entity,id);
+			observer.addEntity(entity,id, fromNetwork);
 	}
 	public void removeEntity(T entity)
 	{

@@ -32,12 +32,23 @@ public abstract class AbstractEntity
 
 	private final EntityType entityType;
 	
-
+	private boolean fromNetwork;
+	
 	public AbstractEntity(EntityType entityType)
 	{
 		this.entityType = entityType;
 		size = new Dimension(32,32); //hmm..	
 		reset();
+	}
+	
+	public boolean fromNetwork()
+	{
+		return fromNetwork;
+	}
+	
+	public void setFromNetwork(boolean fromNetwork)
+	{
+		this.fromNetwork = fromNetwork;
 	}
 	
 	private void reset() 

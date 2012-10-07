@@ -14,6 +14,7 @@ import doharm.logic.entities.inventory.Inventory;
 import doharm.logic.physics.Vector;
 import doharm.logic.world.tiles.PathFinder;
 import doharm.logic.world.tiles.Tile;
+import doharm.net.NetworkMode;
 
 public abstract class Character extends AbstractEntity
 {
@@ -65,40 +66,43 @@ public abstract class Character extends AbstractEntity
 	@Override
 	public void move()
 	{
-		Vector direction = destination.subtract(getPosition());
-		
-		Vector velocity = getVelocity();
-		
-		float distanceToDestination = direction.getLength();
-		
-		
-		if (!path.isEmpty())
+		if (!fromNetwork())
 		{
-			currentAction = Action.MOVING;
-		}
-		else if (currentAction == Action.MOVING)
-			currentAction = Action.IDLE;
-		
-		if (distanceToDestination < movementSpeed)
-		{
+			Vector direction = destination.subtract(getPosition());
+			
+			Vector velocity = getVelocity();
+			
+			float distanceToDestination = direction.getLength();
+			
+			
 			if (!path.isEmpty())
-				nextNodeInPath();
+			{
+				currentAction = Action.MOVING;
+			}
+			else if (currentAction == Action.MOVING)
+				currentAction = Action.IDLE;
+			
+			if (distanceToDestination < movementSpeed)
+			{
+				if (!path.isEmpty())
+					nextNodeInPath();
+			}
+			
+			
+			if (distanceToDestination > movementSpeed)
+			{
+				direction.multiply(1, 2);
+				direction.normalize();
+				direction.multiply(movementSpeed);
+				velocity.add(direction);
+			}
+			else if (path.isEmpty())
+			{
+				velocity.multiply(stopFriction);
+			}
+			
+			setVelocity(velocity);
 		}
-		
-		
-		if (distanceToDestination > movementSpeed)
-		{
-			direction.multiply(1, 2);
-			direction.normalize();
-			direction.multiply(movementSpeed);
-			velocity.add(direction);
-		}
-		else if (path.isEmpty())
-		{
-			velocity.multiply(stopFriction);
-		}
-		
-		setVelocity(velocity);
 		super.move();
 	}
 	

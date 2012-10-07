@@ -3,6 +3,7 @@ package doharm;
 import doharm.gui.view.MainWindow;
 import doharm.logic.Game;
 import doharm.logic.time.Clock;
+import doharm.net.NetworkMode;
 
 /**
  * TODO
@@ -21,16 +22,17 @@ public class Main
 	private static void runClient() 
 	{
 		
-		Game game = new Game();
+		Game game = new Game(NetworkMode.CLIENT);
 		MainWindow window = new MainWindow(game);
-		Clock clock = new Clock(window);
+		Clock clock = new Clock(game,window);
 		clock.start();
 		
 	}
 
 	private static void runServer() 
 	{
-		//TODO load world if not creating a new one.
-		
+		Game game = new Game(NetworkMode.SERVER);
+		Clock clock = new Clock(game);
+		clock.start();
 	}
 }

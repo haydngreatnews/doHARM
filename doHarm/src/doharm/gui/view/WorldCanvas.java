@@ -27,7 +27,7 @@ public class WorldCanvas extends JPanel
 	{
 		super.paintComponent(g);
 		Dimension canvasSize = new Dimension(getWidth(),getHeight());		
-		game.run();
+		
 		renderer.redraw(canvasSize);
 		g.drawImage(renderer.getImage(), 0,0,canvasSize.width,canvasSize.height,null);
 		//paintChildren(g);

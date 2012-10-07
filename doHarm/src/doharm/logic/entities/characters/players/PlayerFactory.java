@@ -18,7 +18,7 @@ public class PlayerFactory extends AbstractEntityFactory<Player>
 		super(world,entityFactory);
 	}
 
-	public Player createPlayer(Tile spawnTile, String name, CharacterClassType classType, int id, PlayerType playerType)
+	public Player createPlayer(Tile spawnTile, String name, CharacterClassType classType, int id, PlayerType playerType, boolean fromNetwork)
 	{
 		Player player = null;
 		switch(playerType)
@@ -40,7 +40,7 @@ public class PlayerFactory extends AbstractEntityFactory<Player>
 		
 		player.spawn(spawnTile);
 		
-		addEntity(player,id);
+		addEntity(player,id,fromNetwork);
 		return player;
 	}
 
