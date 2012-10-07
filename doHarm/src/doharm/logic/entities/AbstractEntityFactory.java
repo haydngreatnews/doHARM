@@ -1,23 +1,23 @@
 package doharm.logic.entities;
 
+import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.Observable;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 
 import doharm.logic.world.World;
 
 public abstract class AbstractEntityFactory<T extends AbstractEntity>
 {
 	private World world;
-	private Set<T> entities;
+	private Map<Integer,T> entities;
 	private EntityFactory observer;
 
 	public AbstractEntityFactory(World world, EntityFactory observer)
 	{
 		this.world = world;
 		this.observer = observer;
-		entities = new HashSet<T>();
+		entities = new HashMap<Integer, T>();
 	}
 	
 	public World getWorld()
@@ -27,7 +27,7 @@ public abstract class AbstractEntityFactory<T extends AbstractEntity>
 	
 	public void addEntity(T entity, int id)
 	{
-		entities.add(entity);
+		entities.put(id, entity);
 		if (observer != null)
 			observer.addEntity(entity,id);
 	}
@@ -38,8 +38,12 @@ public abstract class AbstractEntityFactory<T extends AbstractEntity>
 			observer.removeEntity(entity);
 	}
 	
-	public Set<T> getEntities()
+	public Collection<T> getEntities()
 	{
-		return Collections.unmodifiableSet(entities);
+		return Collections.unmodifiableCollection(entities.values());
+	}
+	public T getEntity(int id)
+	{
+		return entities.get(id);
 	}
 }

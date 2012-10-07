@@ -29,7 +29,7 @@ public class PlayerRenderer {
 
 	public void redraw(Graphics2D graphics, int imgIsoW, int imgIsoH) 
 	{
-		for (Player player: world.getPlayers())
+		for (Player player: world.getPlayerFactory().getEntities())
 		{
 			drawPlayer(player,graphics, imgIsoW, imgIsoH);
 		}

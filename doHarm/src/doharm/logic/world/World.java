@@ -186,19 +186,19 @@ public class World
 		}
 	}
 	
-	public Collection<Player> getPlayers()
+	public PlayerFactory getPlayerFactory()
 	{
-		return Collections.unmodifiableCollection(playerFactory.getEntities());
+		return playerFactory;
 	}
 	
-	public Collection<Item> getItems()
+	public ItemFactory getItemFactory()
 	{
-		return Collections.unmodifiableCollection(itemFactory.getEntities());
+		return itemFactory;
 	}
 	
-	public Collection<AbstractEntity> getEntities()
+	public EntityFactory getEntityFactory()
 	{
-		return Collections.unmodifiableCollection(entityFactory.getEntities());
+		return entityFactory;
 	}
 	
 
