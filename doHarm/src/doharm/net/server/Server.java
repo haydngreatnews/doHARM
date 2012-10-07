@@ -33,8 +33,10 @@ public class Server {
 	
 	private World world;
 	
-	public Server(int port) throws IOException
+	public Server(int port, World world) throws IOException
 	{
+		this.world = world;
+		
 		// Setup the UDP socket.
 		udpSock = new DatagramSocket();
 		
@@ -70,7 +72,7 @@ public class Server {
 				{
 					// TODO check if player is already connected with that address.
 					// If so, they must've dropped, so kill them and start them along the joining process again. 
-					createClient(packet);
+					sendGamestate(createClient(packet));
 				}
 				else
 				{
@@ -118,9 +120,11 @@ public class Server {
 		return false;
 	}
 	
-	private void createClient(DatagramPacket packet)
+	private ConnectedClient createClient(DatagramPacket packet)
 	{
-		clients.add(new ConnectedClient(packet.getSocketAddress()));
+		ConnectedClient client = new ConnectedClient(packet.getSocketAddress());
+		clients.add(client);
+		return client;
 	}
 	
 	/**
@@ -139,7 +143,7 @@ public class Server {
 		{
 			if (e instanceof HumanPlayer)
 			{
-//				entityCreates.put(e.getID(), new CharacterCreate((HumanPlayer)e));	// TODO
+				entityCreates.put(e.getID(), new CharacterCreate((HumanPlayer)e));	// TODO
 			}
 		}
 		world.getEntityFactory().clearAddedEntities();
@@ -149,7 +153,7 @@ public class Server {
 		{
 			if (e instanceof HumanPlayer)
 			{
-//				entityUpdates.put(e.getID(), new CharacterUpdate((HumanPlayer)e));	// TODO
+				entityUpdates.put(e.getID(), new CharacterUpdate((HumanPlayer)e));	// TODO
 			}
 		}
 		
@@ -206,11 +210,10 @@ public class Server {
 		{
 			if (e instanceof HumanPlayer)
 			{
-//				gamestate.addECreate(new CharacterCreate((HumanPlayer)e));	// TODO
-//				gamestate.addEUpdate(new CharacterUpdate((HumanPlayer)e));	// TODO
+				gamestate.addECreate(new CharacterCreate((HumanPlayer)e));	// TODO
+				gamestate.addEUpdate(new CharacterUpdate((HumanPlayer)e));	// TODO
 			}
 		}
-		
 		transmit(gamestate.convertToBytes(), client.getAddress() );
 	}
 	

@@ -13,10 +13,17 @@ abstract public class EntityInfo
 	{
 		this.id = id;
 	}
+	
+	protected void toBytes(ByteBuffer buff)
+	{
+		buff.putInt(id);
+	}
+	
+	public abstract byte[] toBytes();
 }
 
 
-
+/*
 class FurnitureUpdate extends EntityUpdate
 {
 	public FurnitureUpdate(int id, ByteBuffer buff)
@@ -68,4 +75,4 @@ class ItemCreate extends EntityCreate
 		colour = buff.getInt();
 		name = Bytes.getString(buff);
 	}
-}
+}*/

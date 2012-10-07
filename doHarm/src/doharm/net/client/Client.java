@@ -39,15 +39,16 @@ public class Client {
 	
 	private int latestSeqSent;
 	
-	
 	World world;
 	
 	
 	/** Holds on to all unack'd Commands we've sent the server. */
 	private LinkedList<Command> cmdsBuffer;
 	
-	public Client(int port) throws IOException
+	public Client(int port, World world) throws IOException
 	{
+		this.world = world;
+		
 		// Setup the UDP socket.
 		udpSock = new DatagramSocket();
 		

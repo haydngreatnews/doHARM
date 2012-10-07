@@ -1,5 +1,6 @@
 package doharm.net.packets;
 
+import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
 
 /** Class containing static methods to assist in the reading of bytes. */
@@ -26,5 +27,19 @@ public class Bytes {
 		buff.put((byte) temp.length);
 		buff.put(temp);
 		return real;
+	}
+	
+	public static byte[] compress(ByteBuffer buff)
+	{
+		ByteArrayOutputStream output = new ByteArrayOutputStream();
+		output.write(buff.array(), 0, buff.position());
+		return output.toByteArray();
+		
+		/*
+		byte[] array = new byte[buff.position()];
+		ByteBuffer copy = ByteBuffer.wrap(array);
+		copy.put(buff.array(), 0, buff.position());
+		return array;
+		*/
 	}
 }
