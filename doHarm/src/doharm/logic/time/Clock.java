@@ -27,9 +27,11 @@ public class Clock extends Thread
 	{
 		while(true)
 		{
-			game.run();
+			
 			if (window != null)
-				window.repaint();
+				window.repaint(); //calls game.run();
+			else
+				game.run();
 			try 
 			{
 				Thread.sleep(CLOCK_INTERVAL);
