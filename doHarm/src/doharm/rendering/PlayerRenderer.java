@@ -97,9 +97,9 @@ public class PlayerRenderer {
 		
 		if (player.getPlayerType() == PlayerType.HUMAN)
 		{
-			
+			HumanPlayer hp = (HumanPlayer)player;
 			graphics.setColor(Color.orange);
-			Tile t = ((HumanPlayer)player).getHoverTile();
+			Tile t = hp.getHoverTile();
 			if (t != null)
 			{
 				row = t.getY()/world.getTileHeight();
@@ -108,10 +108,15 @@ public class PlayerRenderer {
 				graphics.fillOval((int)v.getX()-size.width/8, (int)v.getY()-size.height/16, size.width/4, size.height/8);
 			}
 			
+			graphics.setColor(Color.magenta.darker());
+			graphics.drawString(hp.getMouseIcon().toString(), x, y-35);
+			
+			
 		}
 		
 		
-		
+		graphics.setColor(Color.white);
+		graphics.drawString(player.getCurrentAction().toString(), x, y-15);
 		
 		
 		//graphics.fillOval(position.getXAsInt()-size.width/2, position.getYAsInt()-size.height/2, size.width, size.height/2);

@@ -2,6 +2,7 @@ package doharm.logic.entities.characters.players;
 
 import doharm.logic.entities.AbstractEntity;
 import doharm.logic.entities.EntityType;
+import doharm.logic.entities.characters.Action;
 import doharm.logic.entities.characters.Character;
 import doharm.logic.entities.inventory.DragonRadar;
 import doharm.logic.world.tiles.Tile;
@@ -16,6 +17,8 @@ public class HumanPlayer extends Player
 	private Tile hoveringTile;
 	
 	private boolean[] mouseDown;
+	private Action mouseIcon;
+	
 	
 	protected HumanPlayer() 
 	{
@@ -35,11 +38,12 @@ public class HumanPlayer extends Player
 		if (mouseDown[2])
 			middleClick();
 		
-		
+		mouseIcon = Action.IDLE;
 		//if (hoveringTile.getEnt)
 		
 		if (hoveringTile != null)
 		{
+			mouseIcon = Action.MOVE;
 			for (AbstractEntity entity: hoveringTile.getEntities())
 			{
 				if (entity.getEntityType() == EntityType.CHARACTER)
@@ -47,18 +51,18 @@ public class HumanPlayer extends Player
 					Character character = (Character)entity;
 					if (character.getAlliance() == null || character.getAlliance() != getAlliance())
 					{
-						//show attack!
+						//show attack icon!
+						mouseIcon = Action.ATTACK;
 					}
 				}
-				
-				
 			}
 		}
-		
-		
-		
 	}
-
+	
+	public Action getMouseIcon()
+	{
+		return mouseIcon;
+	}
 	
 
 	public void hover(Tile tile) 

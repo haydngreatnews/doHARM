@@ -112,7 +112,7 @@ public class WorldRenderer
 		
 		//transform.translate(v.getX(),v.getY());
 		transform.translate(-camera.getRenderPosition().getX(), -camera.getRenderPosition().getY());
-		
+		//transform.scale(0.1f,0.1f);
 		graphics.setTransform(transform);
 		pickGraphics.setTransform(transform);
 		//draw the current game, based on the camera, etc.
@@ -123,7 +123,8 @@ public class WorldRenderer
 		playerRenderer.redraw(graphics, fTileW, fTileH);
 		
 		
-		//TODO REMOVE
+		//TODO COMMENT OUT
+		//////////////////////////////////////////////////////////////////////////////////////////
 		transform.setToIdentity();
 		graphics.setTransform(transform);
 		
@@ -132,6 +133,7 @@ public class WorldRenderer
 		
 		graphics.drawImage(pickImage, 0, 0, null);
 		graphics.setComposite(old);
+		//////////////////////////////////////////////////////////////////////////////////////////
 	}
 
 	public int getPickColourAt(int mouseX, int mouseY)

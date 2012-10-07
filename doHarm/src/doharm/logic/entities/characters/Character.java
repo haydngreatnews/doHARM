@@ -17,7 +17,7 @@ import doharm.logic.world.tiles.Tile;
 
 public abstract class Character extends AbstractEntity
 {
-	private static final float MIN_DISTANCE = 2;
+	//private static final float MIN_DISTANCE = 2;
 	private String name;
 	private CharacterClass characterClass;
 
@@ -27,19 +27,21 @@ public abstract class Character extends AbstractEntity
 	private Vector goal;
 	private Vector destination;
 	
-	private float movementSpeed = 1.7f;
+	private float movementSpeed = 3f;//1.7f;
 	private float stopFriction = 0.1f;
 	
 	private float health;
 	private float mana;
 	private float rage;
 	private Alliance alliance;
+	private Action currentAction;
 	
 	
 	protected Character() 
 	{
 		super(EntityType.CHARACTER);
 		inventory = new Inventory();
+		currentAction = Action.IDLE;
 	}
 	
 	public void setCharacterClass(CharacterClassType classType)
@@ -69,14 +71,22 @@ public abstract class Character extends AbstractEntity
 		
 		float distanceToDestination = direction.getLength();
 		
-		if (distanceToDestination < MIN_DISTANCE)
+		
+		if (!path.isEmpty())
+		{
+			currentAction = Action.MOVING;
+		}
+		else if (currentAction == Action.MOVING)
+			currentAction = Action.IDLE;
+		
+		if (distanceToDestination < movementSpeed)
 		{
 			if (!path.isEmpty())
 				nextNodeInPath();
 		}
 		
 		
-		if (distanceToDestination > MIN_DISTANCE)
+		if (distanceToDestination > movementSpeed)
 		{
 			direction.multiply(1, 2);
 			direction.normalize();
@@ -90,6 +100,11 @@ public abstract class Character extends AbstractEntity
 		
 		setVelocity(velocity);
 		super.move();
+	}
+	
+	public Action getCurrentAction()
+	{
+		return currentAction;
 	}
 
 	public void setName(String name) 
@@ -174,6 +189,10 @@ public abstract class Character extends AbstractEntity
 	{
 		return health;
 	}
+	public void setHealth(float health)
+	{
+		this.health = health;
+	}
 	
 	public float getHealthRatio() 
 	{
@@ -188,18 +207,32 @@ public abstract class Character extends AbstractEntity
 	public float getRage() {
 		return rage;
 	}
+	public void setRage(float rage)
+	{
+		this.rage = rage;
+	}
 	
 	public float getMana() {
 		return mana;
+	}
+	public void setMana(float mana)
+	{
+		this.mana = mana;
 	}
 	
 	public void attack(AbstractEntity e)
 	{
 		//getW
+		currentAction = Action.ATTACK;
 	}
 
 	public Alliance getAlliance() {
 		return alliance;
+	}
+	
+	public void setAlliance(Alliance alliance)
+	{
+		this.alliance = alliance;
 	}
 	
 	

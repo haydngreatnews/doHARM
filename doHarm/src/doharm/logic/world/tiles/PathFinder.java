@@ -18,43 +18,13 @@ public class PathFinder
 	 */
 	public static Stack<Tile> calculatePath(World world, Tile start, Tile goal) 
 	{
-		if (start == null || goal == null)
+		if (start == null || goal == null || goal == start)
 		{
 			return null;
 		}
 		
 		world.resetTiles(goal);
-		/*if (!goal.isWalkable())
-		{
-			int tries = 0;
-			//find closest walkable tile
-			Queue<Tile> possibilities = new LinkedList<Tile>();
-			
-			possibilities.offer(goal);
-			
-			int maxTries = 100;
-			while(tries < maxTries)
-			{
-				Tile possibility = possibilities.poll();
-				
-				if (possibility.isWalkable())
-				{
-					goal = possibility;
-					break;
-				}
-				
-				for (Tile neighbour: possibility.getNeighbours())	
-					possibilities.offer(neighbour);
-				
-				
-				tries++;
-			}
-			
 		
-			
-			if (!goal.isWalkable())
-				return null;
-		}*/
 		
 		
 		//calculate path...
@@ -66,8 +36,10 @@ public class PathFinder
 
 		//boolean foundGoal = false;
 		//System.out.println("Goal: " + goal.getRow() +","+goal.getCol());
-		while (!queue.isEmpty())
+		int numTries = 0;
+		while (!queue.isEmpty() && numTries < 10000)
 		{
+			numTries++;
 			Tile node = queue.poll();
 			//System.out.println("Current: " + node.getRow()+","+node.getCol());
 			
@@ -82,6 +54,12 @@ public class PathFinder
 			if (node == goal)
 			{
 				path.clear();
+				
+				
+				if (!goal.isEmpty())
+				{
+					node = node.getParent();
+				}
 				
 				//foundGoal = true;
 				while (node != start)
@@ -100,7 +78,7 @@ public class PathFinder
 			for (Tile neighbour: node.getNeighbours())
 			{
 				
-				if (!neighbour.isVisited() && neighbour.isWalkable())// && !neighbour.isNextToWall())
+				if (!neighbour.isVisited() && neighbour.isWalkable() && (neighbour.isEmpty()||neighbour == goal))// && !neighbour.isNextToWall())
 				{
 					
 					

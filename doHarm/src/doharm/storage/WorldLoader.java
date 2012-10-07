@@ -20,15 +20,43 @@ public class WorldLoader
 	public WorldLoader(String worldDirectory) throws IOException
 	{
 		Scanner scanner = new Scanner(new File("res/worlds/"+worldDirectory+"/world.txt"));
+		
+		boolean generate = false;
+		
+		
 		numTilesX = scanner.nextInt();
 		numTilesY = scanner.nextInt();
 		String tileset = scanner.next();
 		
+		
+		if (generate)
+		{
+			numTilesX = 20;
+			numTilesY = 20;
+			
+			
+		}
+		
+		
+		
 		this.worldDirectory = worldDirectory;
 		layers = new ArrayList<LayerData>();
-		while (scanner.hasNext())
+		
+		if (!generate)
 		{
-			layers.add(new LayerData(this, scanner.next()));
+			while (scanner.hasNext())
+			{
+				layers.add(new LayerData(this, scanner.next()));
+			}
+		}
+		else
+		{
+			int numLayers = 10;
+			for (int layer = 0; layer < numLayers; layer++)
+			{
+				layers.add(new LayerData(this,layer));
+			}
+			
 		}
 		
 		tilesetLoader = new TilesetLoader(tileset);

@@ -60,7 +60,8 @@ public class Tile implements Comparable<Tile>
 
 		Color color = new Color(red,green,blue);
 		
-		this.pickImage = RenderUtil.generateIsoImage(color, width,height);
+		if (isWalkable())
+			this.pickImage = RenderUtil.generateIsoImage(color, width,height);
 		
 		switchImageTimer = floorData.getNumFramesPerImage();
 		neighbours = new ArrayList<Tile>();
@@ -249,6 +250,22 @@ public class Tile implements Comparable<Tile>
 		return entities;
 	}
 
+
+	public boolean isEmpty() 
+	{
+		return entities.isEmpty();
+	}
+
+
+	public void removeEntity(AbstractEntity entity) 
+	{
+		entities.remove(entity);
+	}
+
+	public void addEntity(AbstractEntity entity) 
+	{
+		entities.add(entity);
+	}
 	
 
 	

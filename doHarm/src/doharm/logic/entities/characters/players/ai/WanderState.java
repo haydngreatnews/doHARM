@@ -11,8 +11,8 @@ public class WanderState implements AIState
 		if (player.getPath().isEmpty())
 		{
 			
-			
-			//player.moveTo(goal);
+			if (Math.random() > 0.998f)
+				player.moveTo(player.getWorld().getRandomEmptyTile());
 			
 			
 		}

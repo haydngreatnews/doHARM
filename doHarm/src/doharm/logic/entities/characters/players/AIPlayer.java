@@ -21,6 +21,7 @@ public class AIPlayer extends Player
 	public void move()
 	{
 		super.move();
+		state.process(this);
 	}
 	
 }

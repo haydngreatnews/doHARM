@@ -37,22 +37,47 @@ public abstract class AbstractEntity
 	{
 		this.entityType = entityType;
 		size = new Dimension(32,32); //hmm..	
+		reset();
 	}
 	
+	private void reset() 
+	{
+		position = new Vector();
+		velocity = new Vector();
+		angle = 0;
+	}
+
 	public void spawn(Tile spawnTile)
 	{
-		this.currentTile = spawnTile;
-		currentLayer = currentTile.getLayer();
-		position = new Vector(spawnTile.getX(), spawnTile.getY());
+		reset();
+		setPosition(spawnTile.getX(),spawnTile.getY(), spawnTile.getLayer());
 		
 		
-		velocity = new Vector();
+		
+		
 		angle = 0;
 		
 	}
 	
 	
 	
+	public void setPosition(float x, float y, Layer layer) 
+	{
+		position.set(x, y);
+		currentLayer = layer;
+		Tile tile = currentLayer.getTileAt(position.getX(), position.getY());
+		
+		if (currentTile == tile || tile == null)
+			return;
+		
+		if (currentTile != null)
+			currentTile.removeEntity(this);
+		
+		this.currentTile = tile;
+		currentLayer = currentTile.getLayer();
+		currentTile.addEntity(this);
+	}
+
 	public World getWorld()
 	{
 		return world;
@@ -95,6 +120,10 @@ public abstract class AbstractEntity
 	{
 		return angle;
 	}
+	public void setAngle(float angle)
+	{
+		this.angle = angle;
+	}
 	
 	
 	
@@ -106,8 +135,8 @@ public abstract class AbstractEntity
 		//Tile newTile = currentLayer.getTileAt(position.getX()+velocity.getX(),position.getY()+velocity.getY());
 
 
-		currentTile = currentLayer.getTileAt(position.getX(), position.getY());
-		currentLayer = currentTile.getLayer();
+		
+		setPosition(position.getX(), position.getY(), currentTile.getLayer());
 		
 		
 		checkCollisions();
@@ -146,6 +175,8 @@ public abstract class AbstractEntity
 	{
 		return entityType;
 	}
+	
+	
 	
 	
 }

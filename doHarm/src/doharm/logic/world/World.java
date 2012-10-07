@@ -303,4 +303,18 @@ public class World
 		int rgb = (colour.getRed() << 16 ) | (colour.getGreen()<<8) | colour.getBlue();
 		return rgb;
 	}
+
+	public Tile getRandomEmptyTile() 
+	{
+		while(true)
+		{
+			int layer = (int) (Math.random()*layers.length);
+			int row = (int) (Math.random()*numRows);
+			int col = (int) (Math.random()*numCols);
+			
+			Tile tile = layers[layer].getTiles()[row][col];
+			if (tile.isWalkable() && tile.isEmpty())
+				return tile;
+		}
+	}
 }
