@@ -7,6 +7,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
+import doharm.net.packets.entityinfo.EntityCreate;
+import doharm.net.packets.entityinfo.EntityUpdate;
+
 /** Struct representing a Server Snapshot, which is then converted into a packet to send over the wire. */
 public class Snapshot {
 

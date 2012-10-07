@@ -4,16 +4,26 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
+import doharm.logic.entities.characters.players.HumanPlayer;
+
 /** Struct representing a Client Command, which is then converted into a packet to send over the wire. */
 public class Command {
 
 	public int seqNum;	// Number of times we've sent a packet with this serverTimeAck already.
 	public final int serverTimeAckd;
 	
-	public Command(int seq, int time)
+	public final float posX, posY, angle;
+	public final int layer;
+	
+	public Command(int seq, int time, HumanPlayer player)
 	{
 		seqNum = seq;
 		serverTimeAckd = time;
+		
+		posX = player.getPosition().getX();
+		posY = player.getPosition().getY();
+		layer = player.getCurrentLayer().getLayerNumber();
+		angle = player.getAngle();
 	}
 	
 	public Command(byte[] packet)
@@ -24,6 +34,11 @@ public class Command {
 		
 		seqNum = buff.getInt();
 		serverTimeAckd = buff.getInt();
+		
+		posX = buff.getFloat();
+		posY = buff.getFloat();
+		layer = buff.getInt();
+		angle = buff.getFloat();
 	}
 	
 	/**
@@ -34,19 +49,22 @@ public class Command {
 	public byte[] convertToBytes()
 	{
 		ByteArrayOutputStream buff = new ByteArrayOutputStream();
+		
+		try {
 		// Packet type
 		buff.write((byte) ClientPacket.COMMAND.ordinal());		// Need the byte cast otherwise it'll write it as a 4-byte int
 		// SeqNum
-		try { buff.write(ByteBuffer.allocate(4).putInt(seqNum).array()); }
-		catch (IOException e) {	e.printStackTrace(); }
+		 buff.write(ByteBuffer.allocate(4).putInt(seqNum).array()); 
 		// ServertimeAckd
-		try { buff.write(ByteBuffer.allocate(4).putInt(serverTimeAckd).array()); }
-		catch (IOException e) {	e.printStackTrace(); }
+		buff.write(ByteBuffer.allocate(4).putInt(serverTimeAckd).array());
 		
 		// my desired viewing direction
 		// my desired movement
 		// my selected weapon
 		// my commands
+		
+		
+		} catch (IOException e) {	e.printStackTrace(); }
 		
 		return buff.toByteArray();
 	}

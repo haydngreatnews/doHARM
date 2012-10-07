@@ -6,14 +6,25 @@ import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.net.SocketException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import doharm.logic.entities.AbstractEntity;
+import doharm.logic.entities.EntityFactory;
+import doharm.logic.entities.characters.classes.CharacterClassType;
+import doharm.logic.entities.characters.players.PlayerType;
+import doharm.logic.world.World;
 import doharm.net.ClientState;
 import doharm.net.UDPReceiver;
 import doharm.net.packets.Command;
 import doharm.net.packets.ServerPacket;
 import doharm.net.packets.Snapshot;
+import doharm.net.packets.entityinfo.CharacterCreate;
+import doharm.net.packets.entityinfo.CharacterUpdate;
+import doharm.net.packets.entityinfo.EntityCreate;
+import doharm.net.packets.entityinfo.EntityUpdate;
 
 public class Client {
 	
@@ -27,6 +38,10 @@ public class Client {
 	private Snapshot snapCurrent, snapNext;
 	
 	private int latestSeqSent;
+	
+	
+	World world;
+	
 	
 	/** Holds on to all unack'd Commands we've sent the server. */
 	private LinkedList<Command> cmdsBuffer;
@@ -122,7 +137,7 @@ public class Client {
 		while (cmdsBuffer.peek().seqNum <= snapNext.seqAckd)
 			cmdsBuffer.poll();
 		
-		Command cmd = new Command(++latestSeqSent, snapNext.serverTime);
+		Command cmd = new Command(++latestSeqSent, snapNext.serverTime, world.getHumanPlayer() );
 		
 		// TODO
 		
@@ -165,15 +180,83 @@ public class Client {
 			// process incoming packets
 			processIncomingPackets();
 			
-			// perform client-side game logics
-			
-			// render
-			
-			// create then send command packet
-			dispatchCommand();
-			
-			// wait for next tick
+			if (state == ClientState.INGAME)
+			{
+				// update gamestate based on snapshots
+				updateWorld();
+				
+				// perform client-side game logics
+				
+				// render
+				
+				// create then send command packet
+				dispatchCommand();
+				
+				// wait for next tick
+			}
+			else
+			{
+				
+				
+				try {Thread.sleep(100);} catch (InterruptedException e) {e.printStackTrace();}
+			}
 		}
+	}
+	
+	private void begin()
+	{
+		// load up static world 
+		
+		// 
+	}
+	
+	private void updateWorld()
+	{	
+		EntityFactory ents = world.getEntityFactory();
+		
+		for (int i : snapNext.getEDeletes())
+		{
+			// skip if we've already deleted this entity (since the server will keep sending us the delete until our ack reaches them)
+			AbstractEntity e = ents.getEntity(i);
+			if (e == null)
+				continue;
+			
+			ents.removeEntity(e);
+		}
+		
+		for (EntityCreate c : snapNext.getECreates().values())
+		{
+			// skip if we've already created this entity (since the server will keep sending us the create until our ack reaches them)
+			AbstractEntity e = ents.getEntity(c.id);
+			if (e != null)
+				continue;
+			
+			if (c instanceof CharacterCreate)
+			{
+				CharacterCreate cc = (CharacterCreate) c;
+				AbstractEntity newEnt = world.getPlayerFactory().createPlayer(world.getLayers()[0].getTiles()[5][5],cc.name,CharacterClassType.WARRIOR, 0,PlayerType.HUMAN, true);
+				ents.addEntity(newEnt, c.id, true);
+			}
+		}
+		
+		for (EntityUpdate u : snapNext.getEUpdates().values())
+		{
+			AbstractEntity e = ents.getEntity(u.id);
+			if (e == null)
+				continue;
+			
+			if (u instanceof CharacterUpdate)
+			{
+				CharacterUpdate cu = (CharacterUpdate) u;
+				
+				if (u.id == world.getHumanPlayer().getID())		// if this is our player, don't bother with it (for now. TODO)
+					break;					
+				
+				e.setPosition(cu.posX, cu.posY, world.getLayer(cu.layer));
+				e.setAngle(cu.angle);
+			}
+		}
+		
 	}
 
 }

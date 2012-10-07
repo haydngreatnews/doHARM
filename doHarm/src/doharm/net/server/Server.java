@@ -9,12 +9,19 @@ import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import doharm.logic.entities.AbstractEntity;
+import doharm.logic.entities.characters.players.HumanPlayer;
+import doharm.logic.world.World;
 import doharm.net.ClientState;
 import doharm.net.UDPReceiver;
 import doharm.net.packets.ClientPacket;
-import doharm.net.packets.EntityInfo;
 import doharm.net.packets.ServerPacket;
 import doharm.net.packets.Snapshot;
+import doharm.net.packets.entityinfo.CharacterCreate;
+import doharm.net.packets.entityinfo.CharacterUpdate;
+import doharm.net.packets.entityinfo.EntityCreate;
+import doharm.net.packets.entityinfo.EntityInfo;
+import doharm.net.packets.entityinfo.EntityUpdate;
 
 public class Server {
 
@@ -23,6 +30,8 @@ public class Server {
 	private UDPReceiver receiver;
 	private DatagramSocket udpSock;
 	private int serverTime;
+	
+	private World world;
 	
 	public Server(int port) throws IOException
 	{
@@ -66,7 +75,7 @@ public class Server {
 				else
 				{
 					// Reject, inform them so.
-					byte[] response = new byte[1];
+					byte[] response = new byte[2];
 					response[0] = (byte) ServerPacket.RESPONSE.ordinal();
 					response[1] = 1;	// 1 = NO at this point in time.
 					transmit(response, packet.getSocketAddress());
@@ -119,11 +128,35 @@ public class Server {
 	 */
 	private void dispatchSnapshots()
 	{	
+		HashMap<Integer,EntityUpdate> entityUpdates = new HashMap<Integer,EntityUpdate>();
+		HashMap<Integer,EntityCreate> entityCreates = new HashMap<Integer,EntityCreate>();
+		ArrayList<Integer> entityDeletes = new ArrayList<Integer>();
+		
 		// get game changes.
 		
-//		HashMap<Integer,EntityUpdate> entityUpdates = new HashMap<Integer,EntityUpdate>();
-//		HashMap<Integer,EntityCreate> entityCreates = new HashMap<Integer,EntityCreate>();
-		ArrayList<Integer> entityDeletes = new ArrayList<Integer>();
+		// Created Entities.
+		for (AbstractEntity e : world.getEntityFactory().getAddedEntities() )
+		{
+			if (e instanceof HumanPlayer)
+			{
+//				entityCreates.put(e.getID(), new CharacterCreate((HumanPlayer)e));	// TODO
+			}
+		}
+		world.getEntityFactory().clearAddedEntities();
+		
+		// Updated Entities (presently is just ALL entities)
+		for (AbstractEntity e : world.getEntityFactory().getEntities() )
+		{
+			if (e instanceof HumanPlayer)
+			{
+//				entityUpdates.put(e.getID(), new CharacterUpdate((HumanPlayer)e));	// TODO
+			}
+		}
+		
+		// Removed Entities.
+		for (AbstractEntity e : world.getEntityFactory().getRemovedEntities() )
+			entityDeletes.add(e.getID());
+		world.getEntityFactory().clearRemovedEntities();
 		
 		
 		for (ConnectedClient c : clients)
@@ -141,17 +174,17 @@ public class Server {
 					snap.addEDelete(eID);
 				}
 				
-//				for (int eID : entityCreates.keySet())
-//				{
-//					// if (relavent)
-//					snap.addECreate(entityCreates.get(eID));
-//				}
-//				
-//				for (int eID : entityUpdates.keySet())
-//				{
-//					// if (relavent)
-//					snap.addEUpdate(entityUpdates.get(eID));
-//				}
+				for (int eID : entityCreates.keySet())
+				{
+					// if (relavent)
+					snap.addECreate(entityCreates.get(eID));
+				}
+				
+				for (int eID : entityUpdates.keySet())
+				{
+					// if (relavent)
+					snap.addEUpdate(entityUpdates.get(eID));
+				}
 				
 				// add snapshot to client
 				c.addSnapshot(snap);
@@ -159,6 +192,26 @@ public class Server {
 				transmit( c.buildTransmissionSnapshot().convertToBytes() , c.getAddress() );
 			}
 		}
+	}
+	
+	/**
+	 * Sends out a "Gamestate" snapshot, it contains all the information.
+	 * @param client
+	 */
+	private void sendGamestate(ConnectedClient client)
+	{
+		Snapshot gamestate = new Snapshot(serverTime, -1);
+		
+		for (AbstractEntity e : world.getEntityFactory().getEntities() )
+		{
+			if (e instanceof HumanPlayer)
+			{
+//				gamestate.addECreate(new CharacterCreate((HumanPlayer)e));	// TODO
+//				gamestate.addEUpdate(new CharacterUpdate((HumanPlayer)e));	// TODO
+			}
+		}
+		
+		transmit(gamestate.convertToBytes(), client.getAddress() );
 	}
 	
 	
