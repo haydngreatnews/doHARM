@@ -41,7 +41,7 @@ public class MainWindow{
 		canvas.add(tp, BorderLayout.EAST);
 		mouseManager = new MouseManager(game,renderer);
 
-		keyboardManager = new KeyboardManager(this);
+		keyboardManager = new KeyboardManager(this,game.getCamera());
 		
 		
 		this.game = game;

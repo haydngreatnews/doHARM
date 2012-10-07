@@ -12,6 +12,7 @@ public class Camera
 	public Dimension canvasDimensions;
 	private int tileWidth;
 	private int tileHeight;
+	private Direction direction;
 	
 	public Camera(int tileWidth, int tileHeight)
 	{
@@ -19,6 +20,7 @@ public class Camera
 		renderPosition = new Vector();
 		this.tileWidth = tileWidth;
 		this.tileHeight = tileHeight;
+		direction = Direction.NORTH;
 	}
 	
 	public void setCanvasDimensions(Dimension dimension)
@@ -58,5 +60,24 @@ public class Camera
 		renderPosition.addX(-canvasDimensions.width/2);
 		renderPosition.addY(-canvasDimensions.height/2);
 		return renderPosition;
+	}
+
+	public void turnLeft() 
+	{
+		int next = direction.ordinal()-1;
+		if (next < 0)
+			next = Direction.values().length-1;
+		direction = Direction.values()[next];
+	}
+	
+	public void turnRight() 
+	{
+		int next = (direction.ordinal()+1)%Direction.values().length;
+		direction = Direction.values()[next];
+	}
+	
+	public Direction getDirection()
+	{
+		return direction;
 	}
 }

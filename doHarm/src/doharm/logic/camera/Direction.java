@@ -2,8 +2,9 @@ package doharm.logic.camera;
 
 public enum Direction 
 {
+	//NOTE: Keep clockwise order!
 	NORTH,
-	SOUTH,
 	EAST,
+	SOUTH,
 	WEST;
 }
