@@ -32,8 +32,6 @@ public class MainWindow {
 	private EjectorQueue<String> messages;
 
 	public MainWindow(Game game) {
-		// TODO window close
-
 		WorldRenderer renderer = new WorldRenderer(game);
 		canvas = new WorldCanvas(game, renderer);
 		textPane = new JTextPane();
@@ -41,7 +39,7 @@ public class MainWindow {
 		textPane.setOpaque(false);
 		textPane.setFocusable(false);
 		messages = new EjectorQueue<String>(10);
-		canvas.setLayout(new MigLayout("fill"));
+		canvas.setLayout(new MigLayout("fill, nogrid"));
 		canvas.add(textPane, "y container.h-200, x 70%, w 30%");
 		canvas.add(new HealthBar(), "y 5, x container.w/2-50");
 		mouseManager = new MouseManager(game, renderer);
@@ -66,14 +64,10 @@ public class MainWindow {
 			frame.setBounds(0, 0, 800, 600);
 			state = MINIMIZED;
 		}
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // TODO change to
-																// window
-																// listener and
-																// handle exit
-																// confirmation
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		addListeners();
+		frame.addKeyListener(keyboardManager);
 		frame.setVisible(true);
-
 	}
 
 	public void toggleMenu() {
@@ -87,7 +81,7 @@ public class MainWindow {
 			canvas.addKeyListener(keyboardManager);
 			canvas.addMouseListener(mouseManager);
 		} else {
-			canvas.add(menu, BorderLayout.CENTER);
+			canvas.add(menu, "align 50% 50%");
 			menu.requestFocusInWindow();
 			menu.addKeyListener(keyboardManager);
 			canvas.removeMouseListener(mouseManager);
@@ -108,7 +102,6 @@ public class MainWindow {
 
 	public void repaint() {
 		frame.repaint();
-		// System.out.println(frame.getFocusOwner());
 	}
 
 	public void addMessage(String text) {
