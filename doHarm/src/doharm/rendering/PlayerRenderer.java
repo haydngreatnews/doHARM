@@ -57,11 +57,10 @@ public class PlayerRenderer {
 			throw new UnsupportedOperationException(player.getPlayerType() + " not implemented");
 		
 		
-		//TODO
+
 		Vector v = RenderUtil.convertCoordsToIso(col, row, player.getCurrentLayer().getLayerNumber());
 		
-		//float x = (-(row*(imgIsoW/2-1)))+(col*(imgIsoW/2-1));
-		//float y = (row*(imgIsoH/2-1))+(col*(imgIsoH/2-1))-(layer.getLayerNumber()*imgIsoH);
+	
 		
 		int x = (int)v.getX()-size.width/2;
 		int y = (int)v.getY()-size.height/4;
@@ -95,8 +94,7 @@ public class PlayerRenderer {
 		graphics.fillOval((int)v.getX()-size.width/8, (int)v.getY()-size.height/16, size.width/4, size.height/8);
 		
 		
-		if (player.getPlayerType() == PlayerType.HUMAN)
-		{
+		if (player.getPlayerType() == PlayerType.HUMAN){
 			HumanPlayer hp = (HumanPlayer)player;
 			graphics.setColor(Color.orange);
 			Tile t = hp.getHoverTile();
@@ -119,7 +117,14 @@ public class PlayerRenderer {
 		graphics.drawString(player.getCurrentAction().toString(), x, y-15);
 		
 		
-		//graphics.fillOval(position.getXAsInt()-size.width/2, position.getYAsInt()-size.height/2, size.width, size.height/2);
+		
+	}
+
+	public void redrawPlayer(Player player, Graphics2D graphics, int fTileW,
+			int wTileH) {
+		// TODO Auto-generated method stub
+		drawPlayer(player,graphics, fTileW, wTileH);
+		
 	}
 
 }

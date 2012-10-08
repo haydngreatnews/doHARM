@@ -27,7 +27,6 @@ public class MenuButtonListener implements ActionListener {
 		if (e.getSource() instanceof PictureButton){
 			action = ((PictureButton)e.getSource()).getName();
 		}
-		System.out.println(action);
 		if (action.equals("runserver")){
 			//TODO:Start a server
 		} else if (action.equals("join")){

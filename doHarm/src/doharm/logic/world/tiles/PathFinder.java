@@ -81,12 +81,16 @@ public class PathFinder
 				if (!neighbour.isVisited() && neighbour.isWalkable() && (neighbour.isEmpty()||neighbour == goal))// && !neighbour.isNextToWall())
 				{
 					
+					float pathLength = node.getPathLength() + node.distanceToTile(neighbour);
 					
+					if (neighbour.getPathLength() == 0 || pathLength < neighbour.getPathLength())
+					{
 					
-					neighbour.setParent(node);
+						neighbour.setParent(node);
 					
-					neighbour.setPathLength(node.getPathLength() + node.distanceToTile(neighbour));
-					queue.offer(neighbour);
+						neighbour.setPathLength(node.getPathLength() + node.distanceToTile(neighbour));
+						queue.offer(neighbour);
+					}
 				}
 			}
 			
