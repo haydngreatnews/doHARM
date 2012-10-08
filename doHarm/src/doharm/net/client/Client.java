@@ -3,6 +3,7 @@ package doharm.net.client;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.net.SocketException;
@@ -31,7 +32,7 @@ public class Client {
 	private UDPReceiver receiver;
 	private DatagramSocket udpSock;
 	
-	private SocketAddress serverAddress;
+	private InetSocketAddress serverAddress;
 	
 	private ClientState state;
 	
@@ -43,16 +44,18 @@ public class Client {
 	
 	
 	/** Holds on to all unack'd Commands we've sent the server. */
-	private LinkedList<Command> cmdsBuffer;
+	private LinkedList<Command> cmdsBuffer = new LinkedList<Command>();
 	
 	public Client(int port, World world) throws IOException
 	{
 		this.world = world;
 		
 		// Setup the UDP socket.
-		udpSock = new DatagramSocket();
+		udpSock = new DatagramSocket(null);
 		
-		InetSocketAddress address = new InetSocketAddress(port);
+		serverAddress = new InetSocketAddress(InetAddress.getByName("localhost"),port);
+		
+		InetSocketAddress address = new InetSocketAddress(0);
 		 
 		udpSock.bind(address);
 		
@@ -70,7 +73,7 @@ public class Client {
 			DatagramPacket packet = receiver.poll();
 			
 			// If the packet isn't from the game server we are connected/talking to, discard.
-			if (packet.getSocketAddress() != serverAddress)
+			if (!packet.getSocketAddress().equals(serverAddress))	// TODO Potentially doesn't work, may need to getAddress, then comapre by IP and port seperately. or something.
 				continue;
 			
 			byte[] data = packet.getData();
@@ -117,7 +120,7 @@ public class Client {
 		int timestamp = Snapshot.getTimestamp(data);
 		
 		// If this packet isn't more recent than the latest snapshot we've received, discard.
-		if ( timestamp <= snapNext.serverTime )
+		if ( snapNext != null && timestamp <= snapNext.serverTime )
 			return;
 		
 		snapNext = new Snapshot(data);
@@ -135,10 +138,17 @@ public class Client {
 	public void dispatchCommand()
 	{
 		// Remove all acknowledged commands from the Command buffer.
-		while (cmdsBuffer.peek().seqNum <= snapNext.seqAckd)
+		while (!cmdsBuffer.isEmpty() && cmdsBuffer.peek().seqNum <= snapNext.seqAckd)
 			cmdsBuffer.poll();
 		
-		Command cmd = new Command(++latestSeqSent, snapNext.serverTime, world.getHumanPlayer() );
+		
+		int time;
+		if (snapNext != null)
+			time = snapNext.serverTime;
+		else
+			time = 0;
+		
+		Command cmd = new Command(++latestSeqSent, time, world.getHumanPlayer() );
 		
 		// TODO
 		
@@ -151,10 +161,10 @@ public class Client {
 	 * @param address IP and Port to send to.
 	 * @return
 	 */
-	public boolean transmit(byte[] data, SocketAddress address)
+	public boolean transmit(byte[] data, InetSocketAddress address)
 	{
 		try {
-			udpSock.send(new DatagramPacket(data, data.length, address));
+			udpSock.send(new DatagramPacket(data, data.length, address.getAddress(), address.getPort()));
 			return true;
 		}
 		catch (SocketException e) { e.printStackTrace(); }
@@ -256,6 +266,11 @@ public class Client {
 				e.setPosition(cu.posX, cu.posY, world.getLayer(cu.layer));
 				e.setAngle(cu.angle);
 			}
+		}
+		
+		if (world.getHumanPlayer() == null)
+		{
+			//world.setHumanPlayer((HumanPlayer) world.getPlayerFactory().getEntity(GAMESTATE_ID));
 		}
 		
 	}
