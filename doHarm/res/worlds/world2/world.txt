@@ -1,0 +1,6 @@
+80
+80
+tileset_new_format.txt
+ground.txt
+walls.txt
+
