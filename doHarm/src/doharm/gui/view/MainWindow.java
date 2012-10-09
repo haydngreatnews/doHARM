@@ -3,6 +3,9 @@ package doharm.gui.view;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.swing.JFrame;
 import javax.swing.JTextPane;
@@ -47,6 +50,7 @@ public class MainWindow {
 		this.game = game;
 		state = MAXIMIZED;
 		toggleSize();
+		addMessage("Welcome to the game");
 	}
 
 	public void toggleSize() {
@@ -103,11 +107,14 @@ public class MainWindow {
 	public void repaint() {
 		frame.repaint();
 	}
+	
+	private DateFormat dateFormat = new SimpleDateFormat("[HH:MM]");
 
 	public void addMessage(String text) {
+		text = dateFormat.format(new Date()) + text;
 		messages.offer(text);
 		StringBuilder sb = new StringBuilder();
-		sb.append("<div style=\"font-family:sans-serif; font-weight:bold\">");
+		sb.append("<div style=\"font-family:sans-serif; color:#00CC00\">");
 		for (String s : messages) {
 			sb.append(s);
 		}
