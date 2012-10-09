@@ -11,6 +11,7 @@ import javax.swing.JFrame;
 import javax.swing.JTextPane;
 
 import net.miginfocom.swing.MigLayout;
+import doharm.gui.decorations.HealthBar;
 import doharm.gui.extras.EjectorQueue;
 import doharm.gui.input.KeyboardManager;
 import doharm.gui.input.MenuButtonListener;
@@ -44,7 +45,7 @@ public class MainWindow {
 		messages = new EjectorQueue<String>(10);
 		canvas.setLayout(new MigLayout("fill, nogrid"));
 		canvas.add(textPane, "y container.h-200, x 70%, w 30%");
-		canvas.add(new HealthBar(), "y 5, x container.w/2-50");
+		canvas.add(new HealthBar(game.getWorld().getHumanPlayer()), "y 5, x container.w/2-50");
 		mouseManager = new MouseManager(game, renderer);
 		keyboardManager = new KeyboardManager(this,game.getCamera());
 		this.game = game;
