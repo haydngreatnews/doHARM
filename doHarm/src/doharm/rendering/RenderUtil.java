@@ -67,7 +67,7 @@ public class RenderUtil {
 		Graphics2D g = (Graphics2D)img.getGraphics();
 		g.setColor(c);
 		int lineLength = 2;
-		int x = width/2;
+		int x = width/2-1;
 		for(int row = 0; row < height/2; row++){
 
 			g.drawLine(x, row, x+lineLength, row);
