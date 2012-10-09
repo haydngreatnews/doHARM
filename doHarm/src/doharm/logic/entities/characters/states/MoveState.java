@@ -14,15 +14,23 @@ public class MoveState extends CharacterState
 	private Stack<Tile> path;
 	private Tile destination;	
 	private Vector nextNodeInPath;
+	private boolean switchStateAtGoal;
 	private static final float MIN_NODE_DISTANCE = 10;
-	private static final float MIN_DESTINATION_DISTANCE = 2;
+	private static final float MIN_DESTINATION_DISTANCE = 1;
 	
-	public MoveState(Tile destination) 
+	public MoveState(Tile destination, boolean switchStateAtGoal) 
 	{
 		super(CharacterStateType.MOVE);
-		this.destination = destination;
+		setDestination(destination);
+		this.switchStateAtGoal = switchStateAtGoal;
 		path = new Stack<Tile>();
 		nextNodeInPath = new Vector();
+		
+	}
+
+	void setDestination(Tile destination) 
+	{
+		this.destination = destination;
 	}
 
 	@Override
@@ -41,7 +49,8 @@ public class MoveState extends CharacterState
 		
 		if (path == null || path.isEmpty() || distanceToDestination < MIN_DESTINATION_DISTANCE)
 		{
-			character.setState(new IdleState());
+			if(switchStateAtGoal)
+				character.setState(new IdleState());
 			return;
 		}
 		

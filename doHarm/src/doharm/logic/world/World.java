@@ -4,9 +4,12 @@ import java.awt.Color;
 import java.io.IOException;
 
 import doharm.logic.camera.Camera;
+import doharm.logic.entities.AbstractEntity;
 import doharm.logic.entities.EntityFactory;
+import doharm.logic.entities.EntityType;
 import doharm.logic.entities.IDManager;
 import doharm.logic.entities.characters.classes.CharacterClassType;
+import doharm.logic.entities.characters.Character;
 import doharm.logic.entities.characters.players.HumanPlayer;
 import doharm.logic.entities.characters.players.Player;
 import doharm.logic.entities.characters.players.PlayerFactory;
@@ -138,6 +141,7 @@ public class World
 		TilesetLoader tilesetLoader = worldLoader.getTilesetLoader();
 		WallTileData tempWallData = tilesetLoader.getWallTileData(0);
 		
+		Tile[][] prevTiles = null;
 		for (Layer layer: layers)
 		{
 			Tile[][] tiles = layer.getTiles();
@@ -145,6 +149,11 @@ public class World
 			{
 				for (int col = 0; col < tiles[0].length; col++)
 				{
+					if (prevTiles != null)
+					{
+						prevTiles[row][col].setRoof(tiles[row][col]);
+					}
+					
 					for (int x = -1; x <= 1; x++)
 					{
 						for (int y = -1; y <= 1; y++)
@@ -178,7 +187,7 @@ public class World
 			}
 			
 			
-			
+			prevTiles = tiles;
 			
 		}
 	}
@@ -187,11 +196,24 @@ public class World
 	{
 		time.process();
 		weather.process();
+		respawnEntities();
 		moveEntities();
 		setCamera();
 	}
 	
 	
+
+	private void respawnEntities() 
+	{
+		for (AbstractEntity e: entityFactory.getEntities())
+		{
+			if (!e.isAlive() && e.getEntityType() == EntityType.CHARACTER)
+			{
+				Character character = (Character)e;
+				character.tryRespawn();
+			}
+		}
+	}
 
 	private void moveEntities() 
 	{

@@ -3,6 +3,7 @@ package doharm.logic.entities.characters.players;
 import doharm.logic.entities.AbstractEntity;
 import doharm.logic.entities.EntityType;
 import doharm.logic.entities.characters.Character;
+import doharm.logic.entities.characters.states.AttackState;
 import doharm.logic.entities.characters.states.CharacterStateType;
 import doharm.logic.entities.characters.states.MoveState;
 import doharm.logic.entities.inventory.DragonRadar;
@@ -19,6 +20,7 @@ public class HumanPlayer extends Player
 	
 	private boolean[] mouseDown;
 	private CharacterStateType mouseIcon;
+	private AbstractEntity hoverEntity; //the entity we are hovering over with the mouse
 
 
 	
@@ -35,12 +37,7 @@ public class HumanPlayer extends Player
 	{
 		super.move();
 		
-		if (mouseDown[0])
-			leftClick();
-		if (mouseDown[1])
-			rightClick();
-		if (mouseDown[2])
-			middleClick();
+		
 		
 		mouseIcon = CharacterStateType.IDLE;
 		//if (hoveringTile.getEnt)
@@ -49,36 +46,54 @@ public class HumanPlayer extends Player
 		{
 			mouseIcon = CharacterStateType.MOVE;
 			
-			AbstractEntity closestEntity = null;
+			hoverEntity = null;
 			float closestDistance = MAX_DISTANCE;
 			
 			for (AbstractEntity entity: getWorld().getEntityFactory().getEntities())
 			{
+				if (!entity.isAlive())
+					continue;
+				
 				float distance = (float) Math.hypot(hoveringTile.getX()-entity.getX(), hoveringTile.getY()-entity.getY());
 				
 				float entitySize = (float)Math.hypot(entity.getSize().width, entity.getSize().height);
 				
 				if (distance < closestDistance && distance < entitySize)
 				{
-					closestEntity = entity;
+					hoverEntity = entity;
 					closestDistance = distance;
 					System.out.println("Found entity");
 				}
 			}
 			
-			if (closestEntity != null)
+			if (hoverEntity != null)
 			{
-				if (closestEntity.getEntityType() == EntityType.CHARACTER)
+				if (hoverEntity.getEntityType() == EntityType.CHARACTER)
 				{
-					Character character = (Character)closestEntity;
-					if (character.getAlliance() == null || character.getAlliance() != getAlliance())
+					Character character = (Character)hoverEntity;
+					if (character != this)
 					{
-						//show attack icon!
-						mouseIcon = CharacterStateType.ATTACK;
+						if (character.getAlliance() == null || character.getAlliance() != getAlliance())
+						{
+							//show attack icon!
+							mouseIcon = CharacterStateType.ATTACK;
+						}
+					}
+					else
+					{
+						//show info about yourself TODO
 					}
 				}
 			}
 		}
+		
+		
+		if (mouseDown[0])
+			leftClick();
+		if (mouseDown[1])
+			rightClick();
+		if (mouseDown[2])
+			middleClick();
 	}
 	
 	public CharacterStateType getMouseIcon()
@@ -109,8 +124,15 @@ public class HumanPlayer extends Player
 	private void leftClick() 
 	{
 		//either move, pick up, attack etc..
-		
-		setState(new MoveState(getHoverTile()));
+		switch (mouseIcon)
+		{
+		case MOVE:
+			setState(new MoveState(getHoverTile(),true));
+			break;
+		case ATTACK:
+			setState(new AttackState((Character)hoverEntity));
+			
+		}
 	}
 	
 	private void rightClick() 

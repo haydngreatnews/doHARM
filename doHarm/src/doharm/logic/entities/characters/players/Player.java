@@ -27,4 +27,10 @@ public abstract class Player extends Character
 
 
 	
+
+
+	
+
+
+	
 }

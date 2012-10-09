@@ -38,6 +38,7 @@ public abstract class Character extends AbstractEntity
 	private Alliance alliance;
 	
 	private CharacterState state;
+	private double spawnTime;
 	
 	
 	protected Character() 
@@ -68,14 +69,8 @@ public abstract class Character extends AbstractEntity
 	@Override
 	public void move()
 	{
-		
-		
-		
+		characterClass.process();
 		state.process(this);
-			
-			
-			
-				
 		
 		super.move();
 	}
@@ -102,10 +97,11 @@ public abstract class Character extends AbstractEntity
 	{
 		super.spawn(spawnTile);
 		
-		Vector position = getPosition();
+		//Vector position = getPosition();
 		
 		health = getMaxHealth();
 	}
+	
 	
 	
 	
@@ -157,11 +153,16 @@ public abstract class Character extends AbstractEntity
 		this.mana = mana;
 	}
 	
-//	public void attack(AbstractEntity e)
-//	{
-//		//getW
-//		
-//	}
+	public float getExperienceRatio() 
+	{
+		return characterClass.getExperienceRatio();
+	}
+	
+	public CharacterClass getCharacterClass()
+	{
+		return characterClass;
+	}
+	
 
 	public Alliance getAlliance() {
 		return alliance;
@@ -181,6 +182,61 @@ public abstract class Character extends AbstractEntity
 	{
 		return movementSpeed; //err. TODO
 	}
-	
+
+	public void receiveDamage(float damage, Character attacker) 
+	{
+		if (!isAlive())
+			return;
+		
+		health -= damage;
+		if (health <= 0)
+		{
+			//kill me now
+			health = 0;
+			
+			//drop all the character's items and gold
+			
+			
+			
+			int exp = calculateExperience();
+			//attacker gets double exp
+			
+			
+			attacker.addExperience(exp);
+			if (attacker.getAlliance() != null)
+			{
+				attacker.getAlliance().addExperience(exp);
+				
+			}
+			
+			spawnTime = System.currentTimeMillis() + 1000*(Math.pow(characterClass.getLevel(), 2));
+			
+			die();
+			
+		}
+		
+	}
+
+	private int calculateExperience() 
+	{
+		return (int)(characterClass.getExperience() * 0.5f);
+	}
+
+	public void addExperience(int exp) 
+	{
+		characterClass.addExperience(exp);
+	}
+	public int getLevel() 
+	{
+		return characterClass.getLevel();
+	}
+
+	public void tryRespawn() 
+	{
+		if (System.currentTimeMillis() > spawnTime)
+		{
+			spawn(getWorld().getRandomEmptyTile());
+		}
+	}
 	
 }

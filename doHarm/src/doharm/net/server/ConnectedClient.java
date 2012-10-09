@@ -1,5 +1,6 @@
 package doharm.net.server;
 
+import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -13,7 +14,7 @@ import doharm.net.packets.Snapshot;
  * The servers view of a Client
  */
 public class ConnectedClient {
-	private SocketAddress address;
+	private InetSocketAddress address;
 	public Command latestCommandPacket;
 	
 	/** Last time we received a packet from this client. */
@@ -24,14 +25,14 @@ public class ConnectedClient {
 	/** Holds on to all unack'd Snapshots we've sent the client. */
 	private LinkedList<Snapshot> snapsBuffer;
 	
-	public ConnectedClient(SocketAddress address)
+	public ConnectedClient(InetSocketAddress address)
 	{
 		this.address = address;
 		//state = ClientState.LOADING;
 		state = ClientState.INGAME;
 	}
 	
-	public SocketAddress getAddress() {	return address; }
+	public InetSocketAddress getAddress() {	return address; }
 	
 	public ClientState getState() { return state; }
 

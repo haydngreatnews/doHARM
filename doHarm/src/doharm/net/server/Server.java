@@ -26,7 +26,7 @@ import doharm.net.packets.entityinfo.EntityUpdate;
 public class Server {
 
 	private final int maxPlayers = 64;
-	private ArrayList<ConnectedClient> clients;
+	private ArrayList<ConnectedClient> clients = new ArrayList<ConnectedClient>();
 	private UDPReceiver receiver;
 	private DatagramSocket udpSock;
 	private int serverTime;
@@ -38,7 +38,7 @@ public class Server {
 		this.world = world;
 		
 		// Setup the UDP socket.
-		udpSock = new DatagramSocket();
+		udpSock = new DatagramSocket(null);
 		
 		InetSocketAddress address = new InetSocketAddress(port);
 		
@@ -80,7 +80,7 @@ public class Server {
 					byte[] response = new byte[2];
 					response[0] = (byte) ServerPacket.RESPONSE.ordinal();
 					response[1] = 1;	// 1 = NO at this point in time.
-					transmit(response, packet.getSocketAddress());
+					transmit(response, new InetSocketAddress(packet.getAddress(), packet.getPort()));
 				}
 				break;
 				
@@ -109,10 +109,10 @@ public class Server {
 	 * @param address IP and Port to send to.
 	 * @return
 	 */
-	public boolean transmit(byte[] data, SocketAddress address)
+	public boolean transmit(byte[] data, InetSocketAddress address)
 	{
 		try {
-			udpSock.send(new DatagramPacket(data, data.length, address));
+			udpSock.send(new DatagramPacket(data, data.length, address.getAddress(), address.getPort()));
 			return true;
 		}
 		catch (SocketException e) { e.printStackTrace(); }
@@ -122,7 +122,7 @@ public class Server {
 	
 	private ConnectedClient createClient(DatagramPacket packet)
 	{
-		ConnectedClient client = new ConnectedClient(packet.getSocketAddress());
+		ConnectedClient client = new ConnectedClient(new InetSocketAddress(packet.getAddress(), packet.getPort()));
 		clients.add(client);
 		return client;
 	}

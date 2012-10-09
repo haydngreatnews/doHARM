@@ -5,12 +5,17 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 
+import doharm.logic.camera.Camera;
+import doharm.logic.entities.characters.players.Player;
 import doharm.logic.physics.Vector;
+import doharm.logic.world.World;
 
 public class RenderUtil {
 
 	private static int imgIsoW = 0;
 	private static int imgIsoH = 0;
+	
+	private static Camera camera;
 
 	/**
 	 * Scales the img parameter to the specified width and height.
@@ -31,18 +36,12 @@ public class RenderUtil {
 	 * A world renderer must have been initialized before this method is called, to yield valid results.
 	 * converts "square" world coordinates to their corresponding isometric coordinates.
 	 * 
-	 * This does not currently work
-	 * 
 	 * 
 	 * @param col
 	 * @param row
 	 * @return
 	 */
 	public static Vector convertCoordsToIso(float col, float row, float layer){
-		//TODO FIX THIS
-//		float x = ((col*(imgIsoW/2)))+(row*(imgIsoW/2));
-//		float y = (-col*(imgIsoH/2))+(row*(imgIsoH/2)) +layer*imgIsoH;
-		
 		
 		
 		float x = -((row*(imgIsoW/2)))+(col*(imgIsoW/2));
@@ -85,8 +84,6 @@ public class RenderUtil {
 			x+=2;
 			lineLength-=4;
 		}
-
-
 		return img;
 	}
 
@@ -95,5 +92,19 @@ public class RenderUtil {
 		imgIsoH = imgH;
 	
 		
+	}
+	
+	
+	/**
+	 * Sets the Camera the Renderer will use to decide which orientation to 
+	 * render from, this must be set before the world is rendered.
+	 * @param c
+	 */
+	public static void setCamera(Camera c){
+		camera = c;
+	}
+	
+	public static boolean isObscured(Player player, World world){
+		return false;
 	}
 }

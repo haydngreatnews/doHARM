@@ -10,6 +10,7 @@ public class TODO {
 	 * distribute dragonballs
 	 * monsters
 	 * 
+	 * randomly spawning items (eg. rare candy)
 	 * 
 	 * 
 	 * 

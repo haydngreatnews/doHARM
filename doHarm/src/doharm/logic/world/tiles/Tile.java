@@ -43,6 +43,8 @@ public class Tile implements Comparable<Tile>
 	private float pathLength;
 	private boolean nextToWall;
 	private Set<AbstractEntity> entities;
+	private Tile roof;
+	private boolean visible;
 	
 	public Tile(Layer layer, int row, int col, int width, int height, Vector position, FloorTileData data, int colour) 
 	{
@@ -57,6 +59,7 @@ public class Tile implements Comparable<Tile>
 		dynamicLight = 0;
 		staticLight = 0.3f;
 		
+		visible = floorData.getType() != 2;
 		
 		int red = 0xFF & ( colour >> 16);
 		int green = 0xFF & (colour >> 8 );
@@ -278,6 +281,18 @@ public class Tile implements Comparable<Tile>
 	public void addEntity(AbstractEntity entity) 
 	{
 		entities.add(entity);
+	}
+
+	public void setRoof(Tile tile) {
+		roof = tile;
+	}
+	public Tile getRoof()
+	{
+		return roof;
+	}
+
+	public boolean isVisible() {
+		return visible;
 	}
 	
 

@@ -78,7 +78,7 @@ public class PathFinder
 			for (Tile neighbour: node.getNeighbours())
 			{
 				
-				if (!neighbour.isVisited() && neighbour.isWalkable() && (neighbour.isEmpty()||neighbour == goal))// && !neighbour.isNextToWall())
+				if (!neighbour.isVisited() && (neighbour.getRoof() == null || !neighbour.getRoof().isVisible() ||  neighbour.getRoof().isWalkable())/*neighbour.isWalkable()*/ && (neighbour.isEmpty()||neighbour == goal))// && !neighbour.isNextToWall())
 				{
 					
 					float pathLength = node.getPathLength() + node.distanceToTile(neighbour);

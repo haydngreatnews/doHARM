@@ -62,6 +62,10 @@ public class Command {
 		// my desired movement
 		// my selected weapon
 		// my commands
+		buff.write(ByteBuffer.allocate(4).putFloat(posX).array());
+		buff.write(ByteBuffer.allocate(4).putFloat(posY).array());
+		buff.write(ByteBuffer.allocate(4).putInt(layer).array());
+		buff.write(ByteBuffer.allocate(4).putFloat(angle).array());
 		
 		
 		} catch (IOException e) {	e.printStackTrace(); }

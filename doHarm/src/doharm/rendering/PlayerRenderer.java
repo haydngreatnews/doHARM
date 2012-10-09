@@ -26,16 +26,60 @@ public class PlayerRenderer {
 		this.world = game.getWorld();
 	}
 
-	public void redraw(Graphics2D graphics, int imgIsoW, int imgIsoH) 
+	/*public void redraw(Graphics2D graphics, int imgIsoW, int imgIsoH) 
 	{
 		for (Player player: world.getPlayerFactory().getEntities())
 		{
 			drawPlayer(player,graphics, imgIsoW, imgIsoH);
 		}
+	}*/
+	
+	public void drawInfo(Player player, Graphics2D graphics, int tileW, int tileH)
+	{
+		if (!player.isAlive())
+			return;
+		
+		Vector position = player.getPosition();
+		float row = position.getY()/tileH;
+		float col = position.getX()/tileW;
+		
+		
+		Vector v = RenderUtil.convertCoordsToIso(col, row, player.getCurrentLayer().getLayerNumber());
+		
+		Dimension size = player.getSize();
+		
+		int x = (int)v.getX()-size.width/2;
+		int y = (int)v.getY()-size.height/4;
+		
+		
+		graphics.setColor(new Color(1-player.getHealthRatio(),player.getHealthRatio(),0,1));
+		graphics.fillRect(x, y-10, (int)(size.width*player.getHealthRatio()), 3);
+		
+		graphics.setColor(new Color(1f,0,1));
+		graphics.fillRect(x, y-5, (int)(size.width*player.getExperienceRatio()), 3);
+		
+		
+		if (player.getPlayerType() == PlayerType.HUMAN)
+		{
+			HumanPlayer hp = (HumanPlayer)player;
+			graphics.setColor(Color.magenta.darker().darker());
+			graphics.drawString("Icon: " + hp.getMouseIcon().toString(), x, y-35);
+		}
+		
+		graphics.setColor(Color.white);
+		graphics.drawString("State: " + player.getStateType().toString(), x, y-15);
+		
+		graphics.setColor(Color.white);
+		graphics.drawString("Level: "+ player.getLevel(), x, y-55);
+		
+		
 	}
 
 	private void drawPlayer(Player player, Graphics2D graphics, int tileW, int tileH) 
 	{
+		if (!player.isAlive())
+			return;
+		
 		Dimension size = player.getSize();
 		//Tile tile = player.getCurrentTile();
 		//Layer layer = player.getCurrentLayer();
@@ -56,11 +100,10 @@ public class PlayerRenderer {
 			throw new UnsupportedOperationException(player.getPlayerType() + " not implemented");
 		
 		
-		//TODO
+
 		Vector v = RenderUtil.convertCoordsToIso(col, row, player.getCurrentLayer().getLayerNumber());
 		
-		//float x = (-(row*(imgIsoW/2-1)))+(col*(imgIsoW/2-1));
-		//float y = (row*(imgIsoH/2-1))+(col*(imgIsoH/2-1))-(layer.getLayerNumber()*imgIsoH);
+	
 		
 		int x = (int)v.getX()-size.width/2;
 		int y = (int)v.getY()-size.height/4;
@@ -69,8 +112,9 @@ public class PlayerRenderer {
 		
 		
 		
-		graphics.setColor(new Color(1-player.getHealthRatio(),player.getHealthRatio(),0,1));
-		graphics.fillRect(x, y-5, (int)(size.width*player.getHealthRatio()), 3);
+		
+		
+		
 		
 		
 		if (player.getStateType() == CharacterStateType.MOVE)
@@ -110,19 +154,17 @@ public class PlayerRenderer {
 				v = RenderUtil.convertCoordsToIso(col, row, player.getCurrentLayer().getLayerNumber());
 				graphics.fillOval((int)v.getX()-size.width/8, (int)v.getY()-size.height/16, size.width/4, size.height/8);
 			}
-			
-			graphics.setColor(Color.magenta.darker());
-			graphics.drawString(hp.getMouseIcon().toString(), x, y-35);
-			
-			
 		}
 		
 		
-		graphics.setColor(Color.white);
-		graphics.drawString(player.getStateType().toString(), x, y-15);
 		
+	}
+
+	public void redrawPlayer(Player player, Graphics2D graphics, int fTileW,
+			int wTileH) {
+		// TODO Auto-generated method stub
+		drawPlayer(player,graphics, fTileW, wTileH);
 		
-		//graphics.fillOval(position.getXAsInt()-size.width/2, position.getYAsInt()-size.height/2, size.width, size.height/2);
 	}
 
 }
