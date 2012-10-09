@@ -2,6 +2,8 @@ package doharm.logic;
 
 import doharm.logic.camera.Camera;
 import doharm.logic.physics.Vector;
+import doharm.logic.time.Time;
+import doharm.logic.weather.Weather;
 import doharm.logic.world.World;
 import doharm.net.NetworkMode;
 
@@ -16,7 +18,12 @@ public class Game
 	{
 		this.networkMode = mode;
 		String worldName = "world1";
-		world = new World(worldName, networkMode);
+		
+		//TODO Network-Sync
+		Time time = new Time();
+		Weather weather = new Weather();
+		
+		world = new World(worldName, networkMode,time,weather);
 		camera = world.getCamera();
 	}
 	
@@ -28,7 +35,7 @@ public class Game
 
 	public void run() 
 	{
-		world.moveEntities();
+		world.process();
 	}
 
 	public World getWorld()

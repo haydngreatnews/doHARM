@@ -11,14 +11,15 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
-import javax.print.attribute.standard.MediaSize.ISO;
 
 import doharm.logic.Game;
 import doharm.logic.camera.Camera;
+import doharm.logic.maths.MathUtils;
 import doharm.logic.physics.Vector;
+import doharm.logic.time.Time;
+import doharm.logic.weather.Weather;
 import doharm.logic.world.Layer;
 import doharm.logic.world.World;
-import doharm.logic.world.tiles.Direction;
 import doharm.logic.world.tiles.Tile;
 import doharm.storage.TilesetLoader;
 import doharm.storage.WorldLoader;
@@ -92,6 +93,9 @@ public class WorldRenderer
 			createImage(canvasSize); //resize the canvas
 	
 		Camera camera = game.getCamera();
+		Time time = game.getWorld().getTime();
+		Weather weather = game.getWorld().getWeather();
+		
 		
 		//give the camera the canvas size so we can calculate the centre of the screen
 		camera.setCanvasDimensions(canvasSize);
@@ -142,6 +146,14 @@ public class WorldRenderer
 		
 		graphics.setColor(Color.white);
 		graphics.drawString("Direction: " + camera.getDirection().toString(), 10, 10);
+		graphics.drawString("Year: " + time.getYear() + ", Month: " + time.getMonth()+", Day: " + time.getDay(), 10, 30);
+		graphics.drawString("Time: " + (int)(time.getTimeOfDay()/1000) + " ("+time.getDayType().toString()+")", 10, 50);
+		graphics.drawString("Light: " + MathUtils.toDP(time.getLight(),2), 10, 70);
+		graphics.drawString("Weather: " + weather.getWeatherType().toString() + "("+MathUtils.toDP(weather.getConditions(),2)+")", 10, 90);
+		
+		
+		
+		
 	}
 
 	public int getPickColourAt(int mouseX, int mouseY)

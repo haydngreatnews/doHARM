@@ -12,6 +12,8 @@ import doharm.logic.entities.characters.players.Player;
 import doharm.logic.entities.characters.players.PlayerFactory;
 import doharm.logic.entities.characters.players.PlayerType;
 import doharm.logic.entities.items.ItemFactory;
+import doharm.logic.time.Time;
+import doharm.logic.weather.Weather;
 import doharm.logic.world.tiles.Direction;
 import doharm.logic.world.tiles.Tile;
 import doharm.net.NetworkMode;
@@ -40,8 +42,15 @@ public class World
 
 	private NetworkMode networkMode;
 	
-	public World(String worldName, NetworkMode networkMode)
+	private Time time;
+	private Weather weather;
+	
+	
+	public World(String worldName, NetworkMode networkMode, Time time, Weather weather)
 	{
+		this.time = time;
+		this.weather = weather;
+		
 		this.networkMode = networkMode;
 		idManager = new IDManager();
 		entityFactory = new EntityFactory(this,idManager);
@@ -174,16 +183,40 @@ public class World
 		}
 	}
 
-	public void moveEntities() 
+	public void process()
+	{
+		time.process();
+		weather.process();
+		moveEntities();
+		setCamera();
+	}
+	
+	
+
+	private void moveEntities() 
 	{
 		for (Player p: playerFactory.getEntities())
 		{
 			p.move();
 		}
+	}
+	
+	private void setCamera() 
+	{
 		if (humanPlayer != null)
 		{
 			camera.setPosition(humanPlayer.getPosition().getX(), humanPlayer.getPosition().getY());
 		}
+	}
+	
+	public Time getTime()
+	{
+		return time;
+	}
+	
+	public Weather getWeather()
+	{
+		return weather;
 	}
 	
 	public PlayerFactory getPlayerFactory()

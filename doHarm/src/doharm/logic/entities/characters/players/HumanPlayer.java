@@ -2,8 +2,9 @@ package doharm.logic.entities.characters.players;
 
 import doharm.logic.entities.AbstractEntity;
 import doharm.logic.entities.EntityType;
-import doharm.logic.entities.characters.Action;
 import doharm.logic.entities.characters.Character;
+import doharm.logic.entities.characters.states.CharacterStateType;
+import doharm.logic.entities.characters.states.MoveState;
 import doharm.logic.entities.inventory.DragonRadar;
 import doharm.logic.world.tiles.Tile;
 
@@ -11,13 +12,16 @@ import doharm.logic.world.tiles.Tile;
 public class HumanPlayer extends Player
 {
 	private static final int NUM_MOUSE_BUTTONS = 3;
-	
+	private static final float MAX_DISTANCE = 999;
 	
 	private DragonRadar dragonRadar;
 	private Tile hoveringTile;
 	
 	private boolean[] mouseDown;
-	private Action mouseIcon;
+	private CharacterStateType mouseIcon;
+
+
+	
 	
 	
 	protected HumanPlayer() 
@@ -38,28 +42,46 @@ public class HumanPlayer extends Player
 		if (mouseDown[2])
 			middleClick();
 		
-		mouseIcon = Action.IDLE;
+		mouseIcon = CharacterStateType.IDLE;
 		//if (hoveringTile.getEnt)
 		
 		if (hoveringTile != null)
 		{
-			mouseIcon = Action.MOVE;
-			for (AbstractEntity entity: hoveringTile.getEntities())
+			mouseIcon = CharacterStateType.MOVE;
+			
+			AbstractEntity closestEntity = null;
+			float closestDistance = MAX_DISTANCE;
+			
+			for (AbstractEntity entity: getWorld().getEntityFactory().getEntities())
 			{
-				if (entity.getEntityType() == EntityType.CHARACTER)
+				float distance = (float) Math.hypot(hoveringTile.getX()-entity.getX(), hoveringTile.getY()-entity.getY());
+				
+				float entitySize = (float)Math.hypot(entity.getSize().width, entity.getSize().height);
+				
+				if (distance < closestDistance && distance < entitySize)
 				{
-					Character character = (Character)entity;
+					closestEntity = entity;
+					closestDistance = distance;
+					System.out.println("Found entity");
+				}
+			}
+			
+			if (closestEntity != null)
+			{
+				if (closestEntity.getEntityType() == EntityType.CHARACTER)
+				{
+					Character character = (Character)closestEntity;
 					if (character.getAlliance() == null || character.getAlliance() != getAlliance())
 					{
 						//show attack icon!
-						mouseIcon = Action.ATTACK;
+						mouseIcon = CharacterStateType.ATTACK;
 					}
 				}
 			}
 		}
 	}
 	
-	public Action getMouseIcon()
+	public CharacterStateType getMouseIcon()
 	{
 		return mouseIcon;
 	}
@@ -88,7 +110,7 @@ public class HumanPlayer extends Player
 	{
 		//either move, pick up, attack etc..
 		
-		moveTo(getHoverTile());
+		setState(new MoveState(getHoverTile()));
 	}
 	
 	private void rightClick() 

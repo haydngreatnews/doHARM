@@ -3,15 +3,14 @@ package doharm.rendering;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
-import java.io.UnsupportedEncodingException;
 import java.util.Collection;
-import java.util.Stack;
 
 import doharm.logic.Game;
-import doharm.logic.entities.characters.Character;
 import doharm.logic.entities.characters.players.HumanPlayer;
 import doharm.logic.entities.characters.players.Player;
 import doharm.logic.entities.characters.players.PlayerType;
+import doharm.logic.entities.characters.states.CharacterStateType;
+import doharm.logic.entities.characters.states.MoveState;
 import doharm.logic.physics.Vector;
 import doharm.logic.world.World;
 import doharm.logic.world.tiles.Tile;
@@ -74,26 +73,30 @@ public class PlayerRenderer {
 		graphics.fillRect(x, y-5, (int)(size.width*player.getHealthRatio()), 3);
 		
 		
-		//Path
-		Collection<Tile> path = player.getPath();
-		graphics.setColor(Color.white);
-		for (Tile tile: path)
+		if (player.getStateType() == CharacterStateType.MOVE)
 		{
-			row = tile.getY()/world.getTileHeight();
-			col = tile.getX()/world.getTileWidth();
+			MoveState state = (MoveState)player.getState();
+			
+			//Path
+			Collection<Tile> path = state.getPath();
+			graphics.setColor(Color.white);
+			for (Tile tile: path)
+			{
+				row = tile.getY()/world.getTileHeight();
+				col = tile.getX()/world.getTileWidth();
+				v = RenderUtil.convertCoordsToIso(col, row, player.getCurrentLayer().getLayerNumber());
+				graphics.fillOval((int)v.getX()-size.width/8, (int)v.getY()-size.height/16, size.width/4, size.height/8);
+			}
+			
+			
+			//Goal
+			graphics.setColor(Color.red);
+			Vector goal = state.getDestination();
+			row = goal.getY()/world.getTileHeight();
+			col = goal.getX()/world.getTileWidth();
 			v = RenderUtil.convertCoordsToIso(col, row, player.getCurrentLayer().getLayerNumber());
 			graphics.fillOval((int)v.getX()-size.width/8, (int)v.getY()-size.height/16, size.width/4, size.height/8);
 		}
-		
-		
-		//Goal
-		graphics.setColor(Color.red);
-		Vector goal = player.getGoal();
-		row = goal.getY()/world.getTileHeight();
-		col = goal.getX()/world.getTileWidth();
-		v = RenderUtil.convertCoordsToIso(col, row, player.getCurrentLayer().getLayerNumber());
-		graphics.fillOval((int)v.getX()-size.width/8, (int)v.getY()-size.height/16, size.width/4, size.height/8);
-		
 		
 		if (player.getPlayerType() == PlayerType.HUMAN)
 		{
@@ -116,7 +119,7 @@ public class PlayerRenderer {
 		
 		
 		graphics.setColor(Color.white);
-		graphics.drawString(player.getCurrentAction().toString(), x, y-15);
+		graphics.drawString(player.getStateType().toString(), x, y-15);
 		
 		
 		//graphics.fillOval(position.getXAsInt()-size.width/2, position.getYAsInt()-size.height/2, size.width, size.height/2);

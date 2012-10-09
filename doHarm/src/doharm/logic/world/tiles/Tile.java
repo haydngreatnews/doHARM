@@ -31,6 +31,8 @@ public class Tile implements Comparable<Tile>
 	private int width;
 	private int height;
 	
+	private float staticLight; //calculated by map editor
+	private float dynamicLight; //calculated by lights ingame.
 	
 	
 	//Pathfinding variables
@@ -52,6 +54,9 @@ public class Tile implements Comparable<Tile>
 		this.position = position;
 		this.floorData = data;
 		
+		dynamicLight = 0;
+		staticLight = 0.3f;
+		
 		
 		int red = 0xFF & ( colour >> 16);
 		int green = 0xFF & (colour >> 8 );
@@ -68,6 +73,15 @@ public class Tile implements Comparable<Tile>
 		
 		walls = new WallTileData[Direction.values().length];
 		entities = new HashSet<AbstractEntity>();
+	}
+	
+	/**
+	 * @return a number between 0 and 9 inclusive, where 0 is pitch black and 9 is fully lit.
+	 */
+	public int getLight()
+	{
+		int darkness = Math.max((int)((staticLight + dynamicLight)*10),9);
+		return darkness;
 	}
 	
 	
