@@ -9,9 +9,10 @@ import doharm.logic.entities.characters.players.HumanPlayer;
 /** Struct representing a Client Command, which is then converted into a packet to send over the wire. */
 public class Command {
 
-	public int seqNum;	// Number of times we've sent a packet with this serverTimeAck already.
+	public int seqNum;
 	public final int serverTimeAckd;
 	
+	// HumanPlayer movement.
 	public final float posX, posY, angle;
 	public final int layer;
 	
