@@ -184,11 +184,5 @@ public class Snapshot {
 			if (!entityUpdates.containsKey(eID) && !entityDeletes.contains(eID))
 				entityUpdates.put(eID, other.entityUpdates.get(eID));
 	}
-	
-	/** Holds changes in player state */
-	private class PlayerState
-	{
-		
-	}
 }
 
