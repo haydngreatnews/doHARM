@@ -96,7 +96,7 @@ public class Snapshot {
 		// Packet type
 		buff.write((byte) ServerPacket.SNAPSHOT.ordinal());		// TODO Do we need the byte cast?
 		// Servertime
-		buff.write(ByteBuffer.allocate(4).putInt(serverTime).array()); 
+		buff.write(Bytes.setInt(serverTime)); 
 		
 		if (entityDeletes.size() > 255)
 			throw new RuntimeException("Entity deletes was over the 255 limit!");
@@ -108,7 +108,7 @@ public class Snapshot {
 		// Write the entity deletes.
 		buff.write((byte) entityDeletes.size());
 		for (int eID : entityDeletes)
-			buff.write(ByteBuffer.allocate(4).putInt(eID).array());	// TODO MAKE SURE IT WRITES FOUR BYTES
+			buff.write(Bytes.setInt(eID));
 		
 		// Write the entity creates.
 		buff.write((byte) entityCreates.size());
