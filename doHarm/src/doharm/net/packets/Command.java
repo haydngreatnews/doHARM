@@ -54,18 +54,18 @@ public class Command {
 		// Packet type
 		buff.write((byte) ClientPacket.COMMAND.ordinal());		// Need the byte cast otherwise it'll write it as a 4-byte int
 		// SeqNum
-		 buff.write(ByteBuffer.allocate(4).putInt(seqNum).array()); 
+		 buff.write(Bytes.setInt(seqNum)); 
 		// ServertimeAckd
-		buff.write(ByteBuffer.allocate(4).putInt(serverTimeAckd).array());
+		buff.write(Bytes.setInt(serverTimeAckd));
 		
 		// my desired viewing direction
 		// my desired movement
 		// my selected weapon
 		// my commands
-		buff.write(ByteBuffer.allocate(4).putFloat(posX).array());
-		buff.write(ByteBuffer.allocate(4).putFloat(posY).array());
-		buff.write(ByteBuffer.allocate(4).putInt(layer).array());
-		buff.write(ByteBuffer.allocate(4).putFloat(angle).array());
+		buff.write(Bytes.setFloat(posX));
+		buff.write(Bytes.setFloat(posY));
+		buff.write(Bytes.setInt(layer));
+		buff.write(Bytes.setFloat(angle));
 		
 		
 		} catch (IOException e) {	e.printStackTrace(); }
