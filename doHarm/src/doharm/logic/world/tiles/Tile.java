@@ -11,6 +11,7 @@ import java.util.Set;
 import doharm.logic.entities.AbstractEntity;
 import doharm.logic.physics.Vector;
 import doharm.logic.world.Layer;
+import doharm.logic.world.World;
 import doharm.rendering.RenderUtil;
 import doharm.storage.FloorTileData;
 import doharm.storage.WallTileData;
@@ -31,9 +32,13 @@ public class Tile implements Comparable<Tile>
 	private int width;
 	private int height;
 	
-	private float staticLight; //calculated by map editor
+	/** calculated by map editor */
+	private float staticLight;
 	private float dynamicLight; //calculated by lights ingame.
 	
+	private boolean visible; //whether or not this tile is invisible (eg. "air")
+	
+	private World world;
 	
 	//Pathfinding variables
 	private boolean visited;
@@ -44,7 +49,7 @@ public class Tile implements Comparable<Tile>
 	private boolean nextToWall;
 	private Set<AbstractEntity> entities;
 	private Tile roof;
-	private boolean visible;
+	
 	
 	public Tile(Layer layer, int row, int col, int width, int height, Vector position, FloorTileData data, int colour) 
 	{
@@ -55,6 +60,8 @@ public class Tile implements Comparable<Tile>
 		this.layer = layer;
 		this.position = position;
 		this.floorData = data;
+		
+		world = layer.getWorld();
 		
 		dynamicLight = 0;
 		staticLight = 0.3f;
@@ -81,10 +88,14 @@ public class Tile implements Comparable<Tile>
 	/**
 	 * @return a number between 0 and 9 inclusive, where 0 is pitch black and 9 is fully lit.
 	 */
-	public int getLight()
+	public float getLight()
 	{
-		int darkness = Math.max((int)((staticLight + dynamicLight)*10),9);
-		return darkness;
+		float light = 0.99f * world.getTime().getLight();//Math.max(staticLight + dynamicLight,1);
+
+		
+		light = Math.min(Math.max(light, 0),1);
+		
+		return light;
 	}
 	
 	

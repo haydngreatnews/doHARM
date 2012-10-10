@@ -2,14 +2,17 @@ package doharm.logic.world;
 
 import java.awt.Color;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 import doharm.logic.camera.Camera;
 import doharm.logic.entities.AbstractEntity;
 import doharm.logic.entities.EntityFactory;
 import doharm.logic.entities.EntityType;
 import doharm.logic.entities.IDManager;
-import doharm.logic.entities.characters.classes.CharacterClassType;
 import doharm.logic.entities.characters.Character;
+import doharm.logic.entities.characters.classes.CharacterClassType;
 import doharm.logic.entities.characters.players.HumanPlayer;
 import doharm.logic.entities.characters.players.Player;
 import doharm.logic.entities.characters.players.PlayerFactory;
@@ -47,6 +50,7 @@ public class World
 	
 	private Time time;
 	private Weather weather;
+	private List<String> messages;
 	
 	
 	public World(String worldName, NetworkMode networkMode, Time time, Weather weather)
@@ -59,7 +63,7 @@ public class World
 		entityFactory = new EntityFactory(this,idManager);
 		playerFactory = new PlayerFactory(this,entityFactory);
 		itemFactory = new ItemFactory(this, entityFactory);
-		
+		messages = new ArrayList<String>();
 		
 		try 
 		{
@@ -132,10 +136,15 @@ public class World
 			//
 			
 		}
-		
+		addMessage("World created.");
 		
 	}
 
+	public void addMessage(String message)
+	{
+		messages.add(message);
+	}
+	
 	private void linkTiles() 
 	{
 		TilesetLoader tilesetLoader = worldLoader.getTilesetLoader();
@@ -376,5 +385,11 @@ public class World
 	public NetworkMode getNetworkMode()
 	{
 		return networkMode;
+	}
+
+	public Collection<String> getAndClearMessages() {
+		List<String> temp = new ArrayList<String>(messages);
+		messages.clear();
+		return temp;
 	}
 }

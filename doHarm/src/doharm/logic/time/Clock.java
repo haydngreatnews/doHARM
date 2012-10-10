@@ -29,7 +29,7 @@ public class Clock extends Thread
 		{
 			
 			if (window != null)
-				window.repaint(); //calls game.run();
+				window.repaint(game.getWorld().getAndClearMessages()); //calls game.run();
 			else
 				game.run();
 			try 
