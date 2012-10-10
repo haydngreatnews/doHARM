@@ -1,8 +1,8 @@
 package doharm.gui.view;
 
-import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.util.Collection;
 
 import javax.swing.JFrame;
 import javax.swing.JTextPane;
@@ -100,7 +100,9 @@ public class MainWindow {
 		return frame;
 	}
 
-	public void repaint() {
+	public void repaint(Collection<String> messages) {
+		for (String message: messages)
+			addMessage(message);
 		frame.repaint();
 	}
 
