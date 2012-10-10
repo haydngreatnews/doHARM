@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Collection;
 import java.util.Date;
 
 import javax.swing.JFrame;
@@ -15,6 +16,7 @@ import net.miginfocom.swing.MigLayout;
 import doharm.gui.decorations.HealthBar;
 import doharm.gui.decorations.ManaBar;
 import doharm.gui.decorations.RageBar;
+import doharm.gui.decorations.XPBar;
 import doharm.gui.extras.EjectorQueue;
 import doharm.gui.input.KeyboardManager;
 import doharm.gui.input.MenuButtonListener;
@@ -52,6 +54,7 @@ public class MainWindow {
 		southPanel.add(new HealthBar(game.getWorld().getHumanPlayer()), "cell 2 1,split 3");
 		southPanel.add(new ManaBar(game.getWorld().getHumanPlayer()));
 		southPanel.add(new RageBar(game.getWorld().getHumanPlayer()));
+		southPanel.add(new XPBar(game.getWorld().getHumanPlayer()), "cell 1 2, span 3, grow, h 5");
 
 		southPanel.add(textPane, "cell 3 1");
 		mouseManager = new MouseManager(game, renderer);
@@ -114,7 +117,9 @@ public class MainWindow {
 		return frame;
 	}
 
-	public void repaint() {
+	public void repaint(Collection<String> messages) {
+		for (String message: messages)
+			addMessage(message);
 		frame.repaint();
 	}
 	
