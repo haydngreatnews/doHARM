@@ -46,14 +46,12 @@ public class Client {
 	/** Holds on to all unack'd Commands we've sent the server. */
 	private LinkedList<Command> cmdsBuffer = new LinkedList<Command>();
 	
-	public Client(int port, World world) throws IOException
+	public Client(World world) throws IOException
 	{
 		this.world = world;
 		
 		// Setup the UDP socket.
 		udpSock = new DatagramSocket(null);
-		
-		serverAddress = new InetSocketAddress(InetAddress.getByName("localhost"),port);
 		
 		InetSocketAddress address = new InetSocketAddress(0);
 		 
@@ -63,6 +61,11 @@ public class Client {
 		receiver.start();
 		
 		state = ClientState.NONE;
+	}
+	
+	public void connect(InetSocketAddress address)
+	{
+		serverAddress = address;
 	}
 	
 	public void processIncomingPackets()
@@ -82,11 +85,11 @@ public class Client {
 			switch (ServerPacket.values()[data[0]])
 			{
 			case SNAPSHOT:
-				updateSnapshotPacket(data);
+				updateSnapshotPacket(data, false);
 				break;
 				
 			case GAMESTATE:
-				updateGamestatePacket(data);
+				updateSnapshotPacket(data, true);
 				break;
 				
 			case RESPONSE:
@@ -113,8 +116,9 @@ public class Client {
 	/**
 	 * Update what the latest snapshot packet from the server is.
 	 * @param data
+	 * @param isGameState is this packet a Gamestate packet.
 	 */
-	public void updateSnapshotPacket(byte[] data)
+	public void updateSnapshotPacket(byte[] data, boolean isGameState)
 	{
 		// Extract the timestamp from the packet.
 		int timestamp = Snapshot.getTimestamp(data);
@@ -126,12 +130,6 @@ public class Client {
 		snapNext = new Snapshot(data);
 	}
 	
-	public void updateGamestatePacket(byte[] data)
-	{
-		// TODO
-		;
-	}
-	
 	/**
 	 * Builds a new Command and sends it out to the server we're connected to.
 	 */
@@ -141,10 +139,9 @@ public class Client {
 		while (!cmdsBuffer.isEmpty() && cmdsBuffer.peek().seqNum <= snapNext.seqAckd)
 			cmdsBuffer.poll();
 		
-		
 		int time;
-		if (snapNext != null)
-			time = snapNext.serverTime;
+		if (snapCurrent != null)
+			time = snapCurrent.serverTime;
 		else
 			time = 0;
 		
@@ -223,6 +220,10 @@ public class Client {
 	
 	private void updateWorld()
 	{	
+		// We don't have a snapshot to update our world with.
+		if (snapNext == null)
+			return;
+		
 		EntityFactory ents = world.getEntityFactory();
 		
 		for (int i : snapNext.getEDeletes())
@@ -273,6 +274,8 @@ public class Client {
 			//world.setHumanPlayer((HumanPlayer) world.getPlayerFactory().getEntity(GAMESTATE_ID));
 		}
 		
+		snapCurrent = snapNext;
+		snapNext = null;
 	}
 
 }
