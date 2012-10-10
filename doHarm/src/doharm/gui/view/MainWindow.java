@@ -1,13 +1,21 @@
 package doharm.gui.view;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
+import java.util.Date;
 
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 import javax.swing.JTextPane;
 
 import net.miginfocom.swing.MigLayout;
+import doharm.gui.decorations.HealthBar;
+import doharm.gui.decorations.ManaBar;
+import doharm.gui.decorations.RageBar;
 import doharm.gui.extras.EjectorQueue;
 import doharm.gui.input.KeyboardManager;
 import doharm.gui.input.MenuButtonListener;
@@ -39,14 +47,21 @@ public class MainWindow {
 		textPane.setOpaque(false);
 		textPane.setFocusable(false);
 		messages = new EjectorQueue<String>(10);
-		canvas.setLayout(new MigLayout("fill, nogrid"));
-		canvas.add(textPane, "y container.h-200, x 70%, w 30%");
-		canvas.add(new HealthBar(), "y 5, x container.w/2-50");
+		canvas.setLayout(new BorderLayout());
+		JPanel southPanel = new JPanel(new MigLayout("wrap 3, align center center","[][][align right]"));
+		southPanel.setOpaque(false);
+		southPanel.add(new HealthBar(game.getWorld().getHumanPlayer()), "cell 2 1,split 3");
+		southPanel.add(new ManaBar(game.getWorld().getHumanPlayer()));
+		southPanel.add(new RageBar(game.getWorld().getHumanPlayer()));
+
+		southPanel.add(textPane, "cell 3 1");
 		mouseManager = new MouseManager(game, renderer);
 		keyboardManager = new KeyboardManager(this,game.getCamera());
 		this.game = game;
 		state = MAXIMIZED;
 		toggleSize();
+		canvas.add(southPanel, BorderLayout.SOUTH);
+		addMessage("Welcome to the game");
 	}
 
 	public void toggleSize() {
@@ -81,7 +96,7 @@ public class MainWindow {
 			canvas.addKeyListener(keyboardManager);
 			canvas.addMouseListener(mouseManager);
 		} else {
-			canvas.add(menu, "align 50% 50%");
+			canvas.add(menu, BorderLayout.CENTER);
 			menu.requestFocusInWindow();
 			menu.addKeyListener(keyboardManager);
 			canvas.removeMouseListener(mouseManager);
@@ -105,11 +120,14 @@ public class MainWindow {
 			addMessage(message);
 		frame.repaint();
 	}
+	
+	private DateFormat dateFormat = new SimpleDateFormat("[HH:MM]");
 
 	public void addMessage(String text) {
+		text = dateFormat.format(new Date()) + text;
 		messages.offer(text);
 		StringBuilder sb = new StringBuilder();
-		sb.append("<div style=\"font-family:sans-serif; font-weight:bold\">");
+		sb.append("<div style=\"font-family:sans-serif; color:#00CC00\">");
 		for (String s : messages) {
 			sb.append(s);
 		}

@@ -16,27 +16,36 @@ import doharm.net.packets.Snapshot;
 public class ConnectedClient {
 	private InetSocketAddress address;
 	public Command latestCommandPacket;
+	private int counter;	// counter used by various.
+	private static int RESEND_DELAY;
 	
-	/** Last time we received a packet from this client. */
+	// Last time we received a packet from this client.
 	private int latestTime;
 	
 	private ClientState state;
 	
-	/** Holds on to all unack'd Snapshots we've sent the client. */
+	// Holds on to all unack'd Snapshots we've sent the client.
 	private LinkedList<Snapshot> snapsBuffer;
 	
 	public ConnectedClient(InetSocketAddress address)
 	{
 		this.address = address;
-		//state = ClientState.LOADING;
-		state = ClientState.INGAME;
+		state = ClientState.READY;
 	}
 	
 	public InetSocketAddress getAddress() {	return address; }
 	
 	public ClientState getState() { return state; }
 
-	public void setState(ClientState newState) { state = newState; }
+	public void setState(ClientState newState)
+	{
+		state = newState;
+		switch (state)
+		{
+		case READY:
+			counter = 0;
+		}
+	}
 	
 	/**
 	 * Update what the latest command packet from the client is.
@@ -44,6 +53,11 @@ public class ConnectedClient {
 	 */
 	public void updateClientCommandPacket(byte[] data)
 	{
+		if (state == ClientState.READY)		// TODO can probably optimise this by having a special kind of command packet sent on first try.
+		{
+			setState(ClientState.INGAME);
+		}
+		
 		// Extract the timestamp from the packet.
 		int seqnum = Command.getSeqNum(data);
 		
@@ -88,5 +102,22 @@ public class ConnectedClient {
 			transSnap.addMissing(iter.next());
 		
 		return transSnap;
+	}
+
+	/**
+	 * Removes all the unack'd snaps from the snapsBuffer.
+	 * Used when sending a full GameState. 
+	 */
+	public void flushSnaps() {
+		snapsBuffer.clear();
+	}
+
+	public boolean resendGamestate() {
+		if (--counter == 0)
+		{
+			counter = RESEND_DELAY;
+			return true;
+		}
+		return false;
 	}
 }
