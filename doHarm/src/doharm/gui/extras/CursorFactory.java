@@ -29,8 +29,8 @@ public class CursorFactory {
 				Graphics g = imgs[i].getGraphics();
 				g.drawImage(src, -IMAGE_SIZE * i, 0, null);
 				g.dispose();
-				map.put(values[i], tk.createCustomCursor(imgs[i], new Point(0,
-						0), values[i].toString()));
+				map.put(values[i], tk.createCustomCursor(imgs[i], new Point(16,
+						16), values[i].toString()));
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

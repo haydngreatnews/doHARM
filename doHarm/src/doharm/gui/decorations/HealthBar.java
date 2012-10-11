@@ -25,7 +25,7 @@ public class HealthBar extends JPanel {
 		g.drawRect(0, 0, getWidth()-1, getHeight()-1);
 		g.setColor(new Color((1-player.getHealthRatio())*.8f, player.getHealthRatio()*.8f, 0));
 		g.fillRect(0, 0, (int) (getWidth()*player.getHealthRatio()), getHeight());
-		g.setColor(Color.BLACK);
+		g.setColor(Color.WHITE);
 		g.drawString("HEALTH   "+(int)player.getHealth()+"/"+(int)player.getMaxHealth(), 2, getHeight()/4*3);
 	}
 }

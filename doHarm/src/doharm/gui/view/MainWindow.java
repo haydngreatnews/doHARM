@@ -74,6 +74,7 @@ public class MainWindow {
 		toggleSize();
 		canvas.add(southPanel, BorderLayout.SOUTH);
 		addMessage(new Message(-1,new MessagePart("Welcome to the game")));
+		new CursorThread().start();
 	}
 
 	public void toggleSize() {
@@ -161,7 +162,15 @@ public class MainWindow {
 	private class CursorThread extends Thread {
 		public void run(){
 			HumanPlayer human = game.getWorld().getHumanPlayer();
+			while (true){
 			frame.setCursor(CursorFactory.getCursors().get(human.getMouseIcon()));
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			}
 		}
 	}
 
