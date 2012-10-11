@@ -15,8 +15,6 @@ public class HealthBar extends JPanel {
 		super();
 		Dimension d = new Dimension(100,20);
 		setPreferredSize(d);
-		setMaximumSize(d);
-		setMinimumSize(d);
 		player = p;
 	}
 	@Override
