@@ -1,5 +1,7 @@
 package doharm.logic.entities.characters.players;
 
+import java.awt.Color;
+
 import doharm.logic.entities.AbstractEntityFactory;
 import doharm.logic.entities.EntityFactory;
 import doharm.logic.entities.characters.classes.CharacterClassType;
@@ -18,7 +20,7 @@ public class PlayerFactory extends AbstractEntityFactory<Player>
 		super(world,entityFactory);
 	}
 
-	public Player createPlayer(Tile spawnTile, String name, CharacterClassType classType, int id, PlayerType playerType, boolean fromNetwork)
+	public Player createPlayer(Tile spawnTile, String name, CharacterClassType classType, int id, PlayerType playerType, Color colour, boolean fromNetwork)
 	{
 		Player player = null;
 		switch(playerType)
@@ -36,7 +38,7 @@ public class PlayerFactory extends AbstractEntityFactory<Player>
 		player.setName(name);
 		player.setWorld(getWorld());
 		player.setCharacterClass(classType);
-		
+		player.setColour(colour);
 		
 		player.spawn(spawnTile);
 		

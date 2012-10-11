@@ -69,16 +69,6 @@ public class Alliance
 	{
 		return Collections.unmodifiableSet(characters);
 	}
-
-	public void addExperience(int exp) 
-	{
-		
-		for (Character ally: characters)
-		{
-			ally.addExperience(exp);
-		}
-		
-	}
 	
 	
 }

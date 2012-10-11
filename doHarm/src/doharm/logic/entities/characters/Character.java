@@ -1,9 +1,7 @@
 package doharm.logic.entities.characters;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Stack;
-
+import doharm.logic.chat.Message;
+import doharm.logic.chat.MessagePart;
 import doharm.logic.chat.Taunts;
 import doharm.logic.entities.AbstractEntity;
 import doharm.logic.entities.EntityType;
@@ -15,8 +13,6 @@ import doharm.logic.entities.characters.states.CharacterState;
 import doharm.logic.entities.characters.states.CharacterStateType;
 import doharm.logic.entities.characters.states.IdleState;
 import doharm.logic.entities.inventory.Inventory;
-import doharm.logic.physics.Vector;
-import doharm.logic.world.tiles.PathFinder;
 import doharm.logic.world.tiles.Tile;
 
 public abstract class Character extends AbstractEntity
@@ -39,7 +35,7 @@ public abstract class Character extends AbstractEntity
 	private Alliance alliance;
 	
 	private CharacterState state;
-	private double spawnTime;
+	private long spawnTime;
 	private Character attackedBy;
 	
 	
@@ -125,7 +121,7 @@ public abstract class Character extends AbstractEntity
 		state = new IdleState();
 		
 		//Vector position = getPosition();
-		
+		resetAttackedBy();
 		health = getMaxHealth();
 	}
 	
@@ -209,6 +205,8 @@ public abstract class Character extends AbstractEntity
 	{
 		return movementSpeed; //err. TODO
 	}
+	
+	
 
 	public void receiveDamage(float damage, Character attacker) 
 	{
@@ -218,6 +216,7 @@ public abstract class Character extends AbstractEntity
 			return;
 		
 		health -= damage;
+		rage += damage;
 		if (health <= 0)
 		{
 			//kill me now
@@ -228,22 +227,34 @@ public abstract class Character extends AbstractEntity
 			
 			
 			int exp = calculateExperience();
-			//attacker gets double exp
 			
 			
-			attacker.addExperience(exp);
+			
+			attacker.addExperience(exp);//attacker gets double exp
+			
 			if (attacker.getAlliance() != null)
 			{
-				attacker.getAlliance().addExperience(exp);
+				for (Character ally: attacker.getAlliance().getCharacters())
+				{
+					ally.setState(new IdleState());
+					ally.addExperience(exp);
+				}
 				
 			}
 			
-			spawnTime = System.currentTimeMillis() + 1000*(Math.pow(characterClass.getLevel(), 2));
+			spawnTime = System.currentTimeMillis() + Math.max((int)(1000*(Math.pow(characterClass.getLevel(), 2))),5000);
+			
+			getWorld().addMessage(new Message(-1, new MessagePart(attacker.getName() + " killed " + getName()+".")));
 			
 			die();
 			
 		}
 		
+	}
+	
+	public String getName()
+	{
+		return name;
 	}
 
 	private int calculateExperience() 
@@ -262,10 +273,16 @@ public abstract class Character extends AbstractEntity
 
 	public void tryRespawn() 
 	{
-		if (System.currentTimeMillis() > spawnTime)
+		if (getTimeTillSpawn() == 0)
 		{
 			spawn(getWorld().getRandomEmptyTile());
 		}
 	}
+
+	public int getTimeTillSpawn() 
+	{
+		return Math.max((int)(spawnTime - System.currentTimeMillis()),0);
+	}
+
 	
 }

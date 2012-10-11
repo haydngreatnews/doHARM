@@ -15,6 +15,13 @@ public class IdleState extends CharacterState
 	@Override
 	public void process(Character character) 
 	{
+		if (character.getAttackedBy() != null)
+		{
+			character.setState(new AttackState(character.getAttackedBy()));
+			character.resetAttackedBy();
+			return;
+		}
+		
 		Vector velocity = character.getVelocity();
 		
 		velocity.multiply(IDLE_FRICTION);

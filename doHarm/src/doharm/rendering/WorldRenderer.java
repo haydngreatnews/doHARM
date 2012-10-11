@@ -13,6 +13,7 @@ import javax.imageio.ImageIO;
 
 import doharm.logic.Game;
 import doharm.logic.camera.Camera;
+import doharm.logic.entities.characters.players.HumanPlayer;
 import doharm.logic.entities.characters.players.Player;
 import doharm.logic.entities.characters.players.PlayerType;
 import doharm.logic.maths.MathUtils;
@@ -104,6 +105,7 @@ public class WorldRenderer
 		Camera camera = game.getCamera();
 		Time time = game.getWorld().getTime();
 		Weather weather = game.getWorld().getWeather();
+		HumanPlayer humanPlayer = game.getWorld().getHumanPlayer();
 
 		//give the camera the canvas size so we can calculate the centre of the screen
 		camera.setCanvasDimensions(canvasSize);
@@ -159,6 +161,11 @@ public class WorldRenderer
 		graphics.drawString("Light: " + MathUtils.toDP(time.getLight(),2), 10, 70);
 		graphics.drawString("Weather: " + weather.getWeatherType().toString() + "("+MathUtils.toDP(weather.getConditions(),2)+")", 10, 90);
 	
+		if (!humanPlayer.isAlive())
+		{
+			graphics.drawString("Respawning in " + humanPlayer.getTimeTillSpawn()/1000 +"s...", 10, 110);
+		}
+		
 	}
 
 	public int getPickColourAt(int mouseX, int mouseY)

@@ -90,7 +90,7 @@ public class PlayerRenderer {
 		
 		
 		
-		if (player.getPlayerType() == PlayerType.HUMAN)
+		/*if (player.getPlayerType() == PlayerType.HUMAN)
 			graphics.setColor(Color.white);
 		else if (player.getPlayerType() == PlayerType.AI)
 			graphics.setColor(Color.RED);
@@ -98,8 +98,9 @@ public class PlayerRenderer {
 			graphics.setColor(Color.GRAY);
 		else
 			throw new UnsupportedOperationException(player.getPlayerType() + " not implemented");
+		*/
 		
-		
+		graphics.setColor(player.getColour());
 
 		Vector v = RenderUtil.convertCoordsToIso(col, row, player.getCurrentLayer().getLayerNumber());
 		

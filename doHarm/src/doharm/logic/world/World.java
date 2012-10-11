@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 import doharm.logic.camera.Camera;
@@ -94,7 +95,7 @@ public class World
 		
 		
 		//TEST STUFF TODO REMOVE
-		humanPlayer = (HumanPlayer)playerFactory.createPlayer(layers[0].getTiles()[5][5],"Test player",CharacterClassType.WARRIOR, 0,PlayerType.HUMAN,false);
+		humanPlayer = (HumanPlayer)playerFactory.createPlayer(layers[0].getTiles()[5][5],"Test player",CharacterClassType.WARRIOR, 0,PlayerType.HUMAN,Color.white,false);
 		
 		
 		
@@ -112,7 +113,7 @@ public class World
 			} while(!tile.isWalkable());
 			
 			
-			playerFactory.createPlayer(tile, "AI"+(i+1), CharacterClassType.WARRIOR, i+1,PlayerType.AI,false);
+			playerFactory.createPlayer(tile, "AI"+(i+1), CharacterClassType.WARRIOR, i+1,PlayerType.AI, new Color((i+102)*10213%255,(i+102)*223%255,(i+23)*1013%255),false);
 			
 		}
 		
@@ -219,14 +220,14 @@ public class World
 
 	private void resetEntities() 
 	{
-		for (AbstractEntity e: entityFactory.getEntities())
+		/*for (AbstractEntity e: entityFactory.getEntities())
 		{
-			if (!e.isAlive() && e.getEntityType() == EntityType.CHARACTER)
+			if (e.getEntityType() == EntityType.CHARACTER)
 			{
 				Character character = (Character)e;
 				character.resetAttackedBy();
 			}
-		}
+		}*/
 	}
 
 	private void respawnEntities() 
@@ -394,7 +395,7 @@ public class World
 			int col = (int) (Math.random()*numCols);
 			
 			Tile tile = layers[layer].getTiles()[row][col];
-			if (tile.isWalkable() && tile.isEmpty())
+			if (tile.isWalkable() && (tile.getRoof() == null || !tile.getRoof().isVisible()) && tile.isEmpty())
 				return tile;
 		}
 	}
@@ -408,5 +409,16 @@ public class World
 		List<Message> temp = new ArrayList<Message>(messages);
 		messages.clear();
 		return temp;
+	}
+
+	public Player getRandomPlayer() 
+	{
+		int n = (int) (Math.random() * playerFactory.getEntities().size());
+		Iterator<Player> iterator = playerFactory.getEntities().iterator();
+		for (int i = 0; i < n; i++)
+		{
+			iterator.next();
+		}
+		return iterator.next();
 	}
 }

@@ -1,8 +1,15 @@
 package doharm.logic.entities.characters.players.ai;
 
 import doharm.logic.entities.characters.players.AIPlayer;
+import doharm.logic.entities.characters.states.AttackState;
 
-public interface AIState 
+public abstract class AIState 
 {
-	public void process(AIPlayer player);
+	protected abstract void internalProcess(AIPlayer player);
+	public void process(AIPlayer player)
+	{
+		internalProcess(player);
+		
+		
+	}
 }
