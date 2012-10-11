@@ -19,6 +19,7 @@ import doharm.logic.entities.characters.players.PlayerType;
 import doharm.logic.world.World;
 import doharm.net.ClientState;
 import doharm.net.UDPReceiver;
+import doharm.net.packets.ClientPacket;
 import doharm.net.packets.Command;
 import doharm.net.packets.ServerPacket;
 import doharm.net.packets.Snapshot;
@@ -39,6 +40,10 @@ public class Client {
 	private Snapshot snapCurrent, snapNext;
 	
 	private int latestSeqSent;
+	
+	private static int RETRY_COUNT = 4;
+	private static int RETRY_DELAY = 20;
+	private int counter;
 	
 	World world;
 	
@@ -63,11 +68,61 @@ public class Client {
 		state = ClientState.NONE;
 	}
 	
-	public void connect(InetSocketAddress address)
+	/**
+	 * Changes the Client state and execute any needed code for switching to the state.
+	 * @param newState
+	 */
+	private void setState(ClientState newState)
 	{
-		serverAddress = address;
+		state = newState;
 	}
 	
+	public boolean connect(InetSocketAddress address)
+	{
+		serverAddress = address;
+		setState(ClientState.CONTACTING);
+		
+		for (int i=0; i<RETRY_COUNT; ++i)
+		{
+			byte[] join = new byte[1];
+			join[0] = (byte) ClientPacket.JOIN.ordinal();
+			transmit(join);
+			counter = 0;
+			while (++counter < RETRY_DELAY);
+			{
+				while (!receiver.isEmpty())
+				{
+					DatagramPacket packet = receiver.poll();
+					
+					// If the packet isn't from the game server we are connected/talking to, discard.
+					if (!packet.getSocketAddress().equals(serverAddress))	// TODO Potentially doesn't work, may need to getAddress, then comapre by IP and port seperately. or something.
+						continue;
+					
+					byte[] data = packet.getData();
+				
+					if (ServerPacket.values()[data[0]] == ServerPacket.RESPONSE)
+					{
+						if (data[1] != 0)
+						{
+							System.out.println("Didn't let you in. For some reason."); // rejected
+							setState(ClientState.NONE);
+							return false;
+						}
+						else
+						{
+							// Good to go.
+							setState(ClientState.INGAME);
+							return true;
+						}
+					}
+				}
+			}
+		}
+		System.out.println("Connection attempt timed out.");
+		setState(ClientState.NONE);
+		return false;
+	}
+
 	public void processIncomingPackets()
 	{		
 		// TODO Might want to eventually add to the condition "|| !runningLate" for if we're taking too long. Probably won't care about this for quite a while.
