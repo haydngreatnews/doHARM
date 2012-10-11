@@ -76,7 +76,11 @@ public class Client {
 	{
 		state = newState;
 	}
-	
+	/** 
+	 * Attempt to connect to a Server.
+	 * @param address Server address to connect to.
+	 * @return If the connection was successful.
+	 */
 	public boolean connect(InetSocketAddress address)
 	{
 		serverAddress = address;
@@ -102,7 +106,7 @@ public class Client {
 				
 					if (ServerPacket.values()[data[0]] == ServerPacket.RESPONSE)
 					{
-						if (data[1] != 0)
+						if (data[1] != 0)	// Response something other than OK.
 						{
 							System.out.println("Didn't let you in. For some reason."); // rejected
 							setState(ClientState.NONE);
