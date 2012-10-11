@@ -20,9 +20,11 @@ public abstract class Player extends Character
 	}
 	
 	
-	public void move()
+	public void process()
 	{
-		super.move();
+		if (!isAlive())
+			return;
+		super.process();
 	}
 
 

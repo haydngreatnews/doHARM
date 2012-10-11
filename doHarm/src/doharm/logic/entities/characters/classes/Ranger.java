@@ -1,13 +1,14 @@
 package doharm.logic.entities.characters.classes;
 
 import doharm.logic.entities.AbstractEntity;
+import doharm.logic.entities.characters.Character;
 
 public class Ranger extends CharacterClass
 {
 
-	public Ranger(AbstractEntity entity,CharacterClassType characterType) 
+	public Ranger(Character character,CharacterClassType characterType) 
 	{
-		super(entity,characterType);
+		super(character,characterType);
 	}
 
 }

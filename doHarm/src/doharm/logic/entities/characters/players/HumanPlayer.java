@@ -33,9 +33,12 @@ public class HumanPlayer extends Player
 	}
 	
 	@Override
-	public void move()
+	public void process()
 	{
-		super.move();
+		if (!isAlive())
+			return;
+		
+		super.process();
 		
 		
 		
@@ -62,7 +65,7 @@ public class HumanPlayer extends Player
 				{
 					hoverEntity = entity;
 					closestDistance = distance;
-					System.out.println("Found entity");
+					
 				}
 			}
 			
@@ -145,4 +148,6 @@ public class HumanPlayer extends Player
 		// ??
 		
 	}
+
+	
 }

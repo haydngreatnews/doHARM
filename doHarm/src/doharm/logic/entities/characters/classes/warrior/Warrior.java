@@ -1,15 +1,15 @@
 package doharm.logic.entities.characters.classes.warrior;
 
-import doharm.logic.entities.AbstractEntity;
+import doharm.logic.entities.characters.Character;
 import doharm.logic.entities.characters.classes.CharacterClass;
 import doharm.logic.entities.characters.classes.CharacterClassType;
 
 public class Warrior extends CharacterClass
 {
 
-	public Warrior(AbstractEntity e,CharacterClassType characterType) 
+	public Warrior(Character character,CharacterClassType characterType) 
 	{
-		super(e,characterType);
+		super(character,characterType);
 		
 		setAttributes(new WarriorAttributes());
 		setLevelupAttributes(new WarriorLevelupAttributes());

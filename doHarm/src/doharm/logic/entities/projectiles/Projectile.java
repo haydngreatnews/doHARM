@@ -14,11 +14,11 @@ public abstract class Projectile extends AbstractEntity
 	}
 	
 	@Override
-	public void move()
+	public void process()
 	{
 		
 		
-		super.move();
+		super.process();
 	}
 	
 }

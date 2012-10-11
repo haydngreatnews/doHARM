@@ -10,8 +10,8 @@ public class Attributes
 	
 	private float maxHealth = 100;
 	private float maxMana = 0;
-	private float healthRegeneration = 1;
-	private float manaRegeneration = 1;
+	private float healthRegeneration = 0.1f;
+	private float manaRegeneration = 0.1f;
 	
 	public Attributes()
 	{

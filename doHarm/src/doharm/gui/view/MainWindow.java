@@ -5,7 +5,6 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Collection;
 import java.util.Date;
 
 import javax.swing.JFrame;
@@ -22,6 +21,8 @@ import doharm.gui.input.KeyboardManager;
 import doharm.gui.input.MenuButtonListener;
 import doharm.gui.input.MouseManager;
 import doharm.logic.Game;
+import doharm.logic.chat.Message;
+import doharm.logic.chat.MessagePart;
 import doharm.rendering.WorldRenderer;
 
 public class MainWindow {
@@ -58,12 +59,12 @@ public class MainWindow {
 
 		southPanel.add(textPane, "cell 3 1");
 		mouseManager = new MouseManager(game, renderer);
-		keyboardManager = new KeyboardManager(this,game.getCamera());
+		keyboardManager = new KeyboardManager(this,game);
 		this.game = game;
 		state = MAXIMIZED;
 		toggleSize();
 		canvas.add(southPanel, BorderLayout.SOUTH);
-		addMessage("Welcome to the game");
+		addMessage(new Message(-1,new MessagePart("Welcome to the game")));
 	}
 
 	public void toggleSize() {
@@ -117,17 +118,23 @@ public class MainWindow {
 		return frame;
 	}
 
-	public void repaint(Collection<String> messages) {
-		for (String message: messages)
+	public void repaint() {
+		for (Message message: game.getWorld().getAndClearMessages())
 			addMessage(message);
 		frame.repaint();
 	}
 	
 	private DateFormat dateFormat = new SimpleDateFormat("[HH:MM]");
 
-	public void addMessage(String text) {
-		text = dateFormat.format(new Date()) + text;
-		messages.offer(text);
+	public void addMessage(Message message) 
+	{
+		//TODO FIX TEMP CRAPPY CODE
+		String temp = message.getParts()[0].getText();
+		//String hex = message.getParts()[0].getColour().
+		
+		
+		temp = dateFormat.format(new Date()) + temp;
+		messages.offer(temp);
 		StringBuilder sb = new StringBuilder();
 		sb.append("<div style=\"font-family:sans-serif; color:#00CC00\">");
 		for (String s : messages) {

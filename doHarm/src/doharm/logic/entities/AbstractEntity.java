@@ -163,7 +163,7 @@ public abstract class AbstractEntity
 	
 	
 	
-	public void move()
+	public void process()
 	{
 		if (!alive)
 			return;

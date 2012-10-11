@@ -7,6 +7,8 @@ import java.util.Collection;
 import java.util.List;
 
 import doharm.logic.camera.Camera;
+import doharm.logic.chat.Message;
+import doharm.logic.chat.MessagePart;
 import doharm.logic.entities.AbstractEntity;
 import doharm.logic.entities.EntityFactory;
 import doharm.logic.entities.EntityType;
@@ -50,7 +52,7 @@ public class World
 	
 	private Time time;
 	private Weather weather;
-	private List<String> messages;
+	private List<Message> messages;
 	
 	
 	public World(String worldName, NetworkMode networkMode, Time time, Weather weather)
@@ -63,7 +65,7 @@ public class World
 		entityFactory = new EntityFactory(this,idManager);
 		playerFactory = new PlayerFactory(this,entityFactory);
 		itemFactory = new ItemFactory(this, entityFactory);
-		messages = new ArrayList<String>();
+		messages = new ArrayList<Message>();
 		
 		try 
 		{
@@ -136,11 +138,11 @@ public class World
 			//
 			
 		}
-		addMessage("World created.");
+		addMessage(new Message(-1, new MessagePart("World created.")));
 		
 	}
 
-	public void addMessage(String message)
+	public void addMessage(Message message)
 	{
 		messages.add(message);
 	}
@@ -205,12 +207,27 @@ public class World
 	{
 		time.process();
 		weather.process();
+		resetEntities();
 		respawnEntities();
 		moveEntities();
 		setCamera();
 	}
 	
 	
+
+	
+
+	private void resetEntities() 
+	{
+		for (AbstractEntity e: entityFactory.getEntities())
+		{
+			if (!e.isAlive() && e.getEntityType() == EntityType.CHARACTER)
+			{
+				Character character = (Character)e;
+				character.resetAttackedBy();
+			}
+		}
+	}
 
 	private void respawnEntities() 
 	{
@@ -228,7 +245,7 @@ public class World
 	{
 		for (Player p: playerFactory.getEntities())
 		{
-			p.move();
+			p.process();
 		}
 	}
 	
@@ -387,8 +404,8 @@ public class World
 		return networkMode;
 	}
 
-	public Collection<String> getAndClearMessages() {
-		List<String> temp = new ArrayList<String>(messages);
+	public Collection<Message> getAndClearMessages() {
+		List<Message> temp = new ArrayList<Message>(messages);
 		messages.clear();
 		return temp;
 	}
