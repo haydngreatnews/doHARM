@@ -36,7 +36,7 @@ public class XPBar extends JPanel {
 		for (int i = (int) Math.round(getWidth() / 8.0); i < getWidth()-20; i += (int) Math.round(getWidth() / 8.0)) {
 			g.drawLine(i, 0, i, getHeight());
 		}
-		g.setColor(new Color(player.getExperienceRatio(), 0, player.getExperienceRatio()));
+		g.setColor(new Color(player.getExperienceRatio()*.6f+.2f, 0, player.getExperienceRatio()*.6f+.2f));
 
 		g.fillRect(0, 0, (int) (getWidth() * player.getExperienceRatio()),
 				getHeight());

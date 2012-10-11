@@ -15,16 +15,17 @@ public class HealthBar extends JPanel {
 		super();
 		Dimension d = new Dimension(100,20);
 		setPreferredSize(d);
+		setOpaque(false);
 		player = p;
 	}
 	@Override
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		g.setColor(Color.RED);
-		g.fillRect(0, 0, getWidth(), getHeight());
-		g.setColor(Color.GREEN);
+		g.setColor(Color.RED.darker());
+		g.drawRect(0, 0, getWidth()-1, getHeight()-1);
+		g.setColor(new Color((1-player.getHealthRatio())*.8f, player.getHealthRatio()*.8f, 0));
 		g.fillRect(0, 0, (int) (getWidth()*player.getHealthRatio()), getHeight());
 		g.setColor(Color.BLACK);
-		g.drawString("HEALTH", 2, getHeight()/4*3);
+		g.drawString("HEALTH   "+(int)player.getHealth()+"/"+(int)player.getMaxHealth(), 2, getHeight()/4*3);
 	}
 }

@@ -17,7 +17,7 @@ import doharm.gui.decorations.HealthBar;
 import doharm.gui.decorations.ManaBar;
 import doharm.gui.decorations.RageBar;
 import doharm.gui.decorations.XPBar;
-import doharm.gui.extras.CursorBuilder;
+import doharm.gui.extras.CursorFactory;
 import doharm.gui.extras.EjectorQueue;
 import doharm.gui.input.KeyboardManager;
 import doharm.gui.input.MenuButtonListener;
@@ -26,7 +26,6 @@ import doharm.logic.Game;
 import doharm.logic.chat.Message;
 import doharm.logic.chat.MessagePart;
 import doharm.logic.entities.characters.players.HumanPlayer;
-import doharm.logic.entities.characters.players.Player;
 import doharm.rendering.WorldRenderer;
 
 public class MainWindow {
@@ -162,7 +161,7 @@ public class MainWindow {
 	private class CursorThread extends Thread {
 		public void run(){
 			HumanPlayer human = game.getWorld().getHumanPlayer();
-			frame.setCursor(CursorBuilder.map.get(human.getMouseIcon()));
+			frame.setCursor(CursorFactory.getCursors().get(human.getMouseIcon()));
 		}
 	}
 
