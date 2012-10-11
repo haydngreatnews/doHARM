@@ -18,12 +18,14 @@ public class CharacterClass
 	private float nextLevelExperience;
 	private int level;
 	private Taunts taunts;
+	private Character character;
 	
 	
 	
 	
 	public CharacterClass(Character character, CharacterClassType type)
 	{
+		this.character = character;
 		experience = INITIAL_EXPERIENCE;
 		lastLevelExperience = INITIAL_EXPERIENCE;
 		nextLevelExperience = INITIAL_EXPERIENCE*2;
@@ -69,6 +71,10 @@ public class CharacterClass
 	{
 		return experience;
 	}
+	public float getNextLevelExperience()
+	{
+		return nextLevelExperience;
+	}
 	
 	public void addExperience(int amount)
 	{
@@ -81,7 +87,7 @@ public class CharacterClass
 		lastLevelExperience = nextLevelExperience;
 		nextLevelExperience = (nextLevelExperience+1)*2;
 		level++;
-		attributes.levelup(levelupAttributes);
+		attributes.levelup(levelupAttributes,character);
 	}
 
 
