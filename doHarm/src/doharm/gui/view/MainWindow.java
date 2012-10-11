@@ -25,6 +25,7 @@ import doharm.gui.input.MouseManager;
 import doharm.logic.Game;
 import doharm.logic.chat.Message;
 import doharm.logic.chat.MessagePart;
+import doharm.logic.entities.characters.players.HumanPlayer;
 import doharm.logic.entities.characters.players.Player;
 import doharm.rendering.WorldRenderer;
 
@@ -160,7 +161,7 @@ public class MainWindow {
 
 	private class CursorThread extends Thread {
 		public void run(){
-			Player human = game.getWorld().getHumanPlayer();
+			HumanPlayer human = game.getWorld().getHumanPlayer();
 			frame.setCursor(CursorBuilder.map.get(human.getMouseIcon()));
 		}
 	}

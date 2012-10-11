@@ -1,38 +1,23 @@
 package doharm.gui.editor;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.ArrayList;
+import java.io.IOException;
 import java.util.List;
-import java.util.Scanner;
+
+import doharm.storage.WorldLoader;
 
 public class EditorLogic {
 	
-	public static List<char[][]> loadFile(File fin){
-		return null;
-		//Load machine output files
-	}
-	public static List<char[][]> loadHumanFile(File fin){
-		List<char[][]> ret = new ArrayList<char[][]>();
+	public static List<char[][]> loadWorld(String worldName){
 		try {
-			int sizex, sizey;
-			String tileset;
-			Scanner sc = new Scanner(fin);
-			sizex = sc.nextInt();
-			//Only maybe necessary?
-			sc.nextLine();
-			sizey = sc.nextInt();
-			tileset = sc.next();
-			List<String> layers = new ArrayList<String>();
-			while (sc.hasNext()){
-				
-			}
-			
-		} catch (FileNotFoundException e) {
+			WorldLoader world = new WorldLoader(worldName);
+			world.getTilesetLoader();
+		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
-		return ret;
+		return null;
 	}
+
 }
+
