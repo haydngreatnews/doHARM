@@ -55,18 +55,18 @@ public class MainWindow {
 		messages = new EjectorQueue<String>(10);
 		canvas.setLayout(new BorderLayout());
 		southPanel = new JPanel(new MigLayout("wrap 3, align center center",
-				"[sg][fill][align right,sg]"));
+				"[grow 33, sg][fill, grow 33, sg][align right, grow 33, sg]"));
 		southPanel.setOpaque(false);
 		southPanel.add(new HealthBar(game.getWorld().getHumanPlayer()),
-				"cell 2 1,split 3, aligny bottom");
+				"cell 0 2, aligny bottom, grow");
 		southPanel.add(new ManaBar(game.getWorld().getHumanPlayer()),
-				"aligny bottom");
+				"aligny bottom, grow");
 		southPanel.add(new RageBar(game.getWorld().getHumanPlayer()),
-				"aligny bottom");
+				"aligny bottom, grow");
 		southPanel.add(new XPBar(game.getWorld().getHumanPlayer()),
-				"cell 2 2, grow, h 5");
+				"cell 0 3, span 3, grow, h 5");
 
-		southPanel.add(textPane, "cell 3 1, grow");
+		southPanel.add(textPane, "cell 0 0, grow, span 3, gapleft 55%");
 		mouseManager = new MouseManager(game, renderer);
 		keyboardManager = new KeyboardManager(this,game);
 		this.game = game;
@@ -161,7 +161,7 @@ public class MainWindow {
 	private class CursorThread extends Thread {
 		public void run(){
 			Player human = game.getWorld().getHumanPlayer();
-			frame.setCursor(CursorBuilder.map.get(human));
+			frame.setCursor(CursorBuilder.map.get(human.getMouseIcon()));
 		}
 	}
 

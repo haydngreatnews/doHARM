@@ -21,8 +21,7 @@ public class XPBar extends JPanel {
 		setLayout(new FlowLayout(FlowLayout.CENTER, 2, 0));
 		Dimension d = new Dimension(100, 10);
 		setPreferredSize(d);
-		label = new JLabel("XP Level:" + p.getLevel(), JLabel.CENTER);
-		label.setPreferredSize(d);
+		label = new JLabel("", JLabel.CENTER);
 		label.setForeground(Color.yellow);
 		add(label);
 		player = p;
@@ -34,7 +33,7 @@ public class XPBar extends JPanel {
 		super.paintComponent(g);
 		g.setColor(Color.GRAY);
 		g.drawRect(0, 0, getWidth() - 1, getHeight() - 1);
-		for (int i = (int) Math.round(getWidth() / 8.0); i < getWidth(); i += (int) Math.round(getWidth() / 8.0)) {
+		for (int i = (int) Math.round(getWidth() / 8.0); i < getWidth()-20; i += (int) Math.round(getWidth() / 8.0)) {
 			g.drawLine(i, 0, i, getHeight());
 		}
 		g.setColor(new Color(player.getExperienceRatio(), 0, player.getExperienceRatio()));
@@ -47,6 +46,6 @@ public class XPBar extends JPanel {
 			//lastLevel = player.getLevel();
 		}
 
-		label.setText("XP:"+player.getCharacterClass().getExperience()+"/"+player.getCharacterClass().getNextLevelExperience()+"\tLevel:" + player.getLevel());
+		label.setText("XP:"+(int)player.getCharacterClass().getExperience()+"/"+(int)player.getCharacterClass().getNextLevelExperience()+"            Level:" + player.getLevel());
 	}
 }
