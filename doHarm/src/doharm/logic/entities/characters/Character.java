@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Stack;
 
+import doharm.logic.chat.Taunts;
 import doharm.logic.entities.AbstractEntity;
 import doharm.logic.entities.EntityType;
 import doharm.logic.entities.characters.alliances.Alliance;
@@ -39,13 +40,21 @@ public abstract class Character extends AbstractEntity
 	
 	private CharacterState state;
 	private double spawnTime;
+	private Character attackedBy;
+	
+	
 	
 	
 	protected Character() 
 	{
 		super(EntityType.CHARACTER);
 		inventory = new Inventory();
-		state = new IdleState();
+		
+	}
+	
+	public Taunts getTaunts() 
+	{
+		return characterClass.getTaunts();
 	}
 	
 	public void setCharacterClass(CharacterClassType classType)
@@ -66,13 +75,29 @@ public abstract class Character extends AbstractEntity
 		return inventory;
 	}
 	
-	@Override
-	public void move()
+	public void resetAttackedBy()
 	{
+		attackedBy = null;
+	}
+	public Character getAttackedBy()
+	{
+		return attackedBy;
+	}
+	
+	@Override
+	public void process()
+	{
+		if (!isAlive())
+			return;
 		characterClass.process();
+		
+		health += characterClass.getAttributes().getHealthRegeneration();
+		health = Math.min(health, getMaxHealth());
+		
+		
 		state.process(this);
 		
-		super.move();
+		super.process();
 	}
 	
 	public CharacterState getState()
@@ -92,10 +117,12 @@ public abstract class Character extends AbstractEntity
 	
 	
 	
-	
+	@Override
 	public void spawn(Tile spawnTile)
 	{
 		super.spawn(spawnTile);
+		
+		state = new IdleState();
 		
 		//Vector position = getPosition();
 		
@@ -185,6 +212,8 @@ public abstract class Character extends AbstractEntity
 
 	public void receiveDamage(float damage, Character attacker) 
 	{
+		attackedBy = attacker;
+		
 		if (!isAlive())
 			return;
 		

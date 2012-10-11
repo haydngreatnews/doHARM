@@ -1,9 +1,10 @@
 package doharm.logic.entities.characters.classes;
 
+import doharm.logic.chat.Taunts;
 import doharm.logic.entities.AbstractEntity;
 import doharm.logic.entities.characters.classes.attributes.Attributes;
 import doharm.logic.entities.characters.classes.attributes.LevelupAttributes;
-
+import doharm.logic.entities.characters.Character;
 
 public class CharacterClass 
 {
@@ -16,16 +17,21 @@ public class CharacterClass
 	private float lastLevelExperience;
 	private float nextLevelExperience;
 	private int level;
+	private Taunts taunts;
+	private Character character;
 	
 	
 	
-	public CharacterClass(AbstractEntity entity, CharacterClassType type)
+	
+	public CharacterClass(Character character, CharacterClassType type)
 	{
+		this.character = character;
 		experience = INITIAL_EXPERIENCE;
 		lastLevelExperience = INITIAL_EXPERIENCE;
 		nextLevelExperience = INITIAL_EXPERIENCE*2;
 		experienceToAdd = 0;
 		level = 1;
+		taunts = new Taunts(character);
 	}
 	
 	public void process()
@@ -65,6 +71,10 @@ public class CharacterClass
 	{
 		return experience;
 	}
+	public float getNextLevelExperience()
+	{
+		return nextLevelExperience;
+	}
 	
 	public void addExperience(int amount)
 	{
@@ -77,7 +87,7 @@ public class CharacterClass
 		lastLevelExperience = nextLevelExperience;
 		nextLevelExperience = (nextLevelExperience+1)*2;
 		level++;
-		attributes.levelup(levelupAttributes);
+		attributes.levelup(levelupAttributes,character);
 	}
 
 
@@ -88,5 +98,11 @@ public class CharacterClass
 		
 		float ratio = relativeExperience / difference;
 		return ratio;
+	}
+	
+	
+
+	public Taunts getTaunts() {
+		return taunts;
 	}
 }

@@ -1,33 +1,30 @@
 package doharm.gui.view;
 
 import java.awt.BorderLayout;
-import java.awt.Cursor;
 import java.awt.Dimension;
-import java.awt.Image;
-import java.awt.LayoutManager;
-import java.awt.Point;
 import java.awt.Toolkit;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextPane;
-import javax.swing.OverlayLayout;
 
 import net.miginfocom.swing.MigLayout;
 import doharm.gui.decorations.HealthBar;
 import doharm.gui.decorations.ManaBar;
 import doharm.gui.decorations.RageBar;
 import doharm.gui.decorations.XPBar;
+import doharm.gui.extras.CursorBuilder;
 import doharm.gui.extras.EjectorQueue;
 import doharm.gui.input.KeyboardManager;
 import doharm.gui.input.MenuButtonListener;
 import doharm.gui.input.MouseManager;
 import doharm.logic.Game;
+import doharm.logic.chat.Message;
+import doharm.logic.chat.MessagePart;
 import doharm.logic.entities.characters.players.Player;
 import doharm.rendering.WorldRenderer;
 
@@ -71,17 +68,12 @@ public class MainWindow {
 
 		southPanel.add(textPane, "cell 3 1, grow");
 		mouseManager = new MouseManager(game, renderer);
-		keyboardManager = new KeyboardManager(this, game.getCamera());
+		keyboardManager = new KeyboardManager(this,game);
 		this.game = game;
 		state = MAXIMIZED;
 		toggleSize();
 		canvas.add(southPanel, BorderLayout.SOUTH);
-		addMessage("Welcome to the game");
-		addMessage("Welcome to the game");
-		addMessage("Welcome to the game");
-		addMessage("Welcome to the game");
-		addMessage("Welcome to the game");
-
+		addMessage(new Message(-1,new MessagePart("Welcome to the game")));
 	}
 
 	public void toggleSize() {
@@ -141,18 +133,21 @@ public class MainWindow {
 	}
 
 	public void repaint() {
-		Collection<String> messages = game.getWorld().getAndClearMessages();
-		for (String message : messages) {
-			System.out.println(message);
+		Collection<Message> messages = game.getWorld().getAndClearMessages();
+		for (Message message: messages)
 			addMessage(message);
-		}
 		frame.repaint();
 	}
 
 	private DateFormat dateFormat = new SimpleDateFormat("[HH:MM]");
 
-	public void addMessage(String text) {
-		text = dateFormat.format(new Date()) + text + "<br />";
+
+	public void addMessage(Message message) 
+	{
+		//TODO FIX TEMP CRAPPY CODE
+		String temp = message.getParts()[0].getText();
+		//String hex = message.getParts()[0].getColour().
+		String text = dateFormat.format(new Date()) + temp + "<br />";
 		messages.offer(text);
 		StringBuilder sb = new StringBuilder();
 		sb.append("<div style=\"font-family:sans-serif; color:#00CC00\">");
@@ -165,8 +160,8 @@ public class MainWindow {
 
 	private class CursorThread extends Thread {
 		public void run(){
-			Player human = game.getWorld().getHumanPlayer().getM;
-			frame.setCursor(c);
+			Player human = game.getWorld().getHumanPlayer();
+			frame.setCursor(CursorBuilder.map.get(human));
 		}
 	}
 

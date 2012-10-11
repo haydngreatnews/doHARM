@@ -1,8 +1,7 @@
 package doharm.logic.entities.characters.players;
 
-import doharm.logic.entities.characters.classes.CharacterClassType;
 import doharm.logic.entities.characters.players.ai.AIState;
-import doharm.logic.entities.characters.players.ai.WanderState;
+import doharm.logic.entities.characters.players.ai.IdleState;
 import doharm.logic.world.tiles.Tile;
 
 
@@ -14,13 +13,23 @@ public class AIPlayer extends Player
 	{
 		super(PlayerType.AI);
 		
-		state = new WanderState();
+		
 	}
 	
 	@Override
-	public void move()
+	public void spawn(Tile spawnTile)
 	{
-		super.move();
+		super.spawn(spawnTile);
+		state = new IdleState();
+		
+	}
+	
+	@Override
+	public void process()
+	{
+		if (!isAlive())
+			return;
+		super.process();
 		state.process(this);
 	}
 	

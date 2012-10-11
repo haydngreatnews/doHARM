@@ -1,13 +1,14 @@
 package doharm.logic.entities.characters.classes;
 
 import doharm.logic.entities.AbstractEntity;
+import doharm.logic.entities.characters.Character;
 
 public class Wizard extends CharacterClass
 {
 
-	public Wizard(AbstractEntity entity,CharacterClassType characterType) 
+	public Wizard(Character character,CharacterClassType characterType) 
 	{
-		super(entity,characterType);
+		super(character,characterType);
 	}
 
 }

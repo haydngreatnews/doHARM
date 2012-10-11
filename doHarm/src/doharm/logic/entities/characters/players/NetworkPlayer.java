@@ -1,7 +1,5 @@
 package doharm.logic.entities.characters.players;
 
-import doharm.logic.entities.characters.classes.CharacterClassType;
-import doharm.logic.world.tiles.Tile;
 
 
 public class NetworkPlayer extends Player
@@ -12,8 +10,10 @@ public class NetworkPlayer extends Player
 	}
 	
 	@Override
-	public void move()
+	public void process()
 	{
-		super.move();
+		if (!isAlive())
+			return;
+		super.process();
 	}
 }
