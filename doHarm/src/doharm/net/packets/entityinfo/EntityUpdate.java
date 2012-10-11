@@ -9,6 +9,7 @@ public abstract class EntityUpdate extends EntityInfo
 {
 	public final int layer; //, velocity, health;
 	public final float posX, posY, angle;
+	protected static final byte CHARACTER = 0, FURNITURE = 1, PROJECTILE = 2;
 	
 	protected EntityUpdate(int id, ByteBuffer buff)
 	{
@@ -29,11 +30,23 @@ public abstract class EntityUpdate extends EntityInfo
 		angle = ent.getAngle();
 	}
 	
-	protected void toBytes(ByteBuffer buff) {
+	protected void toBytes(byte type, ByteBuffer buff) {
 		super.toBytes(buff);
+		buff.put(type);
 		buff.putFloat(posX);
 		buff.putFloat(posY);
 		buff.putInt(layer);
 		buff.putFloat(angle);
+	}
+
+	public static EntityUpdate newEntityUpdate(int id, ByteBuffer buff) {
+		byte type = buff.get();
+		if (type == CHARACTER)
+			return new CharacterUpdate(id,buff);
+		else if (type == FURNITURE)
+			return new FurnitureUpdate(id,buff);
+		else if (type == PROJECTILE)
+			return new ProjectileUpdate(id,buff);
+		return null;
 	}
 }

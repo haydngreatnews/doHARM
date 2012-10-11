@@ -57,8 +57,7 @@ public class Snapshot {
 		for (int i=0; i<count; ++i)
 		{
 			int id = buff.getInt();
-			//entityCreates.put(id, new EntityCreate(id, buff));
-			entityCreates.put(id, new CharacterCreate(id, buff));
+			entityCreates.put(id, EntityCreate.newEntityCreate(id, buff));
 		}
 		
 		// Read updates
@@ -66,8 +65,7 @@ public class Snapshot {
 		for (int i=0; i<count; ++i)
 		{
 			int id = buff.getInt();
-			//entityUpdates.put(id, new EntityUpdate(id, buff));
-			entityUpdates.put(id, new CharacterUpdate(id, buff));
+			entityUpdates.put(id, EntityUpdate.newEntityUpdate(id, buff));
 		}
 	}
 	

@@ -32,6 +32,7 @@ public class Server {
 	private DatagramSocket udpSock;
 	private int serverTime;
 	private int frameTime;	// Time between frames.
+	private static int CLIENT_CHECK_INTERVAL = 60, TIMEOUT_DELAY = 200;
 	
 	private World world;
 	
@@ -245,15 +246,31 @@ public class Server {
 	private void main()
 	{
 		long start, sleepTime;
+		int checkClientsCounter = 0;
 		while (true)
 		{
 			start = System.currentTimeMillis();
+			++checkClientsCounter;
 			// process incoming packets
 			processIncomingPackets();
 			
 			// perform game logics
 			
-			
+			// periodically check if we should drop clients (because we haven't heard from them in a while).
+			if (checkClientsCounter > CLIENT_CHECK_INTERVAL)
+			{
+				checkClientsCounter = 0;
+				ArrayList<ConnectedClient> toRemove = new ArrayList<ConnectedClient>(2);
+				for ( ConnectedClient c : clients )
+				{
+					if (serverTime - c.getLatestTime() > TIMEOUT_DELAY);
+						toRemove.add(c);
+				}
+				for ( ConnectedClient c : toRemove )
+				{
+					clients.remove(c);
+				}
+			}
 			// create then send snapshots
 			dispatchSnapshots();
 			
@@ -261,7 +278,7 @@ public class Server {
 			sleepTime = frameTime - (System.currentTimeMillis()-start);
 			if (sleepTime > 0)
 			{
-				try { Thread.sleep(sleepTime); } catch (InterruptedException e) {e.printStackTrace();}
+				try {Thread.sleep(sleepTime);} catch (InterruptedException e) {e.printStackTrace();}
 			}
 		}
 	}

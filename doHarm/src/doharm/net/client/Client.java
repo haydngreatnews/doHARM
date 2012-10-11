@@ -115,7 +115,7 @@ public class Client {
 						else
 						{
 							// Good to go.
-							setState(ClientState.INGAME);
+							setState(ClientState.READY);
 							return true;
 						}
 					}
@@ -150,24 +150,6 @@ public class Client {
 			case GAMESTATE:
 				updateSnapshotPacket(data, true);
 				break;
-				
-			case RESPONSE:
-				// THIS CASE DOESN'T CHECK WHAT STATE WE ARE IN (ie we could be INGAME then get forced back into LOADING cause of receiving a packet of this type. This should be changed by only listening for certain packets at certain points of time, not sure how exactly want to do that at the mo.
-				// if OK, [create TCP connection] and then load the static game into memory.
-				if (data[1] == 0)	// response code 0 = OK
-				{
-					System.out.println("Server responded with OK, moving to LOADING state...");
-					state = ClientState.LOADING;
-					/* TODO Possibly run the loading in a separate thread so the queue continue to be looped thru.
-					Then again, there is only one thing the client needs to be worrying about, 
-					so he doesn't need to be listening for anything else at this point? 
-					unless we want the server to ask us if were still here every once in a while.. */
-				}
-				else	// it's an error, print the message and return to menu or w/e
-				{
-					System.out.println("Server responded with NO.");
-				}
-				break;
 			}
 		}
 	}
@@ -183,7 +165,7 @@ public class Client {
 		int timestamp = Snapshot.getTimestamp(data);
 		
 		// If this packet isn't more recent than the latest snapshot we've received, discard.
-		if ( snapNext != null && timestamp <= snapNext.serverTime )
+		if ( (snapNext != null && timestamp <= snapNext.serverTime) || (snapCurrent != null && timestamp <= snapCurrent.serverTime) )
 			return;
 		
 		snapNext = new Snapshot(data);
@@ -246,27 +228,18 @@ public class Client {
 		{
 			// process incoming packets
 			processIncomingPackets();
-			
-			if (state == ClientState.INGAME)
-			{
-				// update gamestate based on snapshots
-				updateWorld();
-				
-				// perform client-side game logics
-				
-				// render
-				
-				// create then send command packet
-				dispatchCommand();
-				
-				// wait for next tick
-			}
-			else
-			{
-				
-				
-				try {Thread.sleep(100);} catch (InterruptedException e) {e.printStackTrace();}
-			}
+
+			// update gamestate based on snapshots
+			updateWorld();
+
+			// perform client-side game logics
+
+			// render
+
+			// create then send command packet
+			dispatchCommand();
+
+			// wait for next tick
 		}
 	}
 	
@@ -305,8 +278,8 @@ public class Client {
 			if (c instanceof CharacterCreate)
 			{
 				CharacterCreate cc = (CharacterCreate) c;
-				AbstractEntity newEnt = world.getPlayerFactory().createPlayer(world.getLayers()[0].getTiles()[5][5],cc.name,CharacterClassType.WARRIOR, 0,PlayerType.HUMAN, true);
-				ents.addEntity(newEnt, c.id, true);
+				//AbstractEntity newEnt = world.getPlayerFactory().createPlayer(world.getLayers()[0].getTiles()[5][5],cc.name,CharacterClassType.WARRIOR, 0,PlayerType.HUMAN, true);
+				//ents.addEntity(newEnt, c.id, true);
 			}
 		}
 		

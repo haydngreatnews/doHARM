@@ -25,4 +25,9 @@ public abstract class EntityCreate extends EntityInfo
 		super.toBytes(buff);
 		
 	}
+
+	public static EntityCreate newEntityCreate(int id, ByteBuffer buff) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

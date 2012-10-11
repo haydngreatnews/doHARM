@@ -7,19 +7,21 @@ import doharm.net.packets.Bytes;
 
 public class CharacterCreate extends EntityCreate
 {
-	//public final int colour;
+	public final int colour;
 	public final String name;
 	
 	public CharacterCreate(int id, ByteBuffer buff)
 	{
 		super(id, buff);
-		//colour = buff.getInt();
+		colour = buff.getInt();
 		name = Bytes.getString(buff);
 	}
 
-	public CharacterCreate(HumanPlayer player) {
+	public CharacterCreate(HumanPlayer player)
+	{
 		super(player);
-		name = player.toString();
+		colour = 0;
+		name = player.getName();
 	}
 	
 	public byte[] toBytes()

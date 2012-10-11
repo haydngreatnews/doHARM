@@ -36,6 +36,8 @@ public class ConnectedClient {
 	public InetSocketAddress getAddress() {	return address; }
 	
 	public ClientState getState() { return state; }
+	
+	public int getLatestTime() { return latestTime; }
 
 	public void setState(ClientState newState)
 	{
@@ -70,10 +72,7 @@ public class ConnectedClient {
 	}
 	
 	/** Add a new snapshot to the snap buffer. */
-	public void addSnapshot(Snapshot snap)
-	{
-		snapsBuffer.add(snap);
-	}
+	public void addSnapshot(Snapshot snap) { snapsBuffer.add(snap); }
 	
 	/**
 	 * Builds the Snapshot to actually transmit to the client.
@@ -108,9 +107,7 @@ public class ConnectedClient {
 	 * Removes all the unack'd snaps from the snapsBuffer.
 	 * Used when sending a full GameState. 
 	 */
-	public void flushSnaps() {
-		snapsBuffer.clear();
-	}
+	public void flushSnaps() { snapsBuffer.clear(); }
 
 	public boolean resendGamestate() {
 		if (--counter == 0)
