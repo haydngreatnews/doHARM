@@ -205,6 +205,7 @@ public class WorldRenderer
 			//and dont draw any subsequent layers.
 
 
+
 //			if(isTransparent)
 //				drawTiles(tiles, layerCount, floorImagesTrans, wallImagesTrans);
 //			else
@@ -213,7 +214,7 @@ public class WorldRenderer
 				drawTiles(tiles, layerCount, floorImagesTrans, wallImagesTrans);
 			else
 
-				drawTiles(tiles, layerCount, floorImages, wallImages);
+
 			
 			
 			//TODO
@@ -273,51 +274,7 @@ public class WorldRenderer
 			}
 		}
 		
-	}
-	
-	private void drawTiles1(Tile[][] tiles, int layerCount, BufferedImage[] FI, BufferedImage[] WI){
-		graphics.setColor(new Color(1,0,1,0.4f));
-		for(int row = 0; row < tiles.length; row++){
 
-			for(int col = 0; col < tiles[row].length; col++){
-				Tile tile = tiles[row][col];
-
-				BufferedImage image = FI[tile.getImageID()];
-
-
-				Vector vector = RenderUtil.convertCoordsToIso(col, row, layerCount);
-				int x = vector.getXAsInt() - fTileW/2; //fTileW/2 added PLEASE leave in here
-				int y = vector.getYAsInt() - fTileH/2; //fTileH/2 added PLEASE leave in here
-				graphics.drawImage(image,x,y, null);
-
-				if (tile.isWalkable()) //TODO remove
-					graphics.fillRect(x-1+fTileW/2, y-1+fTileH/2, 2, 2);
-
-				if(tile.isWalkable() && layerCount==0){
-
-
-					pickGraphics.drawImage(tile.getPickImage(), x,y,null);
-
-
-				}
-
-				if(tile.getImageID() != 2 ){
-
-					int imgID = tile.getWallImageID(Direction.UP);
-
-
-					image = WI[imgID++];
-					y+=fTileH/2;
-
-					graphics.drawImage(image,x,y, null);
-					image = WI[imgID];
-					x+=wTileW;
-					graphics.drawImage(image,x,y, null);
-				}
-
-			}
-		}
-		
 	}
 
 	private void createTransparentImages(){
