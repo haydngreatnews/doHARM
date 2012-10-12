@@ -16,6 +16,7 @@ import javax.print.attribute.standard.MediaSize.ISO;
 import doharm.logic.Game;
 import doharm.logic.camera.Camera;
 import doharm.logic.entities.characters.players.Player;
+import doharm.logic.entities.characters.players.PlayerType;
 import doharm.logic.physics.Vector;
 import doharm.logic.world.Layer;
 import doharm.logic.world.World;
@@ -115,23 +116,7 @@ public class WorldRenderer
 		
 		
 		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
+	
 		//clear the mouse pick image
 		pickGraphics.setColor(Color.black);
 		pickGraphics.fillRect(0, 0, canvasSize.width, canvasSize.height);
@@ -183,63 +168,33 @@ public class WorldRenderer
 
 	private void renderWorldIso(){
 		World world = game.getWorld();
-
+		boolean isTransparent = false;
 		Layer[] layers = world.getLayers();
 		for(int layerCount = 0; layerCount < layers.length; layerCount++){
 
 
 			Tile[][] tiles = layers[layerCount].getTiles();
-
-			boolean isTransparent = false;
+			isTransparent = false;
+			for (Player player: world.getPlayerFactory().getEntities()){
+				if(player.getPlayerType() == PlayerType.HUMAN &&  RenderUtil.isObscured(player, world)){
+					isTransparent = true;
+					break;
+				}
+			}
+			
+			
+			
 			//TODO this must be changed when camera views are implemented.
 			//if(tile above the player with respect to the isometric view, 
 			//ie. the tile(s) obscuring view of the player, is not an invisible tile, make this entire layer transparent.
 			//and dont draw any subsequent layers.
 
-			graphics.setColor(new Color(1,0,1,0.4f));
-			for(int row = 0; row < tiles.length; row++){
-
-				for(int col = 0; col < tiles[row].length; col++){
-					Tile tile = tiles[row][col];
-
-					BufferedImage image = floorImages[tile.getImageID()];
-
-
-					Vector vector = RenderUtil.convertCoordsToIso(col, row, layerCount);
-					int x = vector.getXAsInt() - fTileW/2; //fTileW/2 added PLEASE leave in here
-					int y = vector.getYAsInt() - fTileH/2; //fTileH/2 added PLEASE leave in here
-					graphics.drawImage(image,x,y, null);
-
-					if (tile.isWalkable()) //TODO remove
-						graphics.fillRect(x-1+fTileW/2, y-1+fTileH/2, 2, 2);
-
-					
-
-
-					if(tile.isWalkable() && layerCount==0){
-
-
-						pickGraphics.drawImage(tile.getPickImage(), x,y,null);
-
-
-					}
-
-					if(tile.getImageID() != 2 ){
-
-						int imgID = tile.getWallImageID(Direction.UP);
-
-
-						image = wallImages[imgID++];
-						y+=fTileH/2;
-
-						graphics.drawImage(image,x,y, null);
-						image = wallImages[imgID];
-						x+=wTileW;
-						graphics.drawImage(image,x,y, null);
-					}
-
-				}
-			}
+//			if(isTransparent)
+//				drawTiles(tiles, layerCount, floorImagesTrans, wallImagesTrans);
+//			else
+				drawTiles(tiles, layerCount, floorImages, wallImages);
+			
+			
 			//TODO
 			//Draw players on this layer
 
@@ -251,6 +206,51 @@ public class WorldRenderer
 
 		}
 
+	}
+	
+	private void drawTiles(Tile[][] tiles, int layerCount, BufferedImage[] FI, BufferedImage[] WI){
+		graphics.setColor(new Color(1,0,1,0.4f));
+		for(int row = 0; row < tiles.length; row++){
+
+			for(int col = 0; col < tiles[row].length; col++){
+				Tile tile = tiles[row][col];
+
+				BufferedImage image = FI[tile.getImageID()];
+
+
+				Vector vector = RenderUtil.convertCoordsToIso(col, row, layerCount);
+				int x = vector.getXAsInt() - fTileW/2; //fTileW/2 added PLEASE leave in here
+				int y = vector.getYAsInt() - fTileH/2; //fTileH/2 added PLEASE leave in here
+				graphics.drawImage(image,x,y, null);
+
+				if (tile.isWalkable()) //TODO remove
+					graphics.fillRect(x-1+fTileW/2, y-1+fTileH/2, 2, 2);
+
+				if(tile.isWalkable() && layerCount==0){
+
+
+					pickGraphics.drawImage(tile.getPickImage(), x,y,null);
+
+
+				}
+
+				if(tile.getImageID() != 2 ){
+
+					int imgID = tile.getWallImageID(Direction.UP);
+
+
+					image = WI[imgID++];
+					y+=fTileH/2;
+
+					graphics.drawImage(image,x,y, null);
+					image = WI[imgID];
+					x+=wTileW;
+					graphics.drawImage(image,x,y, null);
+				}
+
+			}
+		}
+		
 	}
 
 	private void createTransparentImages(){
