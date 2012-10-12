@@ -5,7 +5,7 @@ import doharm.logic.Game;
 
 public class Clock extends Thread
 {
-	private static final int CLOCK_INTERVAL = 30;
+	public static final int CLOCK_INTERVAL = 30;
 	
 	private MainWindow window;
 

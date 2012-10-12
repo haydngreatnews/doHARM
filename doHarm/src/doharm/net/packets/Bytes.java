@@ -4,8 +4,10 @@ import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
 
 /** Class containing static methods to assist in the reading of bytes. */
-public class Bytes {
+abstract public class Bytes {
 
+	/** Translates a series of bytes that represent a String (that was 
+	 * produced by the setString method in this class) back into a String*/
 	public static String getString(ByteBuffer buff)
 	{
 		int count = (int) buff.get();
@@ -16,6 +18,7 @@ public class Bytes {
 		return new String(array);	
 	}
 	
+	/** Translates a string into an array of bytes (first byte determining the length of the string) */
 	public static byte[] setString(String string)
 	{
 		byte[] temp = string.getBytes();
@@ -29,17 +32,29 @@ public class Bytes {
 		return real;
 	}
 	
+	/** Translates an int into the 4-byte representation. */
+	public static byte[] setInt(int i)
+	{
+		byte[] temp = new byte[4];
+		ByteBuffer buff = ByteBuffer.wrap(temp);
+		buff.putInt(i);
+		return temp;
+	}
+	
+	/** Translates a float into the 4-byte representation. */
+	public static byte[] setFloat(float f)
+	{
+		byte[] temp = new byte[4];
+		ByteBuffer buff = ByteBuffer.wrap(temp);
+		buff.putFloat(f);
+		return temp;
+	}
+	
+	/** Returns a  to */
 	public static byte[] compress(ByteBuffer buff)
 	{
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 		output.write(buff.array(), 0, buff.position());
 		return output.toByteArray();
-		
-		/*
-		byte[] array = new byte[buff.position()];
-		ByteBuffer copy = ByteBuffer.wrap(array);
-		copy.put(buff.array(), 0, buff.position());
-		return array;
-		*/
 	}
 }

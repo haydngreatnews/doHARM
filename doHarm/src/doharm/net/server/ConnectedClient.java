@@ -1,5 +1,6 @@
 package doharm.net.server;
 
+import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -13,29 +14,40 @@ import doharm.net.packets.Snapshot;
  * The servers view of a Client
  */
 public class ConnectedClient {
-	private SocketAddress address;
+	private InetSocketAddress address;
 	public Command latestCommandPacket;
+	private int counter;	// counter used by various.
+	private static int RESEND_DELAY;
 	
-	/** Last time we received a packet from this client. */
+	// Last time we received a packet from this client.
 	private int latestTime;
 	
 	private ClientState state;
 	
-	/** Holds on to all unack'd Snapshots we've sent the client. */
+	// Holds on to all unack'd Snapshots we've sent the client.
 	private LinkedList<Snapshot> snapsBuffer;
 	
-	public ConnectedClient(SocketAddress address)
+	public ConnectedClient(InetSocketAddress address)
 	{
 		this.address = address;
-		//state = ClientState.LOADING;
-		state = ClientState.INGAME;
+		state = ClientState.READY;
 	}
 	
-	public SocketAddress getAddress() {	return address; }
+	public InetSocketAddress getAddress() {	return address; }
 	
 	public ClientState getState() { return state; }
+	
+	public int getLatestTime() { return latestTime; }
 
-	public void setState(ClientState newState) { state = newState; }
+	public void setState(ClientState newState)
+	{
+		state = newState;
+		switch (state)
+		{
+		case READY:
+			counter = 0;
+		}
+	}
 	
 	/**
 	 * Update what the latest command packet from the client is.
@@ -43,6 +55,11 @@ public class ConnectedClient {
 	 */
 	public void updateClientCommandPacket(byte[] data)
 	{
+		if (state == ClientState.READY)		// TODO can probably optimise this by having a special kind of command packet sent on first try.
+		{
+			setState(ClientState.INGAME);
+		}
+		
 		// Extract the timestamp from the packet.
 		int seqnum = Command.getSeqNum(data);
 		
@@ -55,10 +72,7 @@ public class ConnectedClient {
 	}
 	
 	/** Add a new snapshot to the snap buffer. */
-	public void addSnapshot(Snapshot snap)
-	{
-		snapsBuffer.add(snap);
-	}
+	public void addSnapshot(Snapshot snap) { snapsBuffer.add(snap); }
 	
 	/**
 	 * Builds the Snapshot to actually transmit to the client.
@@ -87,5 +101,20 @@ public class ConnectedClient {
 			transSnap.addMissing(iter.next());
 		
 		return transSnap;
+	}
+
+	/**
+	 * Removes all the unack'd snaps from the snapsBuffer.
+	 * Used when sending a full GameState. 
+	 */
+	public void flushSnaps() { snapsBuffer.clear(); }
+
+	public boolean resendGamestate() {
+		if (--counter == 0)
+		{
+			counter = RESEND_DELAY;
+			return true;
+		}
+		return false;
 	}
 }

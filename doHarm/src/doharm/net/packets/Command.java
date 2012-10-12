@@ -9,9 +9,10 @@ import doharm.logic.entities.characters.players.HumanPlayer;
 /** Struct representing a Client Command, which is then converted into a packet to send over the wire. */
 public class Command {
 
-	public int seqNum;	// Number of times we've sent a packet with this serverTimeAck already.
+	public int seqNum;
 	public final int serverTimeAckd;
 	
+	// HumanPlayer movement.
 	public final float posX, posY, angle;
 	public final int layer;
 	
@@ -54,14 +55,18 @@ public class Command {
 		// Packet type
 		buff.write((byte) ClientPacket.COMMAND.ordinal());		// Need the byte cast otherwise it'll write it as a 4-byte int
 		// SeqNum
-		 buff.write(ByteBuffer.allocate(4).putInt(seqNum).array()); 
+		 buff.write(Bytes.setInt(seqNum)); 
 		// ServertimeAckd
-		buff.write(ByteBuffer.allocate(4).putInt(serverTimeAckd).array());
+		buff.write(Bytes.setInt(serverTimeAckd));
 		
 		// my desired viewing direction
 		// my desired movement
 		// my selected weapon
 		// my commands
+		buff.write(Bytes.setFloat(posX));
+		buff.write(Bytes.setFloat(posY));
+		buff.write(Bytes.setInt(layer));
+		buff.write(Bytes.setFloat(angle));
 		
 		
 		} catch (IOException e) {	e.printStackTrace(); }

@@ -23,15 +23,11 @@ public class MenuScreen extends JPanel {
 
 	public MenuScreen(MenuButtonListener mb) {
 		super();
-		// setLayout(new BorderLayout());
 		setLayout(new FlowLayout());
 		setOpaque(false);
 		JPanel menu = new JPanel();
-		LC constraints = new LC();
-		constraints.flowY();//.alignY("40");
-		menu.setLayout(new MigLayout(constraints));
+		menu.setLayout(new MigLayout("flowy"));
 		menu.setOpaque(false);
-		System.out.printf("menu w=%d, menu h=%d\n", menu.getWidth(),menu.getHeight());
 		JButton bResume = new PictureButton("res/menu/resume.png", "resume");
 		JButton bJoin = new PictureButton("res/menu/joingame.png", "join");
 		JButton bRun = new PictureButton("res/menu/runserver.png", "runserver");
@@ -40,8 +36,7 @@ public class MenuScreen extends JPanel {
 		bJoin.addActionListener(mb);
 		bRun.addActionListener(mb);
 		bQuit.addActionListener(mb);
-		System.out.println("Created buttons");
-		menu.add(new JLabel(new ImageIcon("res/menu/header.png")),"align center, gaptop 100");
+		menu.add(new JLabel(new ImageIcon("res/menu/header.png")),"align center, gaptop 80");
 		//menu.add(new JLabel(), "h 60");
 		menu.add(bResume, "align center, gaptop 40");
 		menu.add(bJoin, "align center");

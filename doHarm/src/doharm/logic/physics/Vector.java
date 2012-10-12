@@ -126,6 +126,11 @@ public class Vector
 	{
 		return new Vector(x-v.x,y-v.y);
 	}
+	
+	public Vector subtract(float x, float y) 
+	{
+		return new Vector(this.x-x,this.y-y);
+	}
 
 	@Override 
 	public boolean equals(Object other)
@@ -148,6 +153,8 @@ public class Vector
 	public void divide(float x, float y) {
 		set(this.x/x,this.y/y);
 	}
+
+	
 
 	
 

@@ -57,8 +57,7 @@ public class Snapshot {
 		for (int i=0; i<count; ++i)
 		{
 			int id = buff.getInt();
-			//entityCreates.put(id, new EntityCreate(id, buff));
-			entityCreates.put(id, new CharacterCreate(id, buff));
+			entityCreates.put(id, EntityCreate.newEntityCreate(id, buff));
 		}
 		
 		// Read updates
@@ -66,8 +65,7 @@ public class Snapshot {
 		for (int i=0; i<count; ++i)
 		{
 			int id = buff.getInt();
-			//entityUpdates.put(id, new EntityUpdate(id, buff));
-			entityUpdates.put(id, new CharacterUpdate(id, buff));
+			entityUpdates.put(id, EntityUpdate.newEntityUpdate(id, buff));
 		}
 	}
 	
@@ -96,7 +94,7 @@ public class Snapshot {
 		// Packet type
 		buff.write((byte) ServerPacket.SNAPSHOT.ordinal());		// TODO Do we need the byte cast?
 		// Servertime
-		buff.write(ByteBuffer.allocate(4).putInt(serverTime).array()); 
+		buff.write(Bytes.setInt(serverTime)); 
 		
 		if (entityDeletes.size() > 255)
 			throw new RuntimeException("Entity deletes was over the 255 limit!");
@@ -108,7 +106,7 @@ public class Snapshot {
 		// Write the entity deletes.
 		buff.write((byte) entityDeletes.size());
 		for (int eID : entityDeletes)
-			buff.write(ByteBuffer.allocate(4).putInt(eID).array());	// TODO MAKE SURE IT WRITES FOUR BYTES
+			buff.write(Bytes.setInt(eID));
 		
 		// Write the entity creates.
 		buff.write((byte) entityCreates.size());
@@ -183,12 +181,6 @@ public class Snapshot {
 		for (int eID : other.entityUpdates.keySet())
 			if (!entityUpdates.containsKey(eID) && !entityDeletes.contains(eID))
 				entityUpdates.put(eID, other.entityUpdates.get(eID));
-	}
-	
-	/** Holds changes in player state */
-	private class PlayerState
-	{
-		
 	}
 }
 

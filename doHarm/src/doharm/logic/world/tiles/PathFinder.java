@@ -67,7 +67,7 @@ public class PathFinder
 					path.push(node);
 					node = node.getParent();
 				}
-				path.push(goal);
+				
 				
 				return path;
 			}
@@ -78,18 +78,20 @@ public class PathFinder
 			for (Tile neighbour: node.getNeighbours())
 			{
 				
-				if (!neighbour.isVisited() && neighbour.isWalkable() && (neighbour.isEmpty()||neighbour == goal))// && !neighbour.isNextToWall())
+				if (!neighbour.isVisited() && (neighbour.getRoof() == null || !neighbour.getRoof().isVisible() ||  neighbour.getRoof().isWalkable())/*neighbour.isWalkable()*/ && (neighbour.isEmpty()||neighbour == goal))// && !neighbour.isNextToWall())
 				{
 					
 					float pathLength = node.getPathLength() + node.distanceToTile(neighbour);
 					
 					if (neighbour.getPathLength() == 0 || pathLength < neighbour.getPathLength())
 					{
-					
-						neighbour.setParent(node);
-					
-						neighbour.setPathLength(node.getPathLength() + node.distanceToTile(neighbour));
-						queue.offer(neighbour);
+						if (neighbour.getRow() == node.getRow() || neighbour.getCol() == node.getCol() || !neighbour.isNextToWall())
+						{
+							neighbour.setParent(node);
+						
+							neighbour.setPathLength(node.getPathLength() + node.distanceToTile(neighbour));
+							queue.offer(neighbour);
+						}
 					}
 				}
 			}

@@ -15,6 +15,7 @@ import doharm.logic.world.World;
 import doharm.net.ClientState;
 import doharm.net.UDPReceiver;
 import doharm.net.packets.ClientPacket;
+import doharm.net.packets.Gamestate;
 import doharm.net.packets.ServerPacket;
 import doharm.net.packets.Snapshot;
 import doharm.net.packets.entityinfo.CharacterCreate;
@@ -26,10 +27,12 @@ import doharm.net.packets.entityinfo.EntityUpdate;
 public class Server {
 
 	private final int maxPlayers = 64;
-	private ArrayList<ConnectedClient> clients;
+	private ArrayList<ConnectedClient> clients = new ArrayList<ConnectedClient>();
 	private UDPReceiver receiver;
 	private DatagramSocket udpSock;
 	private int serverTime;
+	private int frameTime;	// Time between frames.
+	private static int CLIENT_CHECK_INTERVAL = 60, TIMEOUT_DELAY = 200;
 	
 	private World world;
 	
@@ -38,7 +41,7 @@ public class Server {
 		this.world = world;
 		
 		// Setup the UDP socket.
-		udpSock = new DatagramSocket();
+		udpSock = new DatagramSocket(null);
 		
 		InetSocketAddress address = new InetSocketAddress(port);
 		
@@ -72,7 +75,7 @@ public class Server {
 				{
 					// TODO check if player is already connected with that address.
 					// If so, they must've dropped, so kill them and start them along the joining process again. 
-					sendGamestate(createClient(packet));
+					createClient(packet);
 				}
 				else
 				{
@@ -80,7 +83,7 @@ public class Server {
 					byte[] response = new byte[2];
 					response[0] = (byte) ServerPacket.RESPONSE.ordinal();
 					response[1] = 1;	// 1 = NO at this point in time.
-					transmit(response, packet.getSocketAddress());
+					transmit(response, new InetSocketAddress(packet.getAddress(), packet.getPort()));
 				}
 				break;
 				
@@ -109,10 +112,10 @@ public class Server {
 	 * @param address IP and Port to send to.
 	 * @return
 	 */
-	public boolean transmit(byte[] data, SocketAddress address)
+	public boolean transmit(byte[] data, InetSocketAddress address)
 	{
 		try {
-			udpSock.send(new DatagramPacket(data, data.length, address));
+			udpSock.send(new DatagramPacket(data, data.length, address.getAddress(), address.getPort()));
 			return true;
 		}
 		catch (SocketException e) { e.printStackTrace(); }
@@ -122,7 +125,7 @@ public class Server {
 	
 	private ConnectedClient createClient(DatagramPacket packet)
 	{
-		ConnectedClient client = new ConnectedClient(packet.getSocketAddress());
+		ConnectedClient client = new ConnectedClient(new InetSocketAddress(packet.getAddress(), packet.getPort()));
 		clients.add(client);
 		return client;
 	}
@@ -167,44 +170,65 @@ public class Server {
 		{
 			if (c.getState() == ClientState.INGAME)
 			{
-				Snapshot snap = new Snapshot(serverTime, c.latestCommandPacket.seqNum);
+				buildSnapshot(c, new Snapshot(serverTime, c.latestCommandPacket.seqNum), entityUpdates, entityCreates, entityDeletes);
 				
-				// TODO temp setup is that the entire game change snap shot is sent to all clients, 
-				// eventually when we add local area only snapshots, will need to build independently.
-				
-				for (int eID : entityDeletes)
-				{
-					// if (relavent)
-					snap.addEDelete(eID);
-				}
-				
-				for (int eID : entityCreates.keySet())
-				{
-					// if (relavent)
-					snap.addECreate(entityCreates.get(eID));
-				}
-				
-				for (int eID : entityUpdates.keySet())
-				{
-					// if (relavent)
-					snap.addEUpdate(entityUpdates.get(eID));
-				}
-				
-				// add snapshot to client
-				c.addSnapshot(snap);
-				// build n send
+				// build transmission snap and send
 				transmit( c.buildTransmissionSnapshot().convertToBytes() , c.getAddress() );
+			}
+			else if ( c.getState() == ClientState.READY )
+			{
+				if (c.resendGamestate())
+					sendGamestate(c);
+				else
+					buildSnapshot(c, new Snapshot(serverTime, -1), entityUpdates, entityCreates, entityDeletes);
 			}
 		}
 	}
 	
 	/**
-	 * Sends out a "Gamestate" snapshot, it contains all the information.
+	 * Builds a snapshot for .
 	 * @param client
+	 * @param snap Freshly constructed snapshot (does not include entity info)
+	 * @param entityUpdates
+	 * @param entityCreates
+	 * @param entityDeletes
+	 */
+	private void buildSnapshot(ConnectedClient client, Snapshot snap, HashMap<Integer,EntityUpdate> entityUpdates, HashMap<Integer,EntityCreate> entityCreates, ArrayList<Integer> entityDeletes)
+	{		
+		// TODO temp setup is that the entire game change snap shot is sent to all clients, 
+		// eventually when we add local area only snapshots.
+		
+		for (int eID : entityDeletes)
+		{
+			// if (relavent)
+			snap.addEDelete(eID);
+		}
+		
+		for (int eID : entityCreates.keySet())
+		{
+			// if (relavent)
+			snap.addECreate(entityCreates.get(eID));
+		}
+		
+		for (int eID : entityUpdates.keySet())
+		{
+			// if (relavent)
+			snap.addEUpdate(entityUpdates.get(eID));
+		}
+		
+		// add snapshot to client
+		client.addSnapshot(snap);
+	}
+	
+	/**
+	 * Sends out a "Gamestate" snapshot, it contains all the information.
+	 * @param client Client to send Gamestate to.
 	 */
 	private void sendGamestate(ConnectedClient client)
 	{
-		Snapshot gamestate = new Snapshot(serverTime, -1);
+		client.flushSnaps();
+		
+		Snapshot gamestate = new Gamestate(serverTime);
 		
 		for (AbstractEntity e : world.getEntityFactory().getEntities() )
 		{
@@ -221,18 +245,41 @@ public class Server {
 	// Fake main method, placeholder used so coding on the flow of operations can be done.
 	private void main()
 	{
+		long start, sleepTime;
+		int checkClientsCounter = 0;
 		while (true)
 		{
+			start = System.currentTimeMillis();
+			++checkClientsCounter;
 			// process incoming packets
 			processIncomingPackets();
 			
 			// perform game logics
 			
-			
+			// periodically check if we should drop clients (because we haven't heard from them in a while).
+			if (checkClientsCounter > CLIENT_CHECK_INTERVAL)
+			{
+				checkClientsCounter = 0;
+				ArrayList<ConnectedClient> toRemove = new ArrayList<ConnectedClient>(2);
+				for ( ConnectedClient c : clients )
+				{
+					if (serverTime - c.getLatestTime() > TIMEOUT_DELAY);
+						toRemove.add(c);
+				}
+				for ( ConnectedClient c : toRemove )
+				{
+					clients.remove(c);
+				}
+			}
 			// create then send snapshots
 			dispatchSnapshots();
 			
 			// wait for next tick
+			sleepTime = frameTime - (System.currentTimeMillis()-start);
+			if (sleepTime > 0)
+			{
+				try {Thread.sleep(sleepTime);} catch (InterruptedException e) {e.printStackTrace();}
+			}
 		}
 	}
 }

@@ -13,9 +13,11 @@ public class Layer
 	private int layerNumber;
 	private int tileWidth;
 	private int tileHeight;
+	private World world;
 	
 	public Layer(World world, int layerNumber)
 	{
+		this.world = world;
 		this.layerNumber = layerNumber;
 		WorldLoader worldLoader = world.getWorldLoader();
 		tiles = new Tile[worldLoader.getNumTilesY()][worldLoader.getNumTilesX()];
@@ -63,5 +65,11 @@ public class Layer
 	public int getLayerNumber()
 	{
 		return layerNumber;
+	}
+
+
+	public World getWorld() 
+	{
+		return world;
 	}
 }

@@ -12,6 +12,7 @@ import doharm.logic.physics.Vector;
 import doharm.logic.world.Layer;
 import doharm.logic.world.World;
 import doharm.logic.world.tiles.Tile;
+import doharm.rendering.RenderUtil;
 
 public abstract class AbstractEntity
 {
@@ -33,6 +34,11 @@ public abstract class AbstractEntity
 	private final EntityType entityType;
 	
 	private boolean fromNetwork;
+	private boolean alive;
+	//private Vector renderPos;
+	
+	
+	
 	
 	public AbstractEntity(EntityType entityType)
 	{
@@ -51,6 +57,11 @@ public abstract class AbstractEntity
 		this.fromNetwork = fromNetwork;
 	}
 	
+	public boolean isAlive()
+	{
+		return alive;
+	}
+	
 	private void reset() 
 	{
 		position = new Vector();
@@ -63,14 +74,20 @@ public abstract class AbstractEntity
 		reset();
 		setPosition(spawnTile.getX(),spawnTile.getY(), spawnTile.getLayer());
 		
-		
-		
-		
 		angle = 0;
-		
+		alive = true;
+	}
+	
+	public void die()
+	{
+		alive = false;
 	}
 	
 	
+	/*public Vector getRenderPos()
+	{
+		return renderPos;
+	}*/
 	
 	public void setPosition(float x, float y, Layer layer) 
 	{
@@ -87,6 +104,13 @@ public abstract class AbstractEntity
 		this.currentTile = tile;
 		currentLayer = currentTile.getLayer();
 		currentTile.addEntity(this);
+		
+		/*float row = y / tile.getHeight();
+		float col = x / tile.getWidth();
+		float layerNum = layer.getLayerNumber(); //interpolate here!
+		
+		renderPos = RenderUtil.convertCoordsToIso(col, row, layerNum);*/
+		
 	}
 
 	public World getWorld()
@@ -139,8 +163,11 @@ public abstract class AbstractEntity
 	
 	
 	
-	public void move()
+	public void process()
 	{
+		if (!alive)
+			return;
+		
 		position.add(velocity.getX(),velocity.getY()*0.5f); //move half speed up/down due to isometric view
 		
 		//Tile newTile = currentLayer.getTileAt(position.getX()+velocity.getX(),position.getY()+velocity.getY());
@@ -186,8 +213,14 @@ public abstract class AbstractEntity
 	{
 		return entityType;
 	}
+
+	public float getX() {
+		return position.getX();
+	}
 	
-	
+	public float getY() {
+		return position.getY();
+	}
 	
 	
 }

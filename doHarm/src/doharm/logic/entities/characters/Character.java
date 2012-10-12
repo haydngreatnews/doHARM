@@ -1,20 +1,19 @@
 package doharm.logic.entities.characters;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Stack;
-
+import doharm.logic.chat.Message;
+import doharm.logic.chat.MessagePart;
+import doharm.logic.chat.Taunts;
 import doharm.logic.entities.AbstractEntity;
 import doharm.logic.entities.EntityType;
 import doharm.logic.entities.characters.alliances.Alliance;
 import doharm.logic.entities.characters.classes.CharacterClass;
 import doharm.logic.entities.characters.classes.CharacterClassType;
 import doharm.logic.entities.characters.classes.warrior.Warrior;
+import doharm.logic.entities.characters.states.CharacterState;
+import doharm.logic.entities.characters.states.CharacterStateType;
+import doharm.logic.entities.characters.states.IdleState;
 import doharm.logic.entities.inventory.Inventory;
-import doharm.logic.physics.Vector;
-import doharm.logic.world.tiles.PathFinder;
 import doharm.logic.world.tiles.Tile;
-import doharm.net.NetworkMode;
 
 public abstract class Character extends AbstractEntity
 {
@@ -23,26 +22,35 @@ public abstract class Character extends AbstractEntity
 	private CharacterClass characterClass;
 
 	private Inventory inventory;
-	private Stack<Tile> path;
 	
-	private Vector goal;
-	private Vector destination;
+	
+	
 	
 	private float movementSpeed = 3f;//1.7f;
-	private float stopFriction = 0.1f;
+	
 	
 	private float health;
 	private float mana;
 	private float rage;
 	private Alliance alliance;
-	private Action currentAction;
+	
+	private CharacterState state;
+	private long spawnTime;
+	private Character attackedBy;
+	
+	
 	
 	
 	protected Character() 
 	{
 		super(EntityType.CHARACTER);
 		inventory = new Inventory();
-		currentAction = Action.IDLE;
+		
+	}
+	
+	public Taunts getTaunts() 
+	{
+		return characterClass.getTaunts();
 	}
 	
 	public void setCharacterClass(CharacterClassType classType)
@@ -63,52 +71,38 @@ public abstract class Character extends AbstractEntity
 		return inventory;
 	}
 	
-	@Override
-	public void move()
+	public void resetAttackedBy()
 	{
-		if (!fromNetwork())
-		{
-			Vector direction = destination.subtract(getPosition());
-			
-			Vector velocity = getVelocity();
-			
-			float distanceToDestination = direction.getLength();
-			
-			
-			if (!path.isEmpty())
-			{
-				currentAction = Action.MOVING;
-			}
-			else if (currentAction == Action.MOVING)
-				currentAction = Action.IDLE;
-			
-			if (distanceToDestination < movementSpeed)
-			{
-				if (!path.isEmpty())
-					nextNodeInPath();
-			}
-			
-			
-			if (distanceToDestination > movementSpeed)
-			{
-				direction.multiply(1, 2);
-				direction.normalize();
-				direction.multiply(movementSpeed);
-				velocity.add(direction);
-			}
-			else if (path.isEmpty())
-			{
-				velocity.multiply(stopFriction);
-			}
-			
-			setVelocity(velocity);
-		}
-		super.move();
+		attackedBy = null;
+	}
+	public Character getAttackedBy()
+	{
+		return attackedBy;
 	}
 	
-	public Action getCurrentAction()
+	@Override
+	public void process()
 	{
-		return currentAction;
+		if (!isAlive())
+			return;
+		characterClass.process();
+		
+		health += characterClass.getAttributes().getHealthRegeneration();
+		health = Math.min(health, getMaxHealth());
+		
+		
+		state.process(this);
+		
+		super.process();
+	}
+	
+	public CharacterState getState()
+	{
+		return state;
+	}
+	public CharacterStateType getStateType()
+	{
+		return state.getStateType();
 	}
 
 	public void setName(String name) 
@@ -116,78 +110,36 @@ public abstract class Character extends AbstractEntity
 		this.name = name;
 	}
 	
-	public Vector getGoal() 
-	{
-		return new Vector(goal);
-	}
 	
+	
+	
+	@Override
 	public void spawn(Tile spawnTile)
 	{
 		super.spawn(spawnTile);
 		
-		Vector position = getPosition();
-		goal = new Vector(position);
-		destination = new Vector(position);
-		path = new Stack<Tile>();
+		state = new IdleState();
+		
+		//Vector position = getPosition();
+		resetAttackedBy();
 		health = getMaxHealth();
 	}
 	
-	public Collection<Tile> getPath()
-	{
-		return Collections.unmodifiableCollection(path);
-	}
 	
-	public void moveTo(Tile goal) 
+	
+	
+	/*public void moveTo(Tile goal) 
 	{
 		
-		Stack<Tile> path = PathFinder.calculatePath(getWorld(), getCurrentTile(), goal);
-		if (path == null)
-			return;
 		
-		this.path = path;
-		goal = path.pop(); //get modified goal
-		this.goal.set(goal.getX(), goal.getY());
-		
-		nextNodeInPath();
-	}
+	}*/
 	
-	private void nextNodeInPath() 
-	{
-		if (!path.isEmpty())
-		{
-			
-			//if (path.size()== 1)
-			{
-				Tile next = path.pop();
-				destination.set(next.getX(), next.getY());
-			}
-			/*else// if (path.size()== 2)
-			{
-				//average between next target and the one after
-				Tile next = path.pop();
-				Tile nextNext = path.peek();
-				float x = (next.getX()+nextNext.getX())*0.5f;
-				float y = (next.getY()+nextNext.getY())*0.5f;
-				destination.set(x, y);
-			}*/
-			/*else
-			{
-				//average between next target and the one after
-				Tile next = path.pop();
-				Tile nextNext = path.pop();
-				Tile nextNextNext = path.peek();
-				float x = (next.getX()+nextNext.getX()*2 + nextNextNext.getX())/4;
-				float y = (next.getY()+nextNext.getY()*2 + nextNextNext.getY())/4;
-				destination.set(x, y);
-				path.push(nextNext);
-			}*/
-		}
-	}
 	
-	public Vector getDestination() 
+	
+	/*public Vector getDestination() 
 	{
 		return new Vector(destination);
-	}
+	}*/
 	
 	public float getHealth()
 	{
@@ -224,11 +176,16 @@ public abstract class Character extends AbstractEntity
 		this.mana = mana;
 	}
 	
-	public void attack(AbstractEntity e)
+	public float getExperienceRatio() 
 	{
-		//getW
-		currentAction = Action.ATTACK;
+		return characterClass.getExperienceRatio();
 	}
+	
+	public CharacterClass getCharacterClass()
+	{
+		return characterClass;
+	}
+	
 
 	public Alliance getAlliance() {
 		return alliance;
@@ -238,6 +195,94 @@ public abstract class Character extends AbstractEntity
 	{
 		this.alliance = alliance;
 	}
+
+	public void setState(CharacterState state) 
+	{
+		this.state = state;
+	}
+
+	public float getMovementSpeed() 
+	{
+		return movementSpeed; //err. TODO
+	}
 	
+	
+
+	public void receiveDamage(float damage, Character attacker) 
+	{
+		attackedBy = attacker;
+		
+		if (!isAlive())
+			return;
+		
+		health -= damage;
+		rage += damage;
+		if (health <= 0)
+		{
+			//kill me now
+			health = 0;
+			
+			//drop all the character's items and gold
+			
+			
+			
+			int exp = calculateExperience();
+			
+			
+			
+			attacker.addExperience(exp);//attacker gets double exp
+			
+			if (attacker.getAlliance() != null)
+			{
+				for (Character ally: attacker.getAlliance().getCharacters())
+				{
+					ally.setState(new IdleState());
+					ally.addExperience(exp);
+				}
+				
+			}
+			
+			spawnTime = System.currentTimeMillis() + Math.max((int)(1000*(Math.pow(characterClass.getLevel(), 2))),5000);
+			
+			getWorld().addMessage(new Message(-1, new MessagePart(attacker.getName() + " killed " + getName()+".")));
+			
+			die();
+			
+		}
+		
+	}
+	
+	public String getName()
+	{
+		return name;
+	}
+
+	private int calculateExperience() 
+	{
+		return (int)(characterClass.getExperience() * 0.5f);
+	}
+
+	public void addExperience(int exp) 
+	{
+		characterClass.addExperience(exp);
+	}
+	public int getLevel() 
+	{
+		return characterClass.getLevel();
+	}
+
+	public void tryRespawn() 
+	{
+		if (getTimeTillSpawn() == 0)
+		{
+			spawn(getWorld().getRandomEmptyTile());
+		}
+	}
+
+	public int getTimeTillSpawn() 
+	{
+		return Math.max((int)(spawnTime - System.currentTimeMillis()),0);
+	}
+
 	
 }

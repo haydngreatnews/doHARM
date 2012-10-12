@@ -23,10 +23,9 @@ public class UDPReceiver extends Thread {
 
 	public void run()
 	{
-		byte[] buffer;
 		while (true)
 		{
-			buffer = new byte[1024];
+			byte[] buffer = new byte[1024];
 			DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
 			try {
 				socket.receive(packet);

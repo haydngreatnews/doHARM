@@ -11,6 +11,7 @@ import java.util.Set;
 import doharm.logic.entities.AbstractEntity;
 import doharm.logic.physics.Vector;
 import doharm.logic.world.Layer;
+import doharm.logic.world.World;
 import doharm.rendering.RenderUtil;
 import doharm.storage.FloorTileData;
 import doharm.storage.WallTileData;
@@ -31,7 +32,13 @@ public class Tile implements Comparable<Tile>
 	private int width;
 	private int height;
 	
+	/** calculated by map editor */
+	private float staticLight;
+	private float dynamicLight; //calculated by lights ingame.
 	
+	private boolean visible; //whether or not this tile is invisible (eg. "air")
+	
+	private World world;
 	
 	//Pathfinding variables
 	private boolean visited;
@@ -41,6 +48,8 @@ public class Tile implements Comparable<Tile>
 	private float pathLength;
 	private boolean nextToWall;
 	private Set<AbstractEntity> entities;
+	private Tile roof;
+	
 	
 	public Tile(Layer layer, int row, int col, int width, int height, Vector position, FloorTileData data, int colour) 
 	{
@@ -52,6 +61,12 @@ public class Tile implements Comparable<Tile>
 		this.position = position;
 		this.floorData = data;
 		
+		world = layer.getWorld();
+		
+		dynamicLight = 0;
+		staticLight = 0.3f;
+		
+		visible = floorData.getType() != 2;
 		
 		int red = 0xFF & ( colour >> 16);
 		int green = 0xFF & (colour >> 8 );
@@ -68,6 +83,19 @@ public class Tile implements Comparable<Tile>
 		
 		walls = new WallTileData[Direction.values().length];
 		entities = new HashSet<AbstractEntity>();
+	}
+	
+	/**
+	 * @return a number between 0 and 9 inclusive, where 0 is pitch black and 9 is fully lit.
+	 */
+	public float getLight()
+	{
+		float light = 0.99f * world.getTime().getLight();//Math.max(staticLight + dynamicLight,1);
+
+		
+		light = Math.min(Math.max(light, 0),1);
+		
+		return light;
 	}
 	
 	
@@ -264,6 +292,18 @@ public class Tile implements Comparable<Tile>
 	public void addEntity(AbstractEntity entity) 
 	{
 		entities.add(entity);
+	}
+
+	public void setRoof(Tile tile) {
+		roof = tile;
+	}
+	public Tile getRoof()
+	{
+		return roof;
+	}
+
+	public boolean isVisible() {
+		return visible;
 	}
 	
 

@@ -10,6 +10,7 @@ public class TODO {
 	 * distribute dragonballs
 	 * monsters
 	 * 
+	 * randomly spawning items (eg. rare candy)
 	 * 
 	 * 
 	 * 
@@ -24,21 +25,14 @@ public class TODO {
 	 * Visitor pattern - Items that use an entity to perform an action.
 	 * 		-Character has useItem(Item item); then item will have a method
 	 * 
-	 * Facade pattern - Game is the facade.
 	 * 
 	 * 
-	 * Flyweight - use a singleton rather than many duplicate objects - Tile
-	 * identify objects which are
-		essentially identical (or refactor program
-		to expose them); then, provide static
-		factory methods for creating them which
-		ensures only one instance for each
-		distinct example.
+	 * Flyweight - AI states
 	 * 
 	 * 
 	 * Observer? 
 	 * 
-	 * Strategy (5)
+	 * Strategy (5)  - AI states.
 	 * 
 	 * 	class Book{...
 			LendingPolicy policy;

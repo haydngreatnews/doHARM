@@ -4,22 +4,29 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 import doharm.gui.view.MainWindow;
+import doharm.logic.Game;
 import doharm.logic.camera.Camera;
 
 public class KeyboardManager implements KeyListener
 {
 	private MainWindow main;
 	private Camera camera;
+	private boolean altDown;
+	private Game game;
 	
-	public KeyboardManager(MainWindow m, Camera camera){
-		this.camera = camera;
+	public KeyboardManager(MainWindow m, Game game){
+		this.game = game;
+		this.camera = game.getCamera();
 		main = m;
 	}
 	
 	@Override
 	public void keyTyped(KeyEvent e) {
 		
-		
+		if (altDown)
+		{
+			game.getWorld().getHumanPlayer().getTaunts().taunt(e.getKeyChar());
+		}
 	}
 
 	@Override
@@ -37,7 +44,8 @@ public class KeyboardManager implements KeyListener
 			main.toggleMenu();
 			break;
 			
-		
+		case KeyEvent.VK_ALT:
+			altDown = true;
 		
 		
 		}
@@ -56,6 +64,8 @@ public class KeyboardManager implements KeyListener
 		case KeyEvent.VK_RIGHT: case KeyEvent.VK_D:
 			camera.turnRight();
 			break;
+		case KeyEvent.VK_ALT:
+			altDown = false;
 		}
 	}
 	

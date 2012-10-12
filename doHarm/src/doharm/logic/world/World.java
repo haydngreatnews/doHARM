@@ -2,16 +2,27 @@ package doharm.logic.world;
 
 import java.awt.Color;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 
 import doharm.logic.camera.Camera;
+import doharm.logic.chat.Message;
+import doharm.logic.chat.MessagePart;
+import doharm.logic.entities.AbstractEntity;
 import doharm.logic.entities.EntityFactory;
+import doharm.logic.entities.EntityType;
 import doharm.logic.entities.IDManager;
+import doharm.logic.entities.characters.Character;
 import doharm.logic.entities.characters.classes.CharacterClassType;
 import doharm.logic.entities.characters.players.HumanPlayer;
 import doharm.logic.entities.characters.players.Player;
 import doharm.logic.entities.characters.players.PlayerFactory;
 import doharm.logic.entities.characters.players.PlayerType;
 import doharm.logic.entities.items.ItemFactory;
+import doharm.logic.time.Time;
+import doharm.logic.weather.Weather;
 import doharm.logic.world.tiles.Direction;
 import doharm.logic.world.tiles.Tile;
 import doharm.net.NetworkMode;
@@ -40,14 +51,22 @@ public class World
 
 	private NetworkMode networkMode;
 	
-	public World(String worldName, NetworkMode networkMode)
+	private Time time;
+	private Weather weather;
+	private List<Message> messages;
+	
+	
+	public World(String worldName, NetworkMode networkMode, Time time, Weather weather)
 	{
+		this.time = time;
+		this.weather = weather;
+		
 		this.networkMode = networkMode;
 		idManager = new IDManager();
 		entityFactory = new EntityFactory(this,idManager);
 		playerFactory = new PlayerFactory(this,entityFactory);
 		itemFactory = new ItemFactory(this, entityFactory);
-		
+		messages = new ArrayList<Message>();
 		
 		try 
 		{
@@ -76,7 +95,7 @@ public class World
 		
 		
 		//TEST STUFF TODO REMOVE
-		humanPlayer = (HumanPlayer)playerFactory.createPlayer(layers[0].getTiles()[5][5],"Test player",CharacterClassType.WARRIOR, 0,PlayerType.HUMAN,false);
+		humanPlayer = (HumanPlayer)playerFactory.createPlayer(layers[0].getTiles()[5][5],"Test player",CharacterClassType.WARRIOR, 0,PlayerType.HUMAN,Color.white,false);
 		
 		
 		
@@ -94,7 +113,7 @@ public class World
 			} while(!tile.isWalkable());
 			
 			
-			playerFactory.createPlayer(tile, "AI"+(i+1), CharacterClassType.WARRIOR, i+1,PlayerType.AI,false);
+			playerFactory.createPlayer(tile, "AI"+(i+1), CharacterClassType.WARRIOR, i+1,PlayerType.AI, new Color((i+102)*10213%255,(i+102)*223%255,(i+23)*1013%255),false);
 			
 		}
 		
@@ -120,15 +139,21 @@ public class World
 			//
 			
 		}
-		
+		addMessage(new Message(-1, new MessagePart("World created.")));
 		
 	}
 
+	public void addMessage(Message message)
+	{
+		messages.add(message);
+	}
+	
 	private void linkTiles() 
 	{
 		TilesetLoader tilesetLoader = worldLoader.getTilesetLoader();
 		WallTileData tempWallData = tilesetLoader.getWallTileData(0);
 		
+		Tile[][] prevTiles = null;
 		for (Layer layer: layers)
 		{
 			Tile[][] tiles = layer.getTiles();
@@ -136,6 +161,11 @@ public class World
 			{
 				for (int col = 0; col < tiles[0].length; col++)
 				{
+					if (prevTiles != null)
+					{
+						prevTiles[row][col].setRoof(tiles[row][col]);
+					}
+					
 					for (int x = -1; x <= 1; x++)
 					{
 						for (int y = -1; y <= 1; y++)
@@ -169,21 +199,73 @@ public class World
 			}
 			
 			
-			
+			prevTiles = tiles;
 			
 		}
 	}
 
-	public void moveEntities() 
+	public void process()
+	{
+		time.process();
+		weather.process();
+		resetEntities();
+		respawnEntities();
+		moveEntities();
+		setCamera();
+	}
+	
+	
+
+	
+
+	private void resetEntities() 
+	{
+		/*for (AbstractEntity e: entityFactory.getEntities())
+		{
+			if (e.getEntityType() == EntityType.CHARACTER)
+			{
+				Character character = (Character)e;
+				character.resetAttackedBy();
+			}
+		}*/
+	}
+
+	private void respawnEntities() 
+	{
+		for (AbstractEntity e: entityFactory.getEntities())
+		{
+			if (!e.isAlive() && e.getEntityType() == EntityType.CHARACTER)
+			{
+				Character character = (Character)e;
+				character.tryRespawn();
+			}
+		}
+	}
+
+	private void moveEntities() 
 	{
 		for (Player p: playerFactory.getEntities())
 		{
-			p.move();
+			p.process();
 		}
+	}
+	
+	private void setCamera() 
+	{
 		if (humanPlayer != null)
 		{
 			camera.setPosition(humanPlayer.getPosition().getX(), humanPlayer.getPosition().getY());
 		}
+	}
+	
+	public Time getTime()
+	{
+		return time;
+	}
+	
+	public Weather getWeather()
+	{
+		return weather;
 	}
 	
 	public PlayerFactory getPlayerFactory()
@@ -313,7 +395,7 @@ public class World
 			int col = (int) (Math.random()*numCols);
 			
 			Tile tile = layers[layer].getTiles()[row][col];
-			if (tile.isWalkable() && tile.isEmpty())
+			if (tile.isWalkable() && (tile.getRoof() == null || !tile.getRoof().isVisible()) && tile.isEmpty())
 				return tile;
 		}
 	}
@@ -321,5 +403,22 @@ public class World
 	public NetworkMode getNetworkMode()
 	{
 		return networkMode;
+	}
+
+	public Collection<Message> getAndClearMessages() {
+		List<Message> temp = new ArrayList<Message>(messages);
+		messages.clear();
+		return temp;
+	}
+
+	public Player getRandomPlayer() 
+	{
+		int n = (int) (Math.random() * playerFactory.getEntities().size());
+		Iterator<Player> iterator = playerFactory.getEntities().iterator();
+		for (int i = 0; i < n; i++)
+		{
+			iterator.next();
+		}
+		return iterator.next();
 	}
 }
