@@ -61,7 +61,7 @@ public class Server {
 			// Check what type of packet it is.			
 			switch (ClientPacket.values()[data[0]])
 			{
-			case COMMAND:
+			case ACTION:
 				for (ConnectedClient c : clients)
 					if ( c.getAddress().equals(packet.getSocketAddress()) )
 					{
@@ -70,29 +70,21 @@ public class Server {
 					}
 				break;
 				
-			case JOIN:
+			case JOIN:	// TODO TODO TODO TODO TODO TODO
+				byte[] response = new byte[2];
+				response[0] = (byte) ServerPacket.RESPONSE.ordinal();
+				
 				if (clients.size() < maxPlayers)
 				{
-					// TODO check if player is already connected with that address.
-					// If so, they must've dropped, so kill them and start them along the joining process again. 
 					createClient(packet);
+					break;
 				}
 				else
 				{
 					// Reject, inform them so.
-					byte[] response = new byte[3];
-					response[0] = (byte) ServerPacket.RESPONSE.ordinal();
 					response[1] = 1;	// 1 = NO server is full.
 					transmit(response, new InetSocketAddress(packet.getAddress(), packet.getPort()));
 				}
-				break;
-				
-			case OKACK:
-				for (ConnectedClient c : clients)
-					if ( c.getAddress().equals(packet.getSocketAddress()) )
-					{
-						// blah
-					}
 				break;
 				
 			case READY:
@@ -195,28 +187,15 @@ public class Server {
 	 */
 	private void buildSnapshot(ConnectedClient client, Snapshot snap, HashMap<Integer,EntityUpdate> entityUpdates, HashMap<Integer,EntityCreate> entityCreates, ArrayList<Integer> entityDeletes)
 	{		
-		// TODO temp setup is that the entire game change snap shot is sent to all clients, 
-		// eventually when we add local area only snapshots.
-		
 		for (int eID : entityDeletes)
-		{
-			// if (relavent)
 			snap.addEDelete(eID);
-		}
 		
 		for (int eID : entityCreates.keySet())
-		{
-			// if (relavent)
 			snap.addECreate(entityCreates.get(eID));
-		}
 		
 		for (int eID : entityUpdates.keySet())
-		{
-			// if (relavent)
 			snap.addEUpdate(entityUpdates.get(eID));
-		}
 		
-		// add snapshot to client
 		client.addSnapshot(snap);
 	}
 	

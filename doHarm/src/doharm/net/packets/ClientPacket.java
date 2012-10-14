@@ -2,8 +2,7 @@ package doharm.net.packets;
 
 public enum ClientPacket {
 	NONE,
-	COMMAND,
+	ACTION,
 	JOIN,
-	OKACK,
 	READY;
 }

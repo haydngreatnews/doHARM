@@ -22,7 +22,7 @@ import doharm.net.ClientState;
 import doharm.net.UDPReceiver;
 import doharm.net.packets.Bytes;
 import doharm.net.packets.ClientPacket;
-import doharm.net.packets.Command;
+import doharm.net.packets.Action;
 import doharm.net.packets.ServerPacket;
 import doharm.net.packets.Snapshot;
 import doharm.net.packets.entityinfo.CharacterCreate;
@@ -48,7 +48,7 @@ public class Client {
 	private int counter;	
 	
 	/** Holds on to all unack'd Commands we've sent the server. */
-	private LinkedList<Command> cmdsBuffer = new LinkedList<Command>();
+	private LinkedList<Action> cmdsBuffer = new LinkedList<Action>();
 	
 	public Client() throws IOException
 	{	
@@ -105,6 +105,7 @@ public class Client {
 								System.out.println("Colour already in use.");
 								break;
 							}
+							serverAddress = null;
 							return false;
 						}
 						else
@@ -117,6 +118,7 @@ public class Client {
 			}
 		}
 		System.out.println("Connection attempt timed out.");
+		serverAddress = null;
 		return false;
 	}
 	
@@ -189,7 +191,7 @@ public class Client {
 		else
 			time = 0;
 		
-		Command cmd = new Command(++latestSeqSent, time, world.getHumanPlayer() );
+		Action cmd = new Action(++latestSeqSent, time, world.getHumanPlayer() );
 		
 		// TODO
 		

@@ -8,7 +8,7 @@ import java.util.Queue;
 
 import doharm.logic.entities.characters.players.HumanPlayer;
 import doharm.net.ClientState;
-import doharm.net.packets.Command;
+import doharm.net.packets.Action;
 import doharm.net.packets.Snapshot;
 
 /**
@@ -16,7 +16,7 @@ import doharm.net.packets.Snapshot;
  */
 public class ConnectedClient {
 	private InetSocketAddress address;
-	public Command latestCommandPacket;
+	public Action latestCommandPacket;
 	private int counter;	// counter used by various.
 	private static int RESEND_DELAY;
 	private HumanPlayer playerEntity;
@@ -63,14 +63,14 @@ public class ConnectedClient {
 		}
 		
 		// Extract the timestamp from the packet.
-		int seqnum = Command.getSeqNum(data);
+		int seqnum = Action.getSeqNum(data);
 		
 		// If this packet isn't more recent than the latest command we've received, discard.
 		if ( seqnum <= latestTime )
 			return;
 		
 		latestTime = seqnum;
-		latestCommandPacket = new Command(data);
+		latestCommandPacket = new Action(data);
 	}
 	
 	/** Add a new snapshot to the snap buffer. */

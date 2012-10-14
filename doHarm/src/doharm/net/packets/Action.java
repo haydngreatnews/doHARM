@@ -6,8 +6,8 @@ import java.nio.ByteBuffer;
 
 import doharm.logic.entities.characters.players.HumanPlayer;
 
-/** Struct representing a Client Command, which is then converted into a packet to send over the wire. */
-public class Command {
+/** Struct representing a Clients Actions, which is then converted into a packet to send over the wire. */
+public class Action {
 
 	public int seqNum;
 	public final int serverTimeAckd;
@@ -16,7 +16,7 @@ public class Command {
 	public final float posX, posY, angle;
 	public final int layer;
 	
-	public Command(int seq, int time, HumanPlayer player)
+	public Action(int seq, int time, HumanPlayer player)
 	{
 		seqNum = seq;
 		serverTimeAckd = time;
@@ -27,7 +27,7 @@ public class Command {
 		angle = player.getAngle();
 	}
 	
-	public Command(byte[] packet)
+	public Action(byte[] packet)
 	{		
 		ByteBuffer buff = ByteBuffer.wrap(packet);
 		
@@ -53,7 +53,7 @@ public class Command {
 		
 		try {
 		// Packet type
-		buff.write((byte) ClientPacket.COMMAND.ordinal());		// Need the byte cast otherwise it'll write it as a 4-byte int
+		buff.write((byte) ClientPacket.ACTION.ordinal());		// Need the byte cast otherwise it'll write it as a 4-byte int
 		// SeqNum
 		 buff.write(Bytes.setInt(seqNum)); 
 		// ServertimeAckd
