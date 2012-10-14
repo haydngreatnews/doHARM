@@ -7,6 +7,7 @@ import doharm.logic.entities.AbstractEntity;
 import doharm.logic.entities.EntityType;
 import doharm.logic.entities.characters.classes.attributes.Attributes;
 import doharm.logic.entities.characters.Character;
+import doharm.logic.world.tiles.Tile;
 
 /**
  * 
@@ -29,6 +30,8 @@ public abstract class Item extends AbstractEntity
 	private ItemImage holdingImage;
 	
 	private ItemType itemType;
+
+	private boolean onGround;
 	
 	public boolean canUse(Character character)
 	{
@@ -39,8 +42,17 @@ public abstract class Item extends AbstractEntity
 	{
 		super(EntityType.ITEM);
 		this.itemType = type;
-		
+		setSize(new Dimension(6,6));
+		onGround = false;
 	}
+	
+	@Override
+	public void spawn(Tile spawnTile)
+	{
+		super.spawn(spawnTile);
+		onGround = true;
+	}
+	
 	
 	public ItemType getItemType()
 	{
@@ -91,6 +103,14 @@ public abstract class Item extends AbstractEntity
 		this.itemType = itemType;
 	}
 
+	public boolean onGround() 
+	{
+		return onGround;
+	}
+	public void setOnGround(boolean onGround)
+	{
+		this.onGround = onGround;
+	}
 	
 	
 	

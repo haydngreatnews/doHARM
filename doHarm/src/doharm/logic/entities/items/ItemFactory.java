@@ -7,6 +7,7 @@ import doharm.logic.entities.inventory.ItemContainer;
 import doharm.logic.entities.items.misc.DragonBall;
 import doharm.logic.entities.items.misc.MiscItemType;
 import doharm.logic.world.World;
+import doharm.logic.world.tiles.Tile;
 
 public class ItemFactory extends AbstractEntityFactory<Item>
 {
@@ -42,6 +43,12 @@ public class ItemFactory extends AbstractEntityFactory<Item>
 			throw new UnsupportedOperationException("ItemType not implemented");
 		}
 		
+		
+		container.pickup(item);
+		if (container instanceof Tile)
+		{
+			item.spawn((Tile)container);
+		}
 		
 		addEntity(item, id,fromNetwork);
 		return item;

@@ -171,8 +171,8 @@ public class MainWindow {
     private void addListeners() {
 	canvas.addMouseListener(mouseManager);
 	canvas.addMouseMotionListener(mouseManager);
-	canvas.addKeyListener(keyboardManager);
-	canvas.requestFocusInWindow();
+	//canvas.addKeyListener(keyboardManager);
+	//canvas.requestFocusInWindow();
 	frame.addKeyListener(keyboardManager);
     }
 

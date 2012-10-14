@@ -6,7 +6,9 @@ import doharm.logic.entities.characters.Character;
 import doharm.logic.entities.characters.states.AttackState;
 import doharm.logic.entities.characters.states.CharacterStateType;
 import doharm.logic.entities.characters.states.MoveState;
+import doharm.logic.entities.characters.states.PickupState;
 import doharm.logic.entities.inventory.DragonRadar;
+import doharm.logic.entities.items.Item;
 import doharm.logic.world.tiles.Tile;
 
 
@@ -90,7 +92,7 @@ public class HumanPlayer extends Player
 			}
 		}
 		
-		
+		System.out.println("MouseIcon = " + mouseIcon.toString());
 		if (mouseDown[0])
 			leftClick();
 		if (mouseDown[1])
@@ -134,6 +136,8 @@ public class HumanPlayer extends Player
 			break;
 		case ATTACK:
 			setState(new AttackState((Character)hoverEntity));
+		case PICKUP:
+			setState(new PickupState((Item)hoverEntity));
 			
 		}
 	}
