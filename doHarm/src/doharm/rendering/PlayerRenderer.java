@@ -44,7 +44,7 @@ public class PlayerRenderer {
 		float col = position.getX()/tileW;
 		
 		
-		Vector v = RenderUtil.convertCoordsToIso(col, row, player.getCurrentLayer().getLayerNumber());
+		Vector v = RenderUtil.convertCoordsToIso(col, row, player.getCurrentLayer().getLayerNumber(), game.getCamera());
 		
 		Dimension size = player.getSize();
 		
@@ -102,7 +102,7 @@ public class PlayerRenderer {
 		
 		graphics.setColor(player.getColour());
 
-		Vector v = RenderUtil.convertCoordsToIso(col, row, player.getCurrentLayer().getLayerNumber());
+		Vector v = RenderUtil.convertCoordsToIso(col, row, player.getCurrentLayer().getLayerNumber(), game.getCamera());
 		
 	
 		
@@ -129,7 +129,7 @@ public class PlayerRenderer {
 			{
 				row = tile.getY()/world.getTileHeight();
 				col = tile.getX()/world.getTileWidth();
-				v = RenderUtil.convertCoordsToIso(col, row, player.getCurrentLayer().getLayerNumber());
+				v = RenderUtil.convertCoordsToIso(col, row, player.getCurrentLayer().getLayerNumber(), game.getCamera());
 				graphics.fillOval((int)v.getX()-size.width/8, (int)v.getY()-size.height/16, size.width/4, size.height/8);
 			}
 			
@@ -139,7 +139,7 @@ public class PlayerRenderer {
 			Vector goal = state.getDestination();
 			row = goal.getY()/world.getTileHeight();
 			col = goal.getX()/world.getTileWidth();
-			v = RenderUtil.convertCoordsToIso(col, row, player.getCurrentLayer().getLayerNumber());
+			v = RenderUtil.convertCoordsToIso(col, row, player.getCurrentLayer().getLayerNumber(), game.getCamera());
 			graphics.fillOval((int)v.getX()-size.width/8, (int)v.getY()-size.height/16, size.width/4, size.height/8);
 		}
 		
@@ -152,7 +152,7 @@ public class PlayerRenderer {
 			{
 				row = t.getY()/world.getTileHeight();
 				col = t.getX()/world.getTileWidth();
-				v = RenderUtil.convertCoordsToIso(col, row, player.getCurrentLayer().getLayerNumber());
+				v = RenderUtil.convertCoordsToIso(col, row, player.getCurrentLayer().getLayerNumber(), game.getCamera());
 				graphics.fillOval((int)v.getX()-size.width/8, (int)v.getY()-size.height/16, size.width/4, size.height/8);
 			}
 		}

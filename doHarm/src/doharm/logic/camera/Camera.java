@@ -54,7 +54,7 @@ public class Camera
 		
 		
 		
-		renderPosition = RenderUtil.convertCoordsToIso(renderPosition.getX(), renderPosition.getY(), 0);
+		renderPosition = RenderUtil.convertCoordsToIso(renderPosition.getX(), renderPosition.getY(), 0, this);
 		
 		
 		renderPosition.addX(-canvasDimensions.width/2);

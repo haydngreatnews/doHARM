@@ -213,6 +213,7 @@ public class WorldRenderer
 			if(isTransparent)
 				drawTiles(tiles, layerCount, floorImagesTrans, wallImagesTrans);
 			else
+				drawTiles(tiles, layerCount, floorImages, wallImages);
 
 
 			
@@ -245,7 +246,7 @@ public class WorldRenderer
 				BufferedImage image = FI[tile.getImageID()];
 
 
-				Vector vector = RenderUtil.convertCoordsToIso(col, row, layerCount);
+				Vector vector = RenderUtil.convertCoordsToIso(col, row, layerCount, game.getCamera());
 				int x = vector.getXAsInt() - fTileW/2; //fTileW/2 added PLEASE leave in here
 				int y = vector.getYAsInt() - fTileH/2; //fTileH/2 added PLEASE leave in here
 				graphics.drawImage(image,x,y, null);
@@ -273,7 +274,6 @@ public class WorldRenderer
 
 			}
 		}
-		
 
 	}
 
@@ -300,22 +300,6 @@ public class WorldRenderer
 			wallImagesTrans[count++] = transparentImage;
 		}
 		
-		
-		
-		
-		
-//			Composite old = backbufferGraphics.getComposite();
-//			backbufferGraphics.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.1f));
-//			backbufferGraphics.drawImage(boardImage, 0, 0,boardImage.getWidth(),boardImage.getHeight(),null);	
-//			backbufferGraphics.setComposite(old);
-//			drawBoard();
-//			backbufferGraphics.setComposite(old);
-//	
-
-
-
-
-
 	}
 
 	private void generateShadowTiles(){
