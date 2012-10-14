@@ -8,6 +8,7 @@ import java.util.Map;
 import javax.swing.ButtonGroup;
 import javax.swing.ButtonModel;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -16,7 +17,7 @@ import javax.swing.JTextField;
 
 import net.miginfocom.swing.MigLayout;
 import doharm.logic.Game;
-import doharm.logic.entities.characters.classes.CharacterClassType;
+import doharm.logic.gameobjects.entities.characters.classes.CharacterClassType;
 import doharm.logic.time.Clock;
 import doharm.net.NetworkMode;
 
@@ -25,9 +26,11 @@ public class CharacterSelect extends JFrame {
 	private JTextField nameField, serverField, portField;
 	private ButtonGroup radios;
 	private String lastError = "";
+	private MainWindow parent;
 	
-	public CharacterSelect(){
+	public CharacterSelect(MainWindow parent){
 		super("Get started!");
+		this.parent = parent;
 		setLayout(new MigLayout("fill, wrap 2"));
 		//setBounds(0, 0, 800, 600);
 		add(new JLabel("Name:"));
@@ -134,7 +137,7 @@ public class CharacterSelect extends JFrame {
 			int port = Integer.valueOf(portField.getText());
 			//TODO:Use a new Game constructor
 			Game game = new Game(NetworkMode.CLIENT);
-			MainWindow window = new MainWindow(game);
+			parent.setGame(game);
 			Clock clock = new Clock(game,window);
 			clock.start();
 			this.dispose();
@@ -142,9 +145,5 @@ public class CharacterSelect extends JFrame {
 			//Display the last error
 			JOptionPane.showMessageDialog(this, "An error occurred:\n"+lastError, "Error", JOptionPane.ERROR_MESSAGE);
 		}
-	}
-	
-	public static void main(String[] args){
-		new CharacterSelect();
 	}
 }

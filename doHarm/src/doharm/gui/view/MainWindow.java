@@ -3,6 +3,7 @@ package doharm.gui.view;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
@@ -44,8 +45,15 @@ public class MainWindow {
 	private JPanel southPanel;
 	private JTextPane textPane;
 	private EjectorQueue<String> messages;
+	
+	public MainWindow(){
+		state = MAXIMIZED;
+		toggleSize();
+		new CursorThread().start();
+		MenuScreen welcomeMenu = new MenuScreen(new File("res/menu/background.png"), new MenuButtonListener(this), false);
+	}
 
-	public MainWindow(Game game) {
+	public void setGame(Game game) {
 		WorldRenderer renderer = new WorldRenderer(game);
 		canvas = new WorldCanvas(game, renderer);
 		textPane = new JTextPane();
@@ -70,11 +78,9 @@ public class MainWindow {
 		mouseManager = new MouseManager(game, renderer);
 		keyboardManager = new KeyboardManager(this,game);
 		this.game = game;
-		state = MAXIMIZED;
-		toggleSize();
+
 		canvas.add(southPanel, BorderLayout.SOUTH);
 		addMessage(new Message(-1,new MessagePart("Welcome to the game")));
-		new CursorThread().start();
 	}
 
 	public void toggleSize() {
