@@ -46,10 +46,10 @@ public class CharacterSelect extends JFrame {
 		}
 		radios.setSelected(classButtons.get(CharacterClassType.values()[0]).getModel(), true);
 		add(new JLabel("Server:"));
-		serverField = new JTextField(20);
+		serverField = new JTextField("127.0.0.1",20);
 		add(serverField,"growx");
 		add(new JLabel("Port:"));
-		add(portField = new JTextField(5));
+		add(portField = new JTextField("8080", 5));
 		JButton startButton = new JButton("Start");
 		JButton cancelButton = new JButton("Cancel");
 		add(startButton);
@@ -138,6 +138,7 @@ public class CharacterSelect extends JFrame {
 			MainWindow window = new MainWindow(game);
 			Clock clock = new Clock(game,window);
 			clock.start();
+			this.dispose();
 		} else {
 			//Display the last error
 			JOptionPane.showMessageDialog(this, "An error occurred:\n"+lastError, "Error", JOptionPane.ERROR_MESSAGE);
