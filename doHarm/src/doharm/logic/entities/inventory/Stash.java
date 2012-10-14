@@ -12,7 +12,7 @@ import doharm.logic.world.tiles.Tile;
 
 public class Stash implements ItemContainer
 {
-	private Item[][] stash;
+	private Item[][] items;
 	private final int numRows;
 	private final int numCols;
 	
@@ -21,7 +21,12 @@ public class Stash implements ItemContainer
 		this.numRows = numRows;
 		this.numCols = numCols;
 		
-		stash = new Item[numRows][numCols];
+		items = new Item[numRows][numCols];
+	}
+	
+	public Item[][] getItems()
+	{
+		return items;
 	}
 
 
@@ -54,12 +59,12 @@ public class Stash implements ItemContainer
 			{
 				if (y >= numRows || x >= numCols)
 					return false;
-				if (stash[y][x] != null)
+				if (items[y][x] != null)
 					return false;
 			}
 		}
 		
-		stash[row][col] = item;
+		items[row][col] = item;
 		return true;
 	}
 

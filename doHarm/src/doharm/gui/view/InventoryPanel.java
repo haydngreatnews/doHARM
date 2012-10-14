@@ -24,7 +24,8 @@ public class InventoryPanel extends JPanel {
 		stash = inventory.getStash().getItems();
 		for(Item[] r : stash){
 			for(Item i: r){
-				new JLabel(new ImageIcon(images.get(r.getImageId())));
+				if (i != null) //NOTE: because one item can take up more than one square, it is only located at the top left square.
+					new JLabel(new ImageIcon(images.get(r.getImageId())));
 			}
 		}
 	}

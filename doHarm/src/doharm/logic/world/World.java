@@ -421,4 +421,9 @@ public class World
 		}
 		return iterator.next();
 	}
+
+	public void createHumanPlayer(Tile spawnPosition, CharacterClassType type, String playerName, Color colour) 
+	{
+		humanPlayer = (HumanPlayer)playerFactory.createPlayer(spawnPosition,playerName,type, 0,PlayerType.HUMAN,colour,false);
+	}
 }

@@ -8,7 +8,6 @@ import java.util.Map;
 import javax.swing.ButtonGroup;
 import javax.swing.ButtonModel;
 import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -17,7 +16,7 @@ import javax.swing.JTextField;
 
 import net.miginfocom.swing.MigLayout;
 import doharm.logic.Game;
-import doharm.logic.gameobjects.entities.characters.classes.CharacterClassType;
+import doharm.logic.entities.characters.classes.CharacterClassType;
 import doharm.logic.time.Clock;
 import doharm.net.NetworkMode;
 

@@ -22,6 +22,11 @@ public class Inventory implements ItemContainer
 	}
 	
 	
+	public Stash getStash()
+	{
+		return stash;
+	}
+	
 	/**
 	 * @param item
 	 * @return true if the item was picked up. Otherwise print inventory full!

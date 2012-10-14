@@ -8,18 +8,15 @@ public class Clock extends Thread
 	public static final int CLOCK_INTERVAL = 30;
 	
 	private MainWindow window;
-
 	private Game game;
-	
-	
+			
 	public Clock(Game game)
 	{
-		this(game,null);
-	}
-			
-	public Clock(Game game, MainWindow window)
-	{
 		this.game = game;
+	}
+	
+	public void setWindow(MainWindow window) 
+	{
 		this.window = window;
 	}
 	
@@ -29,7 +26,7 @@ public class Clock extends Thread
 		{
 			
 			if (window != null)
-				window.repaint(); //calls game.run();
+				window.repaint(); //calls game.run(); immediately before painting, as we can't guarantee when the game will be repainted.
 			else
 				game.run();
 			try 
@@ -39,4 +36,6 @@ public class Clock extends Thread
 			catch (InterruptedException e){}
 		}
 	}
+
+	
 }
