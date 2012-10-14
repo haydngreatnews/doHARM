@@ -62,8 +62,7 @@ public class Camera
 		return renderPosition;
 	}
 
-	public void turnLeft() 
-	{
+	public void turnLeft(){
 		int next = direction.ordinal()-1;
 		if (next < 0)
 			next = Direction.values().length-1;
