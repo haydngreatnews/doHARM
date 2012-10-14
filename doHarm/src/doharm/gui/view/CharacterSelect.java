@@ -1,5 +1,6 @@
 package doharm.gui.view;
 
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
@@ -8,7 +9,6 @@ import java.util.Map;
 import javax.swing.ButtonGroup;
 import javax.swing.ButtonModel;
 import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -16,15 +16,15 @@ import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
 import net.miginfocom.swing.MigLayout;
+import doharm.gui.decorations.ColorIcon;
 import doharm.logic.Game;
-import doharm.logic.gameobjects.entities.characters.classes.CharacterClassType;
+import doharm.logic.entities.characters.classes.CharacterClassType;
 import doharm.logic.time.Clock;
-import doharm.net.NetworkMode;
 
 public class CharacterSelect extends JFrame {
 	private Map<CharacterClassType, JRadioButton> classButtons;
 	private JTextField nameField, serverField, portField;
-	private ButtonGroup radios;
+	private ButtonGroup classRadios, colorRadios;
 	private String lastError = "";
 	private MainWindow parent;
 	
@@ -38,15 +38,29 @@ public class CharacterSelect extends JFrame {
 		add(nameField, "growx");
 		add(new JLabel("Class:"),"aligny top");
 		classButtons = new HashMap<CharacterClassType, JRadioButton>();
-		radios = new ButtonGroup();
+		classRadios = new ButtonGroup();
 		for (CharacterClassType c: CharacterClassType.values()){
 			String name = c.toString().substring(0, 1)+c.toString().substring(1).toLowerCase();
 			classButtons.put(c, new JRadioButton(name));
 			add(classButtons.get(c),"flowy, cell 1 1, align center, sg but");
 			classButtons.get(c).setActionCommand(c.toString());
-			radios.add(classButtons.get(c));
+			classRadios.add(classButtons.get(c));
 		}
-		radios.setSelected(classButtons.get(CharacterClassType.values()[0]).getModel(), true);
+		classRadios.setSelected(classButtons.get(CharacterClassType.values()[0]).getModel(), true);
+		add(new JLabel("Color:"), "");
+		colorRadios = new ButtonGroup();
+		int[] colors = new int[]{0x0000DD, 0x00DD00, 0xDD0000, 0xDDDD00, 0x00DDDD, 0xDD00DD};
+		String constraints = "skip 1, span 2, split 6, flowx";
+		for(int c : colors){
+		    Color color = new Color(c);
+		    JRadioButton b = new JRadioButton(new ColorIcon(color));
+		    b.setSelectedIcon(new ColorIcon(color, true));
+		    b.setActionCommand(""+c);
+		    colorRadios.add(b);
+		    add(b, constraints);
+		    constraints = "";
+		    colorRadios.setSelected(b.getModel(), true);
+		}
 		add(new JLabel("Server:"));
 		serverField = new JTextField("127.0.0.1",20);
 		add(serverField,"growx");
@@ -89,7 +103,7 @@ public class CharacterSelect extends JFrame {
 			return false;			
 		}
 		System.out.println("Name OK");
-		ButtonModel clsModel = radios.getSelection();
+		ButtonModel clsModel = classRadios.getSelection();
 		if (clsModel == null) return false;
 		String selClass = clsModel.getActionCommand();
 		if (selClass== null || selClass.equals("")) return false;
@@ -132,14 +146,12 @@ public class CharacterSelect extends JFrame {
 	private void doStart(){
 		if(checkValues()){
 			String name = nameField.getText();
-			CharacterClassType selClass = CharacterClassType.valueOf(radios.getSelection().getActionCommand());
+			CharacterClassType selClass = CharacterClassType.valueOf(classRadios.getSelection().getActionCommand());
 			String serverName = serverField.getText();
 			int port = Integer.valueOf(portField.getText());
 			//TODO:Use a new Game constructor
-			Game game = new Game(NetworkMode.CLIENT);
+			Game game = new Game(parent, serverName, port, selClass, name, new Color(Integer.parseInt(colorRadios.getSelection().getActionCommand())));
 			parent.setGame(game);
-			Clock clock = new Clock(game,window);
-			clock.start();
 			this.dispose();
 		} else {
 			//Display the last error

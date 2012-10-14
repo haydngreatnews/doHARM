@@ -38,12 +38,14 @@ public class MenuScreen extends JPanel {
 	bQuit.addActionListener(mb);
 	menu.add(new JLabel(new ImageIcon("res/menu/header.png")), "align center, gaptop 80");
 	// menu.add(new JLabel(), "h 60");
+	String gap = ", gaptop 40";
 	if (resume) {
 	    JButton bResume = new PictureButton("res/menu/resume.png", "resume");
-	    menu.add(bResume, "align center, gaptop 40");
+	    menu.add(bResume, "align center"+gap);
 	    bResume.addActionListener(mb);
+	    gap = "";
 	}
-	menu.add(bJoin, "align center");
+	menu.add(bJoin, "align center"+gap);
 	menu.add(bRun, "align center");
 	menu.add(bQuit, "align center, gaptop 40");
 	add(menu);
