@@ -1,21 +1,30 @@
 package doharm.net.packets;
 
+import java.nio.ByteBuffer;
+
+import doharm.logic.entities.characters.players.HumanPlayer;
+
+/** Contains all updating information regarding the player the client controls. */
 public class PlayerState {
 	
-	/** Entity ID number for the current Player this client controls. */
-	public final int id;
-	public final float health, mana, rage;
-	public final long exp;
+	public final float health, mana, rage, exp;
 	
-	public PlayerState(int id)
+	public PlayerState(HumanPlayer player)
 	{
-		this.id = id;
-		this.health = 0;
-		this.mana = 0;
-		this.rage = 0;
-		this.exp = 0;
+		this.health = player.getHealth();
+		this.mana = player.getMana();
+		this.rage = player.getRage();
+		this.exp = player.getExperienceRatio();
 	}
 	
+	public PlayerState(ByteBuffer buff)
+	{
+		health = buff.getFloat();
+		mana = buff.getFloat();
+		rage = buff.getFloat();
+		exp = buff.getLong();
+	}
+
 	public byte[] convertToBytes()
 	{
 		return null;

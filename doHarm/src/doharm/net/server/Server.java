@@ -170,7 +170,7 @@ public class Server {
 		{
 			if (c.getState() == ClientState.INGAME)
 			{
-				buildSnapshot(c, new Snapshot(serverTime, c.latestCommandPacket.seqNum), entityUpdates, entityCreates, entityDeletes);
+				buildSnapshot(c, new Snapshot(serverTime, c.latestCommandPacket.seqNum, c.getPlayerEntity()), entityUpdates, entityCreates, entityDeletes);
 				
 				// build transmission snap and send
 				transmit( c.buildTransmissionSnapshot().convertToBytes() , c.getAddress() );
@@ -180,7 +180,7 @@ public class Server {
 				if (c.resendGamestate())
 					sendGamestate(c);
 				else
-					buildSnapshot(c, new Snapshot(serverTime, -1), entityUpdates, entityCreates, entityDeletes);
+					buildSnapshot(c, new Snapshot(serverTime, -1, null), entityUpdates, entityCreates, entityDeletes);
 			}
 		}
 	}

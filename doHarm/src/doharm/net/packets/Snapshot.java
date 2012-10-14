@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
+import doharm.logic.entities.characters.players.HumanPlayer;
 import doharm.net.packets.entityinfo.CharacterCreate;
 import doharm.net.packets.entityinfo.CharacterUpdate;
 import doharm.net.packets.entityinfo.EntityCreate;
@@ -22,11 +23,14 @@ public class Snapshot {
 	private final HashMap<Integer,EntityCreate> entityCreates = new HashMap<Integer,EntityCreate>();
 	private final ArrayList<Integer> entityDeletes = new ArrayList<Integer>();
 	
-	public Snapshot(int serverTime, int seqAckd)
+	public Snapshot(int serverTime, int seqAckd, HumanPlayer player)
 	{
 		this.serverTime = serverTime;
 		this.seqAckd = seqAckd;
-		pState = null;
+		if (player != null)
+			pState = new PlayerState(player);
+		else
+			pState = null;
 	}
 	
 	/**
@@ -45,7 +49,7 @@ public class Snapshot {
 		seqAckd = buff.getInt();
 		
 		// Read playerstate
-		pState = null;
+		pState = new PlayerState(buff);
 		
 		// Read deletes
 		int count = (int) buff.get();
