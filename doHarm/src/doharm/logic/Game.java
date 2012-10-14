@@ -11,6 +11,7 @@ import doharm.logic.weather.Weather;
 import doharm.logic.world.World;
 import doharm.logic.world.tiles.Tile;
 import doharm.net.NetworkMode;
+import doharm.net.client.Client;
 
 public class Game 
 {
@@ -19,6 +20,7 @@ public class Game
 	private NetworkMode networkMode;
 	
 	private Clock clock;
+	private Client client;
 	
 	
 	
@@ -56,6 +58,14 @@ public class Game
 	}
 	
 	/**
+	 * Create game for testing purposes only!
+	 */
+	public Game()
+	{
+		this(NetworkMode.OFFLINE);
+	}
+	
+	/**
 	 * Create game for CLIENT
 	 * @param window
 	 * @param ip
@@ -64,11 +74,11 @@ public class Game
 	 * @param playerName
 	 * @param playerColour
 	 */
-	public Game(MainWindow window, String ip, int port, CharacterClassType type, String playerName, Color playerColour)
+	public Game(MainWindow window, String ip, int port, CharacterClassType type, String playerName, Color playerColour, Client client)
 	{
 		this(NetworkMode.CLIENT);
 		clock.setWindow(window);
-		
+		this.client = client;
 		
 		
 		//TODO COnnect to server
