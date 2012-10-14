@@ -5,7 +5,7 @@ import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.util.Collection;
 
-import doharm.logic.Game;
+import doharm.logic.AbstractGame;
 import doharm.logic.entities.characters.players.HumanPlayer;
 import doharm.logic.entities.characters.players.Player;
 import doharm.logic.entities.characters.players.PlayerType;
@@ -17,10 +17,10 @@ import doharm.logic.world.tiles.Tile;
 
 public class PlayerRenderer {
 
-	private Game game;
+	private AbstractGame game;
 	private World world;
 
-	public PlayerRenderer(Game game) 
+	public PlayerRenderer(AbstractGame game) 
 	{
 		this.game = game;
 		this.world = game.getWorld();

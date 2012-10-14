@@ -1,16 +1,16 @@
 package doharm.logic.time;
 
 import doharm.gui.view.MainWindow;
-import doharm.logic.Game;
+import doharm.logic.AbstractGame;
 
 public class Clock extends Thread
 {
 	public static final int CLOCK_INTERVAL = 30;
 	
 	private MainWindow window;
-	private Game game;
+	private AbstractGame game;
 			
-	public Clock(Game game)
+	public Clock(AbstractGame game)
 	{
 		this.game = game;
 	}

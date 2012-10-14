@@ -2,13 +2,20 @@ package doharm.logic;
 
 public class TODO {
 	/**
-	 * 
 	 * picking up items
-	 * attacking
-	 * fix collision detection
-	 * Basic AI character states
+	 * attacking with projectiles
+	 * collision detection
 	 * distribute dragonballs
 	 * monsters
+	 * npc's + shop
+	 * trading
+	 * weight / size limits for items.
+	 * chests
+	 * keys + doors
+	 * lights
+	 * maps (dragon radar)
+	 * treasures
+	 * winning the game
 	 * 
 	 * randomly spawning items (eg. rare candy)
 	 * 

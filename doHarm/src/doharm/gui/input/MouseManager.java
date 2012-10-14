@@ -4,17 +4,17 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
-import doharm.logic.Game;
+import doharm.logic.AbstractGame;
 import doharm.logic.world.World;
 import doharm.logic.world.tiles.Tile;
 import doharm.rendering.WorldRenderer;
 
 public class MouseManager implements MouseListener, MouseMotionListener
 {
-	private Game game;
+	private AbstractGame game;
 	private WorldRenderer renderer;
 
-	public MouseManager(Game game, WorldRenderer renderer) 
+	public MouseManager(AbstractGame game, WorldRenderer renderer) 
 	{
 		this.game = game;
 		this.renderer = renderer;

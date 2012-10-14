@@ -1,8 +1,12 @@
 package doharm.logic.entities.items;
 
+import java.awt.Dimension;
+
+
 import doharm.logic.entities.AbstractEntity;
 import doharm.logic.entities.EntityType;
 import doharm.logic.entities.characters.classes.attributes.Attributes;
+import doharm.logic.entities.characters.Character;
 
 /**
  * 
@@ -18,24 +22,24 @@ import doharm.logic.entities.characters.classes.attributes.Attributes;
 public abstract class Item extends AbstractEntity
 {
 	private Attributes minimumAttributes;
-	private int width; //in stash
-	private int height; //in stash
-	private int imageID;
+	
+	private Dimension stashSize; 
+	private ItemImage inventoryImage;
+	private ItemImage droppedImage;
+	private ItemImage holdingImage;
+	
 	private ItemType itemType;
 	
-	
-	/*public boolean canUse(Player player)
+	public boolean canUse(Character character)
 	{
-		
-	}*/
+		return true;
+	}
 	
-	protected Item(ItemType type, int width, int height, int imageID)
+	protected Item(ItemType type)
 	{
 		super(EntityType.ITEM);
 		this.itemType = type;
-		this.width = width;
-		this.height = height;
-		this.imageID = imageID; 
+		
 	}
 	
 	public ItemType getItemType()
@@ -43,23 +47,54 @@ public abstract class Item extends AbstractEntity
 		return itemType;
 	}
 
-	public int getHeight() {
-		return height; //TODO
+	public Attributes getMinimumAttributes() {
+		return minimumAttributes;
 	}
 
-	public int getWidth() {
-		return width; //TODO
+	public void setMinimumAttributes(Attributes minimumAttributes) {
+		this.minimumAttributes = minimumAttributes;
 	}
+
+	public Dimension getStashSize() {
+		return stashSize;
+	}
+
+	public void setStashSize(Dimension stashSize) {
+		this.stashSize = stashSize;
+	}
+
+	public ItemImage getInventoryImage() {
+		return inventoryImage;
+	}
+
+	public void setInventoryImage(ItemImage inventoryImage) {
+		this.inventoryImage = inventoryImage;
+	}
+
+	public ItemImage getDroppedImage() {
+		return droppedImage;
+	}
+
+	public void setDroppedImage(ItemImage droppedImage) {
+		this.droppedImage = droppedImage;
+	}
+
+	public ItemImage getHoldingImage() {
+		return holdingImage;
+	}
+
+	public void setHoldingImage(ItemImage holdingImage) {
+		this.holdingImage = holdingImage;
+	}
+
+	public void setItemType(ItemType itemType) {
+		this.itemType = itemType;
+	}
+
 	
-	/**
-	 * NOTE: this will map to two different images (Each in an array):
-	 * -The inventory image, and
-	 * -The world image (when the item is lying on the ground)
-	 * 
-	 * @return the the image id of this item.
-	 */
-	public int getImageID()
-	{
-		return imageID;
-	}
+	
+	
+	
+	
+	
 }

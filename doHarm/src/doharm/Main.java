@@ -1,7 +1,8 @@
 package doharm;
 
 import doharm.gui.view.MainWindow;
-import doharm.logic.Game;
+import doharm.logic.AbstractGame;
+import doharm.logic.ServerGame;
 import doharm.logic.time.Clock;
 import doharm.net.NetworkMode;
 
@@ -45,6 +46,6 @@ public class Main
 
 	private static void runServer(int port) 
 	{
-		new Game(port);
+		new ServerGame(port);
 	}
 }

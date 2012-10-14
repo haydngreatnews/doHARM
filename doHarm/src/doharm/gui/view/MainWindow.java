@@ -25,11 +25,12 @@ import doharm.gui.extras.EjectorQueue;
 import doharm.gui.input.KeyboardManager;
 import doharm.gui.input.MenuButtonListener;
 import doharm.gui.input.MouseManager;
-import doharm.logic.Game;
+import doharm.logic.AbstractGame;
 import doharm.logic.chat.Message;
 import doharm.logic.chat.MessagePart;
 import doharm.logic.entities.characters.players.HumanPlayer;
 import doharm.logic.entities.characters.states.CharacterStateType;
+import doharm.logic.testing.TestGame;
 import doharm.rendering.WorldRenderer;
 
 public class MainWindow {
@@ -40,7 +41,7 @@ public class MainWindow {
 
     private int state;
     private JFrame frame;
-    private Game game;
+    private AbstractGame game;
     private MenuScreen menu;
     private JPanel canvas;
     private MouseManager mouseManager;
@@ -77,12 +78,18 @@ public class MainWindow {
 		case KeyEvent.VK_F11:
 		    toggleSize();
 		    break;
+		case KeyEvent.VK_F12:
+			setGame(new TestGame(MainWindow.this));
+			break;
 		}
 	    }
 	});
+	
+	//TODO REMOVE
+	setGame(new TestGame(this));
     }
 
-    public void setGame(Game game) {
+    public void setGame(AbstractGame game) {
 	WorldRenderer renderer = new WorldRenderer(game);
 	frame.remove(canvas);
 	canvas = new WorldCanvas(game, renderer);
@@ -109,7 +116,8 @@ public class MainWindow {
 	canvas.add(southPanel, BorderLayout.SOUTH);
 	addMessage(new Message(-1, new MessagePart("Welcome to the game")));
 	new CursorThread().start();
-	frame.revalidate();
+	//frame.revalidate(); //Roland: Not defined in Java 6?
+	frame.validate();
 	canvas.requestFocusInWindow();
     }
 
@@ -176,7 +184,7 @@ public class MainWindow {
 		addMessage(message);
 	}
 	frame.repaint();
-	System.out.println(frame.getFocusOwner());
+	//System.out.println(frame.getFocusOwner());
     }
 
     private DateFormat dateFormat = new SimpleDateFormat("[HH:MM]");

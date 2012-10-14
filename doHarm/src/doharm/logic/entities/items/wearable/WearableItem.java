@@ -11,9 +11,10 @@ public abstract class WearableItem extends Item
 	private float decayRate;
 	
 	
-	public WearableItem(SlotType slotType, int width, int height, int imageID) 
+	public WearableItem(SlotType slotType) 
 	{
-		super(ItemType.WEARABLE, width, height, imageID);
+		super(ItemType.WEARABLE);
+		this.slotType = slotType;
 	}
 	
 	public SlotType getSlotType()

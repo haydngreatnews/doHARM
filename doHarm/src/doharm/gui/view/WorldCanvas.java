@@ -6,16 +6,16 @@ import java.awt.Graphics2D;
 
 import javax.swing.JPanel;
 
-import doharm.logic.Game;
+import doharm.logic.AbstractGame;
 import doharm.rendering.WorldRenderer;
 
 public class WorldCanvas extends JPanel
 {
 	private static final long serialVersionUID = 1L;
 	private WorldRenderer renderer;
-	private Game game;
+	private AbstractGame game;
 	
-	public WorldCanvas(Game game, WorldRenderer renderer)
+	public WorldCanvas(AbstractGame game, WorldRenderer renderer)
 	{
 		super();
 		this.game = game;

@@ -53,9 +53,9 @@ public class Stash implements ItemContainer
 	
 	private boolean add(Item item, int row, int col) 
 	{
-		for (int y = row; y < row+item.getHeight(); y++)
+		for (int y = row; y < row+item.getStashSize().height; y++)
 		{
-			for (int x = col; x < col+item.getWidth(); x++)
+			for (int x = col; x < col+item.getStashSize().width; x++)
 			{
 				if (y >= numRows || x >= numCols)
 					return false;

@@ -20,7 +20,12 @@ import doharm.logic.entities.characters.players.HumanPlayer;
 import doharm.logic.entities.characters.players.Player;
 import doharm.logic.entities.characters.players.PlayerFactory;
 import doharm.logic.entities.characters.players.PlayerType;
+import doharm.logic.entities.inventory.DragonRadar;
 import doharm.logic.entities.items.ItemFactory;
+import doharm.logic.entities.items.ItemQuality;
+import doharm.logic.entities.items.ItemType;
+import doharm.logic.entities.items.misc.DragonBall;
+import doharm.logic.entities.items.misc.MiscItemType;
 import doharm.logic.time.Time;
 import doharm.logic.weather.Weather;
 import doharm.logic.world.tiles.Direction;
@@ -54,19 +59,26 @@ public class World
 	private Time time;
 	private Weather weather;
 	private List<Message> messages;
+
+	private DragonRadar dragonRadar;
 	
 	
-	public World(String worldName, NetworkMode networkMode, Time time, Weather weather)
+	public World(String worldName, NetworkMode networkMode)
 	{
-		this.time = time;
-		this.weather = weather;
-		
 		this.networkMode = networkMode;
+		messages = new ArrayList<Message>();
 		idManager = new IDManager();
+		dragonRadar = new DragonRadar();
+		time = new Time();
+		weather = new Weather();
+		
+		
 		entityFactory = new EntityFactory(this,idManager);
 		playerFactory = new PlayerFactory(this,entityFactory);
-		itemFactory = new ItemFactory(this, entityFactory);
-		messages = new ArrayList<Message>();
+		itemFactory = new ItemFactory(this, entityFactory, dragonRadar);
+		
+		
+		
 		
 		try 
 		{
@@ -139,8 +151,25 @@ public class World
 			//
 			
 		}
+		
+		addDragonballs();
+		
+		
 		addMessage(new Message(-1, new MessagePart("World created.")));
 		
+	}
+
+	/**
+	 * Only called by server!
+	 */
+	private void addDragonballs() 
+	{
+		for (int i = 0; i < 7; i++)
+		{
+			itemFactory.setDragonBallStar(i);
+			Tile tile = getRandomEmptyTile();
+			itemFactory.createItem(ItemType.MISC, MiscItemType.DRAGONBALL.ordinal(), ItemQuality.LEGENDARY, idManager.takeID(), tile, false);
+		}
 	}
 
 	public void addMessage(Message message)

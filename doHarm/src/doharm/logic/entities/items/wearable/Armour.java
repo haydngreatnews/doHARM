@@ -14,9 +14,9 @@ import doharm.logic.entities.inventory.SlotType;
 public abstract class Armour extends WearableItem
 {
 
-	public Armour(SlotType slotType, int width, int height, int imageID) 
+	public Armour() 
 	{
-		super(slotType, width, height, imageID);
+		super(SlotType.TORSO);
 	}
 
 }

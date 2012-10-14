@@ -17,9 +17,11 @@ import javax.swing.JTextField;
 
 import net.miginfocom.swing.MigLayout;
 import doharm.gui.decorations.ColorIcon;
-import doharm.logic.Game;
+import doharm.logic.ClientGame;
+import doharm.logic.AbstractGame;
 import doharm.logic.entities.characters.classes.CharacterClassType;
 import doharm.logic.time.Clock;
+import doharm.net.client.Client;
 
 public class CharacterSelect extends JFrame {
 	private Map<CharacterClassType, JRadioButton> classButtons;
@@ -150,7 +152,11 @@ public class CharacterSelect extends JFrame {
 			String serverName = serverField.getText();
 			int port = Integer.valueOf(portField.getText());
 			//TODO:Use a new Game constructor
-			Game game = new Game(parent, serverName, port, selClass, name, new Color(Integer.parseInt(colorRadios.getSelection().getActionCommand())));
+			Color colour = new Color(Integer.parseInt(colorRadios.getSelection().getActionCommand()));
+			
+			Client client = null;//new Client(serverName?,port?); //TODO!! talk to adam
+			
+			AbstractGame game = new ClientGame(parent, selClass, name, colour, client);
 			parent.setGame(game);
 			this.dispose();
 		} else {

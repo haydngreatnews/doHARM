@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Set;
 
 import doharm.logic.entities.AbstractEntity;
+import doharm.logic.entities.inventory.ItemContainer;
+import doharm.logic.entities.items.Item;
 import doharm.logic.physics.Vector;
 import doharm.logic.world.Layer;
 import doharm.logic.world.World;
@@ -16,7 +18,7 @@ import doharm.rendering.RenderUtil;
 import doharm.storage.FloorTileData;
 import doharm.storage.WallTileData;
 
-public class Tile implements Comparable<Tile>
+public class Tile implements Comparable<Tile>, ItemContainer
 {
 	private FloorTileData floorData;
 	private WallTileData[] walls;
@@ -94,6 +96,8 @@ public class Tile implements Comparable<Tile>
 
 		
 		light = Math.min(Math.max(light, 0),1);
+		
+		
 		
 		return light;
 	}
@@ -304,6 +308,20 @@ public class Tile implements Comparable<Tile>
 
 	public boolean isVisible() {
 		return visible;
+	}
+
+	@Override
+	public boolean pickup(Item item) 
+	{
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void drop(Item item, Tile tile) 
+	{
+		// TODO Auto-generated method stub
+		
 	}
 	
 

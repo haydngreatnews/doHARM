@@ -11,7 +11,7 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-import doharm.logic.Game;
+import doharm.logic.AbstractGame;
 import doharm.logic.camera.Camera;
 import doharm.logic.entities.characters.players.HumanPlayer;
 import doharm.logic.entities.characters.players.Player;
@@ -50,7 +50,7 @@ public class WorldRenderer
 	private BufferedImage[] wallImagesTrans;
 
 	private AffineTransform transform;
-	private Game game;
+	private AbstractGame game;
 
 	private PlayerRenderer playerRenderer;
 
@@ -62,7 +62,7 @@ public class WorldRenderer
 	private int wTileW;
 	private  int wTileH;
 
-	public WorldRenderer(Game game)
+	public WorldRenderer(AbstractGame game)
 	{
 		this.game = game;
 		playerRenderer = new PlayerRenderer(game);

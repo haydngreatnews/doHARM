@@ -1,12 +1,12 @@
 package doharm.logic.entities.items.wearable.temp;
 
-import doharm.logic.entities.items.wearable.Weapon;
+import doharm.logic.entities.items.wearable.weapons.Weapon;
 
 public class Sword extends Weapon
 {
 	public Sword() 
 	{
-		super(2, 2, 0);
+		super();
 		
 	}
 	

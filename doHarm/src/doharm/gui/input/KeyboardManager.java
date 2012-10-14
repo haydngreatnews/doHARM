@@ -4,7 +4,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 import doharm.gui.view.MainWindow;
-import doharm.logic.Game;
+import doharm.logic.AbstractGame;
 import doharm.logic.camera.Camera;
 
 public class KeyboardManager implements KeyListener
@@ -12,9 +12,9 @@ public class KeyboardManager implements KeyListener
 	private MainWindow main;
 	private Camera camera;
 	private boolean altDown;
-	private Game game;
+	private AbstractGame game;
 	
-	public KeyboardManager(MainWindow m, Game game){
+	public KeyboardManager(MainWindow m, AbstractGame game){
 		this.game = game;
 		this.camera = game.getCamera();
 		main = m;
