@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import doharm.logic.entities.characters.players.HumanPlayer;
 import doharm.net.ClientState;
 import doharm.net.packets.Command;
 import doharm.net.packets.Snapshot;
@@ -18,6 +19,7 @@ public class ConnectedClient {
 	public Command latestCommandPacket;
 	private int counter;	// counter used by various.
 	private static int RESEND_DELAY;
+	private HumanPlayer playerEntity;
 	
 	// Last time we received a packet from this client.
 	private int latestTime;
@@ -116,5 +118,9 @@ public class ConnectedClient {
 			return true;
 		}
 		return false;
+	}
+
+	public HumanPlayer getPlayerEntity() {
+		return playerEntity;
 	}
 }

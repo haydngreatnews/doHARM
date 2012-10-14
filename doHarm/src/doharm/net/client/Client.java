@@ -37,6 +37,8 @@ public class Client {
 	
 	private ClientState state;
 	
+	private int playerEntID;
+	
 	private Snapshot snapCurrent, snapNext;
 	
 	private int latestSeqSent;
