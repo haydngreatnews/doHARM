@@ -7,6 +7,7 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.net.SocketException;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -19,6 +20,7 @@ import doharm.logic.entities.characters.players.PlayerType;
 import doharm.logic.world.World;
 import doharm.net.ClientState;
 import doharm.net.UDPReceiver;
+import doharm.net.packets.Bytes;
 import doharm.net.packets.ClientPacket;
 import doharm.net.packets.Command;
 import doharm.net.packets.ServerPacket;
@@ -35,8 +37,6 @@ public class Client {
 	
 	private InetSocketAddress serverAddress;
 	
-	private ClientState state;
-	
 	private int playerEntID;
 	
 	private Snapshot snapCurrent, snapNext;
@@ -45,18 +45,13 @@ public class Client {
 	
 	private static int RETRY_COUNT = 4;
 	private static int RETRY_DELAY = 20;
-	private int counter;
-	
-	World world;
-	
+	private int counter;	
 	
 	/** Holds on to all unack'd Commands we've sent the server. */
 	private LinkedList<Command> cmdsBuffer = new LinkedList<Command>();
 	
-	public Client(World world) throws IOException
-	{
-		this.world = world;
-		
+	public Client() throws IOException
+	{	
 		// Setup the UDP socket.
 		udpSock = new DatagramSocket(null);
 		
@@ -66,32 +61,20 @@ public class Client {
 		
 		receiver = new UDPReceiver(udpSock);
 		receiver.start();
-		
-		state = ClientState.NONE;
 	}
 	
-	/**
-	 * Changes the Client state and execute any needed code for switching to the state.
-	 * @param newState
-	 */
-	private void setState(ClientState newState)
-	{
-		state = newState;
-	}
 	/** 
 	 * Attempt to connect to a Server.
 	 * @param address Server address to connect to.
 	 * @return If the connection was successful.
 	 */
-	public boolean connect(InetSocketAddress address)
+	public boolean connect(InetSocketAddress address, String name, int colour)
 	{
 		serverAddress = address;
-		setState(ClientState.CONTACTING);
+		byte[] join = buildJoinPacket(name,colour);
 		
 		for (int i=0; i<RETRY_COUNT; ++i)
 		{
-			byte[] join = new byte[1];
-			join[0] = (byte) ClientPacket.JOIN.ordinal();
 			transmit(join);
 			counter = 0;
 			while (++counter < RETRY_DELAY);
@@ -110,14 +93,23 @@ public class Client {
 					{
 						if (data[1] != 0)	// Response something other than OK.
 						{
-							System.out.println("Didn't let you in. For some reason."); // rejected
-							setState(ClientState.NONE);
+							switch (data[1])	// rejected
+							{
+							case 1:
+								System.out.println("Server is full.");
+								break;
+							case 2:
+								System.out.println("Name already in use.");
+								break;
+							case 3:
+								System.out.println("Colour already in use.");
+								break;
+							}
 							return false;
 						}
 						else
 						{
 							// Good to go.
-							setState(ClientState.READY);
 							return true;
 						}
 					}
@@ -125,8 +117,17 @@ public class Client {
 			}
 		}
 		System.out.println("Connection attempt timed out.");
-		setState(ClientState.NONE);
 		return false;
+	}
+	
+	private byte[] buildJoinPacket(String name, int colour)
+	{
+		byte[] join = new byte[name.length()+6];
+		ByteBuffer buff = ByteBuffer.wrap(join);
+		buff.put((byte) ClientPacket.JOIN.ordinal());
+		buff.put(Bytes.setString(name));
+		buff.putInt(colour);
+		return Bytes.compress(buff);
 	}
 
 	public void processIncomingPackets()
@@ -176,7 +177,7 @@ public class Client {
 	/**
 	 * Builds a new Command and sends it out to the server we're connected to.
 	 */
-	public void dispatchCommand()
+	public void dispatchCommand(World world)
 	{
 		// Remove all acknowledged commands from the Command buffer.
 		while (!cmdsBuffer.isEmpty() && cmdsBuffer.peek().seqNum <= snapNext.seqAckd)
@@ -223,7 +224,7 @@ public class Client {
 		return transmit(data, serverAddress);
 	}
 	
-	// Fake main method, placeholder used so coding on the flow of operations can be done.
+	/* Fake main method, placeholder used so coding on the flow of operations can be done.
 	private void main()
 	{
 		while (true)
@@ -243,16 +244,9 @@ public class Client {
 
 			// wait for next tick
 		}
-	}
+	}*/
 	
-	private void begin()
-	{
-		// load up static world 
-		
-		// 
-	}
-	
-	private void updateWorld()
+	private void updateWorld(World world)
 	{	
 		// We don't have a snapshot to update our world with.
 		if (snapNext == null)

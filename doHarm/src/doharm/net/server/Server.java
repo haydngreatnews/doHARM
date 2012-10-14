@@ -80,9 +80,9 @@ public class Server {
 				else
 				{
 					// Reject, inform them so.
-					byte[] response = new byte[2];
+					byte[] response = new byte[3];
 					response[0] = (byte) ServerPacket.RESPONSE.ordinal();
-					response[1] = 1;	// 1 = NO at this point in time.
+					response[1] = 1;	// 1 = NO server is full.
 					transmit(response, new InetSocketAddress(packet.getAddress(), packet.getPort()));
 				}
 				break;
