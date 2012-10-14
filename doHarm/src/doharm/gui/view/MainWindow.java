@@ -119,6 +119,8 @@ public class MainWindow {
 	//frame.revalidate(); //Roland: Not defined in Java 6?
 	frame.validate();
 	canvas.requestFocusInWindow();
+	
+	addListeners(); //NEEDED! 
     }
 
     public void toggleSize() {
@@ -138,7 +140,7 @@ public class MainWindow {
 	}
 	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	addListeners();
-	frame.addKeyListener(keyboardManager);
+	
 	frame.setVisible(true);
     }
 
@@ -171,6 +173,7 @@ public class MainWindow {
 	canvas.addMouseMotionListener(mouseManager);
 	canvas.addKeyListener(keyboardManager);
 	canvas.requestFocusInWindow();
+	frame.addKeyListener(keyboardManager);
     }
 
     public JFrame getFrame() {
