@@ -134,11 +134,12 @@ public class RenderUtil {
 
 //		Layer next = layers[layerNum];
 //		Tile[][] tiles = next.getTiles();
-
+	
 		int row = y;
 		int col = x;
 
-		while(layers.length-1 < layerNum){
+		while(layerNum < layers.length){
+			
 			Layer next = layers[layerNum];
 			Tile[][] tiles = next.getTiles();
 			switch(world.getCamera().getDirection()){

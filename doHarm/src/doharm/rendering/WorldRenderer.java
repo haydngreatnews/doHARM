@@ -218,8 +218,9 @@ public class WorldRenderer
 					drawTiles(tiles, layerCount, floorImagesTrans, wallImagesTrans);
 					drawLayer = false;
 				}
-				else
+				else{
 					drawTiles(tiles, layerCount, floorImages, wallImages);
+				}
 
 
 
