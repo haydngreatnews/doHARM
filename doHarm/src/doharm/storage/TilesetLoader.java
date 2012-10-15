@@ -15,11 +15,16 @@ public class TilesetLoader
 	private int wallTileWidth;
 	private int wallTileHeight;
 	
+	private int rampTileWidth;
+	private int rampTileHeight;
+	
 	private String floorTileSetImage;
 	private String wallTileSetImage;
+	private String rampTileSetImage;
 	
 	private List<FloorTileData> floorTileData;
 	private List<WallTileData> wallTileData;
+	private List<RampTileData> rampTileData;
 	
 	
 	public TilesetLoader(String filename) throws FileNotFoundException
@@ -28,10 +33,30 @@ public class TilesetLoader
 		
 		loadFloorTiles(scanner.nextLine().trim());
 		loadWallTiles(scanner.nextLine().trim());
+		loadRampTiles(scanner.nextLine().trim());
 		
 
 	}
 	
+	private void loadRampTiles(String fname) throws FileNotFoundException{
+		// TODO Auto-generated method stub
+		Scanner scanner = new Scanner(new File("res/tilesets/"+fname));
+		rampTileSetImage = scanner.nextLine().trim();
+		
+		
+		rampTileWidth = Integer.parseInt(scanner.nextLine());
+		rampTileHeight = Integer.parseInt(scanner.nextLine());
+		
+		rampTileData = new ArrayList<RampTileData>();
+		
+		while(scanner.hasNextLine())
+		{
+			String line = scanner.nextLine();
+			if (line.trim().length() > 0)
+				rampTileData.add(new RampTileData(line));
+		}
+	}
+
 	private void loadFloorTiles(String fname) throws FileNotFoundException{
 		Scanner scanner = new Scanner(new File("res/tilesets/"+fname));
 		floorTileSetImage = scanner.nextLine().trim();

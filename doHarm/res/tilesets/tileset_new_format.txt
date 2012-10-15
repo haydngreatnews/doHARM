@@ -1,2 +1,3 @@
 floortileset.txt
 walltileset.txt
+rampTileSet.txt
