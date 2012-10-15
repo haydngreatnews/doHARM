@@ -31,4 +31,18 @@ public class PlayerState {
 		return null;
 	}
 
+	public static PlayerState getPlayerState(ByteBuffer buff)
+	{
+		switch (buff.get())
+		{
+		case 0:
+			return null;
+		case 1:
+			return new PlayerState(buff);
+		case 2:
+			return new PlayerStateFull(buff);
+		}
+		return null;
+	}
+
 }
