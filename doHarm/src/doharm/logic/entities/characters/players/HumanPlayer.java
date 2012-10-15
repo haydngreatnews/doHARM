@@ -150,9 +150,10 @@ public class HumanPlayer extends Player
 		}
 	}
 	
-	private void rightClick() 
+	protected void rightClick() 
 	{
 		//ranged attack / cast spell, etc...
+		super.rightClick();
 	}
 	
 	private void middleClick() 

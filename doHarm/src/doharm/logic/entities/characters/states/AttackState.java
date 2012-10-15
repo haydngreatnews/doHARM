@@ -1,6 +1,8 @@
 package doharm.logic.entities.characters.states;
 
 import doharm.logic.entities.characters.Character;
+import doharm.logic.entities.inventory.SlotType;
+import doharm.logic.entities.items.wearable.WearableItem;
 
 public class AttackState extends CharacterState
 {
@@ -28,13 +30,23 @@ public class AttackState extends CharacterState
 		
 		if (character.fromNetwork())
 			return;
+		
+		float minDistance = 3;
+		
+		
+		WearableItem weapon = character.getInventory().getSlots()[SlotType.WEAPON.ordinal()];
+		
+		if (weapon != null)
+		{
 			
+		}
+		
 		
 		float distance = character.getCurrentTile().distanceToTile(victim.getCurrentTile());
 		
 		//TODO increased distance for ranged attack.
 		
-		if (distance < 3)
+		if (distance < minDistance)
 		{
 			float damage = 1;
 			victim.receiveDamage(damage,character);

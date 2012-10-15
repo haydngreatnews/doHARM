@@ -5,7 +5,7 @@ import doharm.logic.physics.Vector;
 
 public class IdleState extends CharacterState
 {
-	private static final float IDLE_FRICTION = 0.1f;
+	private static final float IDLE_FRICTION = 0.5f;
 	
 	public IdleState()
 	{

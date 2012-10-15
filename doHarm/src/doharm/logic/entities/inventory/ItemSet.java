@@ -26,10 +26,9 @@ public class ItemSet implements ItemContainer
 	}
 
 	@Override
-	public void drop(Item item, Tile tile) 
+	public boolean drop(Item item, ItemContainer destination)
 	{
-		// TODO Auto-generated method stub
-		
+		return true; //TODO!
 	}
 	
 	

@@ -7,6 +7,9 @@ import doharm.logic.chat.MessagePart;
 import doharm.logic.entities.characters.Character;
 import doharm.logic.entities.items.Item;
 import doharm.logic.entities.items.ItemQuality;
+import doharm.logic.entities.items.ItemType;
+import doharm.logic.entities.items.misc.MiscItem;
+import doharm.logic.entities.items.misc.MiscItemType;
 
 public class PickupState extends CharacterState
 {
@@ -42,14 +45,14 @@ public class PickupState extends CharacterState
 		if (distance < 2)
 		{
 			boolean pickedUp = character.getInventory().pickup(itemToPickup);
-			String pickupString = "picked up "+(itemToPickup.isUnique()?"the ":"a ");
+			String pickupString = " picked up "+(itemToPickup.isUnique()?"the ":"a ");
 			String exclamation = itemToPickup.getQuality() == ItemQuality.LEGENDARY?"!":"";
 			
 			if (character.isHumanPlayer())
 			{
 				if (pickedUp)
 				{
-					Message message = new Message(character.getID(), new MessagePart("you "+ pickupString +itemToPickup.toString()+exclamation,Color.yellow));
+					Message message = new Message(character.getID(), new MessagePart("you"+ pickupString +itemToPickup.toString()+exclamation,Color.yellow));
 					character.getWorld().addMessage(message);
 				}
 				else
@@ -58,9 +61,45 @@ public class PickupState extends CharacterState
 					character.getWorld().addMessage(message);
 				}
 			}
-			else
+			
+			if (itemToPickup.getItemType() == ItemType.MISC)
 			{
-				
+				MiscItem misc = (MiscItem)itemToPickup;
+				if (misc.getMiscItemType() == MiscItemType.DRAGONBALL)
+				{
+					int numDragonBalls = character.getNumDragonBalls();
+					Color colour = Color.green;
+					
+					
+					if (numDragonBalls == 7)
+						colour = Color.yellow;
+					else if (numDragonBalls > 4)
+						colour = Color.red;
+					else if (numDragonBalls > 2)
+						colour = Color.orange;
+					
+					
+					MessagePart part = new MessagePart(character.getName() + pickupString + itemToPickup.toString()+"<br/>",Color.white);
+					MessagePart part2 = new MessagePart(character.getName() + " now has " + numDragonBalls + " dragon balls!",colour);
+					
+					
+					Message message = new Message(-1, part,part2);
+					character.getWorld().addMessage(message);
+					
+					
+					if (numDragonBalls == 7)
+					{
+						if (character.isHumanPlayer())
+						{
+							message = new Message(-1, new MessagePart("YOU WON THE GAME!",colour));
+						}
+						else
+							message = new Message(-1, new MessagePart(character.getName() +" WON THE GAME!",colour));
+						
+						character.getWorld().getGame().end(character);
+					}
+					
+				}
 			}
 			
 			

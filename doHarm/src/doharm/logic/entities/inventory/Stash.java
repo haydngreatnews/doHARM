@@ -1,6 +1,9 @@
 package doharm.logic.entities.inventory;
 
 import doharm.logic.entities.items.Item;
+import doharm.logic.entities.items.ItemType;
+import doharm.logic.entities.items.misc.MiscItem;
+import doharm.logic.entities.items.misc.MiscItemType;
 import doharm.logic.world.tiles.Tile;
 
 /**
@@ -15,6 +18,7 @@ public class Stash implements ItemContainer
 	private Item[][] items;
 	private final int numRows;
 	private final int numCols;
+	
 	
 	public Stash(int numRows, int numCols)
 	{
@@ -31,9 +35,9 @@ public class Stash implements ItemContainer
 
 
 	@Override
-	public void drop(Item item, Tile tile) {
-		
-		
+	public boolean drop(Item item, ItemContainer destination)
+	{
+		return true; //TODO
 	}
 	@Override
 	public boolean pickup(Item item) 
@@ -73,6 +77,24 @@ public class Stash implements ItemContainer
 	public void reorder()
 	{
 		//TODO
+	}
+
+	public int getNumDragonBalls() 
+	{
+		int dragonballs = 0;
+		for (int row = 0; row < numRows; row++)
+		{
+			for (int col = 0; col < numCols; col++)
+			{
+				Item item = items[row][col];
+				if (item != null && item.getItemType() == ItemType.MISC)
+				{
+					if (((MiscItem)item).getMiscItemType() == MiscItemType.DRAGONBALL)
+						dragonballs++;
+				}
+			}
+		}
+		return dragonballs;
 	}
 	
 }

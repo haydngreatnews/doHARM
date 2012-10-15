@@ -109,6 +109,8 @@ public class PlayerRenderer {
 		int x = (int)v.getX()-size.width/2;
 		int y = (int)v.getY()-size.height/4;
 		
+		
+		//draw the player
 		graphics.fillOval(x, y, size.width, size.height/2);
 		
 		
@@ -116,35 +118,34 @@ public class PlayerRenderer {
 		
 		
 		
-		
-		
-		if (player.getStateType() == CharacterStateType.MOVE)
+		/*if (player.getPlayerType() == PlayerType.HUMAN)
 		{
-			MoveState state = (MoveState)player.getState();
-			
-			//Path
-			Collection<Tile> path = state.getPath();
-			graphics.setColor(Color.white);
-			for (Tile tile: path)
+			if (player.getStateType() == CharacterStateType.MOVE)
 			{
-				row = tile.getY()/world.getTileHeight();
-				col = tile.getX()/world.getTileWidth();
+				MoveState state = (MoveState)player.getState();
+				
+				//Path
+				Collection<Tile> path = state.getPath();
+				graphics.setColor(Color.white);
+				for (Tile tile: path)
+				{
+					row = tile.getY()/world.getTileHeight();
+					col = tile.getX()/world.getTileWidth();
+					v = RenderUtil.convertCoordsToIso(col, row, player.getCurrentLayer().getLayerNumber(), game.getCamera());
+					graphics.fillOval((int)v.getX()-size.width/8, (int)v.getY()-size.height/16, size.width/4, size.height/8);
+				}
+				
+				
+				//Goal
+				graphics.setColor(Color.red);
+				Vector goal = state.getDestination();
+				row = goal.getY()/world.getTileHeight();
+				col = goal.getX()/world.getTileWidth();
 				v = RenderUtil.convertCoordsToIso(col, row, player.getCurrentLayer().getLayerNumber(), game.getCamera());
 				graphics.fillOval((int)v.getX()-size.width/8, (int)v.getY()-size.height/16, size.width/4, size.height/8);
 			}
-			
-			
-			//Goal
-			graphics.setColor(Color.red);
-			Vector goal = state.getDestination();
-			row = goal.getY()/world.getTileHeight();
-			col = goal.getX()/world.getTileWidth();
-			v = RenderUtil.convertCoordsToIso(col, row, player.getCurrentLayer().getLayerNumber(), game.getCamera());
-			graphics.fillOval((int)v.getX()-size.width/8, (int)v.getY()-size.height/16, size.width/4, size.height/8);
-		}
 		
-		if (player.getPlayerType() == PlayerType.HUMAN)
-		{
+		
 			HumanPlayer hp = (HumanPlayer)player;
 			graphics.setColor(Color.orange);
 			Tile t = hp.getHoverTile();
@@ -155,7 +156,8 @@ public class PlayerRenderer {
 				v = RenderUtil.convertCoordsToIso(col, row, player.getCurrentLayer().getLayerNumber(), game.getCamera());
 				graphics.fillOval((int)v.getX()-size.width/8, (int)v.getY()-size.height/16, size.width/4, size.height/8);
 			}
-		}
+		}*/
+		
 		
 		
 		

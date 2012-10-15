@@ -13,5 +13,9 @@ public abstract class MiscItem extends Item
 		this.miscItemType = miscItemType;
 	}
 
+	public MiscItemType getMiscItemType() {
+		return miscItemType;
+	}
+
 	
 }

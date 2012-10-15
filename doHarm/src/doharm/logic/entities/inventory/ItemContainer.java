@@ -11,5 +11,5 @@ import doharm.logic.world.tiles.Tile;
 public interface ItemContainer 
 {
 	public boolean pickup(Item item);
-	public void drop(Item item, Tile tile);
+	public boolean drop(Item item, ItemContainer destination);
 }

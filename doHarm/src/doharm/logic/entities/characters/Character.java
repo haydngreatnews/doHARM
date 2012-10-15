@@ -315,5 +315,15 @@ public abstract class Character extends AbstractEntity
 	{
 		return characterType;
 	}
+
+	public int getNumDragonBalls() 
+	{
+		return inventory.getStash().getNumDragonBalls();
+	}
+
+	protected void rightClick() 
+	{
+		
+	}
 	
 }

@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import doharm.logic.AbstractGame;
 import doharm.logic.camera.Camera;
 import doharm.logic.chat.Message;
 import doharm.logic.chat.MessagePart;
@@ -24,7 +25,6 @@ import doharm.logic.entities.inventory.DragonRadar;
 import doharm.logic.entities.items.ItemFactory;
 import doharm.logic.entities.items.ItemQuality;
 import doharm.logic.entities.items.ItemType;
-import doharm.logic.entities.items.misc.DragonBall;
 import doharm.logic.entities.items.misc.MiscItemType;
 import doharm.logic.time.Time;
 import doharm.logic.weather.Weather;
@@ -61,10 +61,13 @@ public class World
 	private List<Message> messages;
 
 	private DragonRadar dragonRadar;
+
+	private AbstractGame game;
 	
 	
-	public World(String worldName, NetworkMode networkMode)
+	public World(AbstractGame game, String worldName, NetworkMode networkMode)
 	{
+		this.game = game;
 		this.networkMode = networkMode;
 		messages = new ArrayList<Message>();
 		idManager = new IDManager();
@@ -157,6 +160,11 @@ public class World
 		
 		addMessage(new Message(-1, new MessagePart("World created.")));
 		
+	}
+	
+	public IDManager getIDManager()
+	{
+		return idManager;
 	}
 
 	/**
@@ -454,5 +462,9 @@ public class World
 	public void createHumanPlayer(Tile spawnPosition, CharacterClassType type, String playerName, Color colour) 
 	{
 		humanPlayer = (HumanPlayer)playerFactory.createPlayer(spawnPosition,playerName,type, 0,PlayerType.HUMAN,colour,false);
+	}
+
+	public AbstractGame getGame() {
+		return game;
 	}
 }

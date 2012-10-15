@@ -10,7 +10,7 @@ public class Inventory implements ItemContainer
 	public static final int STASH_ROWS = 6;
 	public static final int STASH_COLS = 10;
 	
-	private Item[] slots;
+	private WearableItem[] slots;
 	private Stash stash;
 	private Belt belt;
 	
@@ -18,10 +18,15 @@ public class Inventory implements ItemContainer
 
 	public Inventory()
 	{
-		slots= new Item[SlotType.values().length];
+		slots= new WearableItem[SlotType.values().length];
 		stash = new Stash(STASH_ROWS, STASH_COLS);
+		belt = new Belt();
 	}
 	
+	public WearableItem[] getSlots()
+	{
+		return slots;
+	}
 	
 	public Stash getStash()
 	{
@@ -102,9 +107,9 @@ public class Inventory implements ItemContainer
 
 
 	@Override
-	public void drop(Item item, Tile tile) {
-		// TODO Auto-generated method stub
-		
+	public boolean drop(Item item, ItemContainer destination)
+	{
+		return true; //TODO
 	}
 	
 }
