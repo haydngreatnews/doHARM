@@ -194,7 +194,7 @@ public abstract class Character extends AbstractEntity
 		return rage / getMaxMana();
 	}
 	
-	private float getMaxMana() {
+	public float getMaxMana() {
 		return characterClass.getAttributes().getMaxMana();
 	}
 

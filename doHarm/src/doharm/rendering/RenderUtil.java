@@ -132,14 +132,14 @@ public class RenderUtil {
 		int y = player.getCurrentTile().getCol();
 		int layerNum = player.getCurrentLayer().getLayerNumber() + 1;
 
-//		Layer next = layers[layerNum];
-//		Tile[][] tiles = next.getTiles();
-	
+		//		Layer next = layers[layerNum];
+		//		Tile[][] tiles = next.getTiles();
+
 		int row = y;
 		int col = x;
 
 		while(layerNum < layers.length){
-			
+
 			Layer next = layers[layerNum];
 			Tile[][] tiles = next.getTiles();
 			switch(world.getCamera().getDirection()){
@@ -173,7 +173,85 @@ public class RenderUtil {
 		}
 		return false;
 	}
-}
+
+	public static BufferedImage generateLeftWallImage(Color color, int fTileH, int wTileW, int wTileH) {
+		// TODO Auto-generated method stub
+		BufferedImage img = new BufferedImage(wTileW, wTileH, BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g = (Graphics2D)img.getGraphics();
+		g.setColor(color);
+		int lineLength = 1;
+		int x = 0;
+		int row = 0;
+		for(; row < fTileH/2; row++){
+
+			g.drawLine(x, row, x+lineLength, row);
+
+			lineLength+=2;
+		}
+		lineLength-=2;
+		x+=2;
+
+		for(; row < wTileH-(fTileH/2); row++){
+
+			g.drawLine(x, row, x+lineLength, row);
+
+		}
+
+		x+=2;
+		for(; row < wTileH; row++){
+
+			g.drawLine(x, row, x+lineLength, row);
+
+			x+=2;
+
+		}
+		return img;
+	}
+
+	public static BufferedImage generateRightWallImage(Color color, int fTileH, int wTileW, int wTileH) {
+		// TODO Auto-generated method stub
+		BufferedImage img = new BufferedImage(wTileW, wTileH, BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g = (Graphics2D)img.getGraphics();
+		g.setColor(color);
+		int lineLength = wTileW;
+		int x = wTileW-1;
+		int row = 0;
+
+		for(; row >=0; row--){
+
+			g.drawLine(x, row, x+lineLength, row);
+
+			x-=2;
+
+		}
+
+
+		for(; row < fTileH/2; row++){
+
+			g.drawLine(x, row, x+lineLength, row);
+
+			lineLength+=2;
+		}
+		lineLength-=2;
+		x+=2;
+
+		for(; row < wTileH-(fTileH/2); row++){
+
+			g.drawLine(x, row, x+lineLength, row);
+
+		}
+
+		for(; row < fTileH/2; row++){
+
+			g.drawLine(x, row, x+lineLength, row);
+
+			lineLength+=2;
+		}
+
+		x+=2;
+		return img;
+	}
+	}
 
 
 

@@ -92,16 +92,15 @@ public class MainWindow {
 
 	public void setGame(AbstractGame game) {
 		WorldRenderer renderer = new WorldRenderer(game);
-		mouseManager = new MouseManager(game, renderer);
-		keyboardManager = new KeyboardManager(this, game);
+
 		frame.remove(canvas);
 		canvas = new WorldCanvas(game, renderer);
 		state = MAXIMIZED;
+		toggleSize();
 		textPane = new JTextPane();
 		textPane.setContentType("text/html");
 		textPane.setOpaque(false);
 		textPane.setFocusable(false);
-		toggleSize();
 		messages = new EjectorQueue<String>(10);
 		canvas.setLayout(new BorderLayout());
 		southPanel = new JPanel(new MigLayout("wrap 3, align center center",
@@ -117,6 +116,9 @@ public class MainWindow {
 				"cell 0 3, span 3, grow, h 5");
 
 		southPanel.add(textPane, "cell 0 0, grow, span 3, gapleft 55%");
+		mouseManager = new MouseManager(game, renderer);
+		keyboardManager = new KeyboardManager(this, game);
+
 		this.game = game;
 
 		canvas.add(southPanel, BorderLayout.SOUTH);
@@ -177,6 +179,7 @@ public class MainWindow {
 	private void addListeners() {
 		canvas.addMouseListener(mouseManager);
 		canvas.addMouseMotionListener(mouseManager);
+
 		if (textPane != null) {
 			//textPane.addMouseListener(mouseManager);
 			//textPane.addMouseMotionListener(mouseManager);
@@ -223,8 +226,11 @@ public class MainWindow {
 		public void run() {
 			HumanPlayer human = game.getWorld().getHumanPlayer();
 			while (true) {
-				frame.setCursor(CursorFactory.getCursors().get(
-						human.getMouseIcon()));
+				if (!human.isAlive()) {
+					frame.setCursor(CursorFactory.getCursors().get(CharacterStateType.IDLE));
+				} else
+					frame.setCursor(CursorFactory.getCursors().get(
+							human.getMouseIcon()));
 				try {
 					Thread.sleep(100);
 				} catch (InterruptedException e) {
