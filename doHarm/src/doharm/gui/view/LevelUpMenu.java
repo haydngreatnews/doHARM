@@ -64,6 +64,7 @@ public class LevelUpMenu extends JFrame {
 			}
 		});
 		add(commit, "skip 1");
+		
 	}
 
 	private class LevelUpListener implements ActionListener {

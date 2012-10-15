@@ -25,6 +25,7 @@ import doharm.gui.extras.EjectorQueue;
 import doharm.gui.input.KeyboardManager;
 import doharm.gui.input.MenuButtonListener;
 import doharm.gui.input.MouseManager;
+import doharm.gui.input.PassThroughListener;
 import doharm.logic.AbstractGame;
 import doharm.logic.chat.Message;
 import doharm.logic.chat.MessagePart;
@@ -45,6 +46,7 @@ public class MainWindow {
 	private MenuScreen menu;
 	private JPanel canvas;
 	private MouseManager mouseManager;
+	private PassThroughListener passThrough;
 	private KeyboardManager keyboardManager;
 	private JPanel southPanel;
 	private JTextPane textPane;
@@ -113,7 +115,6 @@ public class MainWindow {
 				"aligny bottom, grow");
 		southPanel.add(new XPBar(game.getWorld().getHumanPlayer()),
 				"cell 0 3, span 3, grow, h 5");
-
 		southPanel.add(textPane, "cell 0 0, grow, span 3, gapleft 55%");
 		mouseManager = new MouseManager(game, renderer);
 		keyboardManager = new KeyboardManager(this, game);
@@ -179,6 +180,10 @@ public class MainWindow {
 		canvas.addMouseMotionListener(mouseManager);
 		canvas.addKeyListener(keyboardManager);
 		canvas.requestFocusInWindow();
+		if (textPane != null){
+			textPane.addMouseListener(passThrough);
+			textPane.addMouseMotionListener(passThrough);
+		}
 		frame.addKeyListener(keyboardManager);
 	}
 
