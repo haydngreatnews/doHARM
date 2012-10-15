@@ -13,11 +13,10 @@ import javax.swing.JPanel;
 
 import doharm.gui.editor.EditorLogic.EditorTileSetLoader;
 import doharm.rendering.RenderUtil;
-import doharm.storage.LayerData;
 import doharm.storage.WorldLoader;
 
 public class EditorCanvas extends JPanel {
-    private ArrayList<LayerData> layers = new ArrayList<LayerData>();
+    private ArrayList<EditorLayerData> layers = new ArrayList<EditorLayerData>();
     private int xDim, yDim;
     private int currentLayer = 0;
     private EditorTileSetLoader tiles;
@@ -46,7 +45,7 @@ public class EditorCanvas extends JPanel {
 	drawLayer(layers.get(currentLayer), (Graphics2D) g);
     }
 
-    private void drawLayer(LayerData layer, Graphics2D g) {
+    private void drawLayer(EditorLayerData layer, Graphics2D g) {
 	g.setStroke(new BasicStroke(2));
 	g.setColor(new Color(0xAAAAAAAA, true));
 	//Draw a grid
@@ -56,7 +55,6 @@ public class EditorCanvas extends JPanel {
 	}
 	for (int x = 0; x < xDim; ++x) {
 	    for (int y = 0; y < yDim; ++y) {
-		System.out.printf("Drawing tile x=%d,y=%d with TileID=%d\n", x, y, layer.getTileID(y, x));
 		g.drawImage(tiles.getTileImage(layer.getTileID(y, x)), TILE_SIZE * x, TILE_SIZE * y, TILE_SIZE, TILE_SIZE, null);
 	    }
 	}
@@ -80,7 +78,7 @@ public class EditorCanvas extends JPanel {
 	yDim = w.getNumTilesY();
 	layers.clear();
 	for (int i = 0; i < w.getNumLayers(); i++) {
-	    layers.add(i, w.getLayerData(i));
+	    layers.add(i, new EditorLayerData(w.getLayerData(i), xDim, yDim));
 	}
     }
     
@@ -89,7 +87,7 @@ public class EditorCanvas extends JPanel {
     }
     
     public boolean setTileUnder(int x, int y, int tileType){
-	layers.get(currentLayer).getTileID(y/TILE_SIZE, x/TILE_SIZE);
 	layers.get(currentLayer).setTileID(y/TILE_SIZE, x/TILE_SIZE, tileType);
+	return true;
     }
 }
