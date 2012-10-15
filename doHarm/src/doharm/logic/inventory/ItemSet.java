@@ -1,4 +1,4 @@
-package doharm.logic.entities.inventory;
+package doharm.logic.inventory;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -8,7 +8,7 @@ import doharm.logic.world.tiles.Tile;
 
 /**
  * This class stores a set of items.
- * For example, a bookcase can have a set of items.
+ * For example, a bookcase can have a set of items. Also tiles contain a set of items...
  * @author bewickrola
  */
 public class ItemSet implements ItemContainer
@@ -26,10 +26,17 @@ public class ItemSet implements ItemContainer
 	}
 
 	@Override
-	public boolean drop(Item item, ItemContainer destination)
+	public boolean drop(Item item, ItemContainer destination) 
 	{
-		return true; //TODO!
+		if (destination.pickup(item))
+		{
+			items.remove(item);
+			return true;
+		}
+		return false;
 	}
+
+	
 	
 	
 	

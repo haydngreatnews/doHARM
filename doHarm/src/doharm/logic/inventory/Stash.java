@@ -1,4 +1,4 @@
-package doharm.logic.entities.inventory;
+package doharm.logic.inventory;
 
 import doharm.logic.entities.items.Item;
 import doharm.logic.entities.items.ItemType;
@@ -37,7 +37,20 @@ public class Stash implements ItemContainer
 	@Override
 	public boolean drop(Item item, ItemContainer destination)
 	{
-		return true; //TODO
+		if (destination.pickup(item))
+		{
+			for (int row = 0; row < numRows; row++)
+			{
+				for (int col = 0; col < numCols; col++)
+				{
+					if (item == items[row][col])
+						items[row][col] = null;
+				}
+			}
+			
+			return true;
+		}
+		return false;
 	}
 	@Override
 	public boolean pickup(Item item) 

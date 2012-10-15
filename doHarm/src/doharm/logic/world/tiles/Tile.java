@@ -9,8 +9,9 @@ import java.util.List;
 import java.util.Set;
 
 import doharm.logic.entities.AbstractEntity;
-import doharm.logic.entities.inventory.ItemContainer;
 import doharm.logic.entities.items.Item;
+import doharm.logic.inventory.ItemContainer;
+import doharm.logic.inventory.ItemSet;
 import doharm.logic.physics.Vector;
 import doharm.logic.world.Layer;
 import doharm.logic.world.World;
@@ -20,6 +21,8 @@ import doharm.storage.WallTileData;
 
 public class Tile implements Comparable<Tile>, ItemContainer
 {
+	private ItemContainer items;
+	
 	private FloorTileData floorData;
 	private WallTileData[] walls;
 	
@@ -85,6 +88,7 @@ public class Tile implements Comparable<Tile>, ItemContainer
 		
 		walls = new WallTileData[Direction.values().length];
 		entities = new HashSet<AbstractEntity>();
+		items = new ItemSet();
 	}
 	
 	/**
@@ -311,18 +315,17 @@ public class Tile implements Comparable<Tile>, ItemContainer
 	}
 
 	@Override
-	public boolean pickup(Item item) 
-	{
-		// TODO Auto-generated method stub
-		return false;
+	public boolean pickup(Item item) {
+		return items.pickup(item);
 	}
 
 	@Override
-	public void drop(Item item, Tile tile) 
+	public boolean drop(Item item, ItemContainer destination) 
 	{
-		// TODO Auto-generated method stub
-		
+		return items.drop(item, destination);
 	}
+
+	
 	
 
 	

@@ -1,4 +1,4 @@
-package doharm.logic.entities.inventory;
+package doharm.logic.inventory;
 
 import doharm.logic.entities.items.Item;
 import doharm.logic.entities.items.ItemType;
@@ -59,7 +59,26 @@ public class Inventory implements ItemContainer
 		return pickedup;
 	}
 
-	
+	@Override
+	public boolean drop(Item item, ItemContainer destination)
+	{
+		if (destination.pickup(item))
+		{
+			stash.drop(item, destination);
+			belt.drop(item, destination);
+			for (int i = 0; i < slots.length; i++)
+			{
+				if (slots[i] == item)
+					slots[i] = null;
+			}
+			
+			
+			return true;
+		}
+		return false;
+		
+		
+	}
 
 	
 
@@ -106,10 +125,6 @@ public class Inventory implements ItemContainer
 	}
 
 
-	@Override
-	public boolean drop(Item item, ItemContainer destination)
-	{
-		return true; //TODO
-	}
+	
 	
 }

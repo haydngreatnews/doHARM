@@ -9,9 +9,9 @@ import javax.swing.JPanel;
 import net.miginfocom.swing.MigLayout;
 
 import doharm.logic.entities.characters.players.HumanPlayer;
-import doharm.logic.entities.inventory.Inventory;
-import doharm.logic.entities.inventory.ItemContainer;
 import doharm.logic.entities.items.Item;
+import doharm.logic.inventory.Inventory;
+import doharm.logic.inventory.ItemContainer;
 
 public class InventoryPanel extends JPanel {
 	

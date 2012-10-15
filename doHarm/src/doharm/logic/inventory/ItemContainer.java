@@ -1,4 +1,4 @@
-package doharm.logic.entities.inventory;
+package doharm.logic.inventory;
 
 import doharm.logic.entities.items.Item;
 import doharm.logic.world.tiles.Tile;

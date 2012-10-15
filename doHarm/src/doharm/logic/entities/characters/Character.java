@@ -12,7 +12,7 @@ import doharm.logic.entities.characters.classes.warrior.Warrior;
 import doharm.logic.entities.characters.states.CharacterState;
 import doharm.logic.entities.characters.states.CharacterStateType;
 import doharm.logic.entities.characters.states.IdleState;
-import doharm.logic.entities.inventory.Inventory;
+import doharm.logic.inventory.Inventory;
 import doharm.logic.world.tiles.Tile;
 
 public abstract class Character extends AbstractEntity

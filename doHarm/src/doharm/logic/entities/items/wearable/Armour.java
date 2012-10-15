@@ -1,6 +1,6 @@
 package doharm.logic.entities.items.wearable;
 
-import doharm.logic.entities.inventory.SlotType;
+import doharm.logic.inventory.SlotType;
 
 
 /**

@@ -21,11 +21,11 @@ import doharm.logic.entities.characters.players.HumanPlayer;
 import doharm.logic.entities.characters.players.Player;
 import doharm.logic.entities.characters.players.PlayerFactory;
 import doharm.logic.entities.characters.players.PlayerType;
-import doharm.logic.entities.inventory.DragonRadar;
 import doharm.logic.entities.items.ItemFactory;
 import doharm.logic.entities.items.ItemQuality;
 import doharm.logic.entities.items.ItemType;
 import doharm.logic.entities.items.misc.MiscItemType;
+import doharm.logic.entities.items.misc.dragonballs.DragonRadar;
 import doharm.logic.time.Time;
 import doharm.logic.weather.Weather;
 import doharm.logic.world.tiles.Direction;
@@ -160,6 +160,11 @@ public class World
 		
 		addMessage(new Message(-1, new MessagePart("World created.")));
 		
+	}
+	
+	public DragonRadar getDragonRadar()
+	{
+		return dragonRadar;
 	}
 	
 	public IDManager getIDManager()

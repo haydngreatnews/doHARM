@@ -1,4 +1,4 @@
-package doharm.logic.entities.inventory;
+package doharm.logic.inventory;
 
 public enum SlotType 
 {
