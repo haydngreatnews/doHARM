@@ -96,7 +96,7 @@ public class Tile implements Comparable<Tile>, ItemContainer
 	 */
 	public float getLight()
 	{
-		float light = 0.99f * world.getTime().getLight();//Math.max(staticLight + dynamicLight,1);
+		float light = 0.2f * world.getTime().getLight();//Math.max(staticLight + dynamicLight,1);
 
 		
 		light = Math.min(Math.max(light, 0),1);
