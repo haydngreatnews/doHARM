@@ -2,7 +2,13 @@ package doharm.logic.entities.characters.classes.attributes;
 
 import java.awt.Color;
 
-public enum AttributePointType 
+/**
+ * points can be used to increase one of the below attributes.
+ * 
+ * @author Roland
+ */
+
+public enum AttributeType 
 {
 	INTELLIGENCE, //mana
 	VITALITY, //health
@@ -26,7 +32,9 @@ public enum AttributePointType
 		}
 	}
 	
-	
+	/**
+	 * @return a string that describes this attribute type.
+	 */
 	public String getDescription() 
 	{
 		switch(this)

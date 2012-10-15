@@ -5,6 +5,9 @@ import doharm.logic.entities.EntityFactory;
 import doharm.logic.entities.items.misc.MiscItemType;
 import doharm.logic.entities.items.misc.dragonballs.DragonBall;
 import doharm.logic.entities.items.misc.dragonballs.DragonRadar;
+import doharm.logic.entities.items.usable.UsableItemType;
+import doharm.logic.entities.items.usable.potions.HealthPotion;
+import doharm.logic.entities.items.wearable.WearableItemType;
 import doharm.logic.inventory.ItemContainer;
 import doharm.logic.world.World;
 import doharm.logic.world.tiles.Tile;
@@ -26,18 +29,28 @@ public class ItemFactory extends AbstractEntityFactory<Item>
 	}
 	
 	/**
-	 * Add an item to a container.
-	 * @param type
+	 * Add a new item to a container.
+	 * @param type the type of item to create, either misc, wearable or usable.
+	 * @param subtype the subtype of item, eg. dragonball, sword, health potion, etc.
+	 * @param quality the quality of the item
+	 * @param id the unique entity id.
 	 * @param container where to add the item to (could be a tile, player inventory, chest, etc.)
+	 * @param fromNetwork
 	 * @return the created item
 	 */
-	public Item createItem(ItemType type, int subtypeOrdinal, ItemQuality quality, int id, ItemContainer container, boolean fromNetwork)
+	public Item createItem(ItemType type, int subtype, ItemQuality quality, int id, ItemContainer container, boolean fromNetwork)
 	{
 		Item item = null;
 		switch (type)
 		{
 		case MISC:
-			item = createMiscItem(subtypeOrdinal, quality);
+			item = createMiscItem(subtype, quality);
+			break;
+		case USABLE:
+			item = createUsableItem(subtype,quality);
+			break;
+		case WEARABLE:
+			item = createWearableItem(subtype, quality);
 			break;
 		default:
 			throw new UnsupportedOperationException("ItemType not implemented");
@@ -59,15 +72,49 @@ public class ItemFactory extends AbstractEntityFactory<Item>
 		return item;
 	}
 	
-	private Item createMiscItem(int subtypeOrdinal, ItemQuality quality) 
+	private Item createWearableItem(int subtype, ItemQuality quality) 
 	{
-		MiscItemType type = MiscItemType.values()[subtypeOrdinal];
+		WearableItemType type = WearableItemType.values()[subtype];
 		Item item = null;
 		switch (type)
 		{
-		case COIN:
-			//item = new Coin();
+		//case SWORD:
+			//item = new Sword();
+			
+			//break;
+		default:
+			throw new UnsupportedOperationException("UsableItemType not implemented");
+		}
+		
+		//return item;
+	}
+
+	private Item createUsableItem(int subtype, ItemQuality quality) 
+	{
+		UsableItemType type = UsableItemType.values()[subtype];
+		Item item = null;
+		switch (type)
+		{
+		case HEALTH_POTION:
+			item = new HealthPotion();
+			
 			break;
+		default:
+			throw new UnsupportedOperationException("UsableItemType not implemented");
+		}
+		
+		return item;
+	}
+
+	private Item createMiscItem(int subtype, ItemQuality quality) 
+	{
+		MiscItemType type = MiscItemType.values()[subtype];
+		Item item = null;
+		switch (type)
+		{
+		//case COIN:
+			//item = new Coin();
+			//break;
 		case DRAGONBALL:	
 			item = new DragonBall(dragonBallStar);
 			item.setUnique(true);

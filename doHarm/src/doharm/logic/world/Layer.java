@@ -35,7 +35,7 @@ public class Layer
 			{
 				FloorTileData data = tileLoader.getFloorTileData().get(layerData.getTileID(y,x));
 						
-				tiles[y][x] = new Tile(this, y,x,tileWidth,tileHeight,new Vector(x*tileWidth,y*tileHeight),data, world.getColour(y, x, layerNumber));
+				tiles[y][x] = new Tile(this, y,x,tileWidth,tileHeight,data, world.getColour(y, x, layerNumber));
 			}
 		}
 	}

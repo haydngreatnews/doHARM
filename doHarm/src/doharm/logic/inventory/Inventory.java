@@ -66,18 +66,20 @@ public class Inventory implements ItemContainer
 		{
 			stash.drop(item, destination);
 			belt.drop(item, destination);
-			for (int i = 0; i < slots.length; i++)
-			{
-				if (slots[i] == item)
-					slots[i] = null;
-			}
-			
-			
+			deleteItem(item);
 			return true;
 		}
 		return false;
-		
-		
+	}
+	
+	@Override
+	public void deleteItem(Item item) 
+	{
+		for (int i = 0; i < slots.length; i++)
+		{
+			if (slots[i] == item)
+				slots[i] = null;
+		}
 	}
 
 	
@@ -123,6 +125,24 @@ public class Inventory implements ItemContainer
 		
 		return false;
 	}
+
+	public Belt getBelt() {
+		return belt;
+	}
+
+	@Override
+	public void dropAll(Tile dropTile) 
+	{
+		for (Item item: slots)
+		{
+			if (item != null)
+				drop(item, dropTile);
+		}
+		
+		
+	}
+
+	
 
 
 	

@@ -6,10 +6,11 @@ import java.awt.event.KeyListener;
 import doharm.gui.view.MainWindow;
 import doharm.logic.AbstractGame;
 import doharm.logic.camera.Camera;
+import doharm.logic.entities.items.usable.UsableItem;
 
 public class KeyboardManager implements KeyListener
 {
-	private MainWindow main;
+	private MainWindow window;
 	private Camera camera;
 	private boolean altDown;
 	private AbstractGame game;
@@ -17,7 +18,7 @@ public class KeyboardManager implements KeyListener
 	public KeyboardManager(MainWindow m, AbstractGame game){
 		this.game = game;
 		this.camera = game.getCamera();
-		main = m;
+		window = m;
 	}
 	
 	@Override
@@ -25,28 +26,54 @@ public class KeyboardManager implements KeyListener
 		
 		if (altDown)
 		{
-			game.getWorld().getHumanPlayer().getTaunts().taunt(e.getKeyChar());
+			if (game.getWorld().getHumanPlayer() != null)
+				game.getWorld().getHumanPlayer().getTaunts().taunt(e.getKeyChar());
 		}
 	}
 
 	@Override
 	public void keyPressed(KeyEvent e) 
 	{
+		for (int i = KeyEvent.VK_1; i <= KeyEvent.VK_8; i++)
+		{
+			if (e.getKeyCode() == i)
+			{
+				if (game.getWorld().getHumanPlayer() != null)
+				{
+					UsableItem item = game.getWorld().getHumanPlayer().getInventory().getBelt().getItem(i-KeyEvent.VK_1);
+					if (item != null)
+						game.getWorld().getHumanPlayer().useItem(item);
+					
+				}
+				
+			}
+		}
+		
 		switch(e.getKeyCode())
 		{
 		case KeyEvent.VK_ESCAPE:
 			System.exit(0); //TODO handle exit confirmation
 			break;
+			
+		case KeyEvent.VK_F9:
+			if (game.getWorld().getHumanPlayer() != null) //test suicide method
+				game.getWorld().getHumanPlayer().die(game.getWorld().getHumanPlayer());
+			break;
 		case KeyEvent.VK_F11:
-			main.toggleSize();
+			window.toggleSize();
 			break;
 		case KeyEvent.VK_F10:
-			main.toggleMenu();
+			window.toggleMenu();
 			break;
+			
+		
+			
+		
+		
 			
 		case KeyEvent.VK_ALT:
 			altDown = true;
-		
+			break;
 		
 		}
 			

@@ -1,6 +1,15 @@
 package doharm.logic.entities.items.usable.potions;
 
-public abstract class Potion 
+import doharm.logic.entities.items.usable.UsableItem;
+import doharm.logic.entities.items.usable.UsableItemType;
+
+public abstract class Potion extends UsableItem
 {
+	protected Potion(UsableItemType usableItemType) 
+	{
+		super(usableItemType);
+	}
+	
+	
 	
 }

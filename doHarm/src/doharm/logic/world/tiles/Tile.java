@@ -56,14 +56,14 @@ public class Tile implements Comparable<Tile>, ItemContainer
 	private Tile roof;
 	
 	
-	public Tile(Layer layer, int row, int col, int width, int height, Vector position, FloorTileData data, int colour) 
+	public Tile(Layer layer, int row, int col, int width, int height, FloorTileData data, int colour) 
 	{
 		this.width = width;
 		this.height = height;
 		this.row = row;
 		this.col = col;
 		this.layer = layer;
-		this.position = position;
+		this.position = new Vector(col*width,row*height);
 		this.floorData = data;
 		
 		world = layer.getWorld();
@@ -71,7 +71,7 @@ public class Tile implements Comparable<Tile>, ItemContainer
 		dynamicLight = 0;
 		staticLight = 0.3f;
 		
-		visible = floorData.getType() != 2;
+		visible = floorData.getType() != TileType.NOTHING;
 		
 		int red = 0xFF & ( colour >> 16);
 		int green = 0xFF & (colour >> 8 );
@@ -176,7 +176,7 @@ public class Tile implements Comparable<Tile>, ItemContainer
 	
 	public boolean isWalkable()
 	{
-		return floorData.getType() == 1; //TODO
+		return floorData.getType() == TileType.GRASS;
 	}
 	
 	
@@ -323,6 +323,12 @@ public class Tile implements Comparable<Tile>, ItemContainer
 	public boolean drop(Item item, ItemContainer destination) 
 	{
 		return items.drop(item, destination);
+	}
+	
+	@Override
+	public void deleteItem(Item item) 
+	{
+		items.deleteItem(item);
 	}
 
 	

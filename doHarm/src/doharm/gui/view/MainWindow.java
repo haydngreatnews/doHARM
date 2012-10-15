@@ -123,7 +123,7 @@ public class MainWindow {
 		this.game = game;
 
 		canvas.add(southPanel, BorderLayout.SOUTH);
-		addMessage(new Message(-1, new MessagePart("Welcome to the game")));
+		addMessage(new Message(-1, false, new MessagePart("Welcome to the game")));
 		new CursorThread().start();
 		// frame.revalidate(); //Roland: Not defined in Java 6?
 		frame.validate();

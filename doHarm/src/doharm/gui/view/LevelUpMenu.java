@@ -9,17 +9,17 @@ import javax.swing.JLabel;
 
 import net.miginfocom.swing.MigLayout;
 
-import doharm.logic.entities.characters.classes.attributes.AttributePointType;
+import doharm.logic.entities.characters.classes.attributes.AttributeType;
 import doharm.logic.entities.characters.players.Player;
 import doharm.logic.world.World;
 import doharm.net.NetworkMode;
 
 public class LevelUpMenu extends JFrame {
 
-	private int[] changes = new int[AttributePointType.values().length];
-	private JLabel[] values = new JLabel[AttributePointType.values().length + 1];
-	private JButton[] minusButtons = new JButton[AttributePointType.values().length];
-	private JButton[] plusButtons = new JButton[AttributePointType.values().length];
+	private int[] changes = new int[AttributeType.values().length];
+	private JLabel[] values = new JLabel[AttributeType.values().length + 1];
+	private JButton[] minusButtons = new JButton[AttributeType.values().length];
+	private JButton[] plusButtons = new JButton[AttributeType.values().length];
 	private int pointsToSpend;
 	private Player player;
 
@@ -37,7 +37,7 @@ public class LevelUpMenu extends JFrame {
 		add(new JLabel("Points left:"));
 		add(values[values.length - 1] = new JLabel("" + pointsToSpend));
 		ActionListener listen = new LevelUpListener();
-		for (AttributePointType type : AttributePointType.values()) {
+		for (AttributeType type : AttributeType.values()) {
 			add(new JLabel(type.toString().substring(0,1).toUpperCase()+type.toString().substring(1).toLowerCase() + ":"), "align right");
 			JButton minus, plus;
 			add(minus = new JButton("-"), "split 3");
@@ -57,7 +57,7 @@ public class LevelUpMenu extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				for (int i = 0; i< changes.length; ++i){
 					while (changes[i]>0){
-						player.getCharacterClass().addPoint(AttributePointType.values()[i]);
+						player.getCharacterClass().addPoint(AttributeType.values()[i]);
 						--changes[i];
 					}
 				}
@@ -72,7 +72,7 @@ public class LevelUpMenu extends JFrame {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			char sign = e.getActionCommand().charAt(0);
-			AttributePointType type = AttributePointType.valueOf(e
+			AttributeType type = AttributeType.valueOf(e
 					.getActionCommand().substring(1));
 			if (sign == '+') {
 				changes[type.ordinal()]++;
@@ -87,7 +87,7 @@ public class LevelUpMenu extends JFrame {
 				JLabel label = values[i];
 				label.setText(""
 						+ player.getCharacterClass().getAttributes()
-								.getAttr(AttributePointType.values()[i]));
+								.getAttr(AttributeType.values()[i]));
 			}
 			values[values.length - 1].setText("" + pointsToSpend);
 			for (int i = 0; i < minusButtons.length; ++i){

@@ -1,5 +1,13 @@
 package doharm.logic.entities.characters;
 
-public enum CharacterType {
-	PLAYER, NPC, MONSTER,
+/**
+ * Possible character types.
+ * @author Roland
+ */
+
+public enum CharacterType 
+{
+	PLAYER, 
+	NPC, //for trading, etc.
+	MONSTER,
 }

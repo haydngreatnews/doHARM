@@ -1,15 +1,16 @@
 package doharm.storage;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
+
+import doharm.logic.world.tiles.TileType;
 
 public class FloorTileData extends TileData{
 	
 	private String name;
 	private boolean walkable;//in-file, is 0 for walkable, 1 for not walkable
-	private int type; //0=wall 1=grass 2=water 3=object?
+	private TileType type; 
 	private List<Integer> imageIDs;
 	
 	
@@ -20,7 +21,7 @@ public class FloorTileData extends TileData{
 		Scanner scan = new Scanner(line);
 		name = scan.next();
 		walkable = (scan.nextInt() == 0) ? true : false;
-		type = scan.nextInt();
+		type = TileType.values()[scan.nextInt()];
 		while (scan.hasNext())
 		{
 			imageIDs.add(scan.nextInt());
@@ -34,7 +35,7 @@ public class FloorTileData extends TileData{
 	}
 
 
-	public int getType() 
+	public TileType getType() 
 	{
 		return type;
 	}

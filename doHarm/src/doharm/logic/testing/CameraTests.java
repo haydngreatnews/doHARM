@@ -5,7 +5,7 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 import doharm.logic.camera.Camera;
-import doharm.logic.camera.Direction;
+import doharm.logic.camera.CameraDirection;
 
 public class CameraTests 
 {
@@ -17,7 +17,7 @@ public class CameraTests
 		Camera camera = new Camera(0,0);
 		
 		//test turning one way and back has no effect, but that turning does have an effect.
-		Direction d = camera.getDirection();
+		CameraDirection d = camera.getDirection();
 		
 		camera.turnLeft();
 		assertFalse(d == camera.getDirection());

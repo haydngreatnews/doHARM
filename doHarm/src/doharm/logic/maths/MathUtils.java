@@ -1,5 +1,9 @@
 package doharm.logic.maths;
 
+/**
+ * Handy maths utility functions.
+ * @author Roland
+ */
 public class MathUtils 
 {
 	/**

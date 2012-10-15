@@ -8,7 +8,7 @@ import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 
 import doharm.logic.camera.Camera;
-import doharm.logic.camera.Direction;
+import doharm.logic.camera.CameraDirection;
 import doharm.logic.entities.characters.players.Player;
 import doharm.logic.physics.Vector;
 import doharm.logic.world.Layer;
@@ -47,7 +47,7 @@ public class RenderUtil {
 	 * @return
 	 */
 	public static Vector convertCoordsToIso(float col, float row, float layer, Camera c){
-		Direction d = c.getDirection();
+		CameraDirection d = c.getDirection();
 		float x = 0;
 		float y = 0;
 

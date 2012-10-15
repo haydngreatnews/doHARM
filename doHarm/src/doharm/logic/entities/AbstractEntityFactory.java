@@ -20,18 +20,18 @@ public abstract class AbstractEntityFactory<T extends AbstractEntity>
 		entities = new HashMap<Integer, T>();
 	}
 	
-	public World getWorld()
+	protected World getWorld()
 	{
 		return world;
 	}
 	
-	public void addEntity(T entity, int id, boolean fromNetwork)
+	protected void addEntity(T entity, int id, boolean fromNetwork)
 	{
 		entities.put(id, entity);
 		if (observer != null)
 			observer.addEntity(entity,id, fromNetwork);
 	}
-	public void removeEntity(T entity)
+	protected void removeEntity(T entity)
 	{
 		entities.remove(entity);
 		if (observer != null)

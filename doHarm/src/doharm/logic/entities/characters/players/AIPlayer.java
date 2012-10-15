@@ -11,13 +11,19 @@ import doharm.logic.entities.characters.players.ai.AIState;
 import doharm.logic.entities.characters.states.CharacterStateType;
 import doharm.logic.world.tiles.Tile;
 
+/**
+ * An AI player is a player that tries to simulate human actions.
+ * 
+ * 
+ * @author Roland
+ */
 
 public class AIPlayer extends Player
 {
 	//Uses the flyweight pattern - only need a single instance of each state.
 	private static Map<CharacterStateType, AIState> states;
 	
-	
+	//Create all the possible states.
 	static
 	{
 		states = new HashMap<CharacterStateType, AIState>();
@@ -52,16 +58,12 @@ public class AIPlayer extends Player
 	protected AIPlayer() 
 	{
 		super(PlayerType.AI);
-		
-		
 	}
 	
 	@Override
 	public void spawn(Tile spawnTile)
 	{
 		super.spawn(spawnTile);
-		
-		
 	}
 	
 	@Override
@@ -71,7 +73,7 @@ public class AIPlayer extends Player
 			return;
 		super.process();
 		
-		//Strategy pattern
+		//Strategy pattern, process a state depending on the AI's state type.
 		states.get(getStateType()).process(this);
 	}
 	

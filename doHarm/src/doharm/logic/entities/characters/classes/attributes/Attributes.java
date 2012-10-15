@@ -51,6 +51,10 @@ public class Attributes
 		float mc = MathUtils.toDP(maxMana - manaBefore,1);
 		float rc = MathUtils.toDP(maxRage - rageBefore,1);
 		
+		
+		if (!character.isHumanPlayer())
+			return;
+		
 		World world = character.getWorld();
 		int id = character.getID();
 		String text = "LEVEL UP! [";
@@ -63,7 +67,8 @@ public class Attributes
 		
 		text += "]";
 		
-		world.addMessage(new Message(id, new MessagePart(text)));
+		
+		world.addMessage(new Message(id,false, new MessagePart(text)));
 		
 	}
 
@@ -152,7 +157,7 @@ public class Attributes
 		this.vitality = vitality;
 	}
 
-	public int getAttr(AttributePointType t){
+	public int getAttr(AttributeType t){
 		switch(t){
 		case DEXTERITY:
 			return getDexterity();

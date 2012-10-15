@@ -7,7 +7,7 @@ import doharm.logic.entities.items.misc.MiscItemType;
 import doharm.logic.world.tiles.Tile;
 
 /**
- * A stash can store items in a grid like behaviour.
+ * A stash can store items in a grid like fashion.
  * A player has a stash, so does a chest, etc.
  * 
  * @author bewickrola
@@ -39,19 +39,26 @@ public class Stash implements ItemContainer
 	{
 		if (destination.pickup(item))
 		{
-			for (int row = 0; row < numRows; row++)
-			{
-				for (int col = 0; col < numCols; col++)
-				{
-					if (item == items[row][col])
-						items[row][col] = null;
-				}
-			}
+			deleteItem(item);
 			
 			return true;
 		}
 		return false;
 	}
+	
+	@Override
+	public void deleteItem(Item item) 
+	{
+		for (int row = 0; row < numRows; row++)
+		{
+			for (int col = 0; col < numCols; col++)
+			{
+				if (item == items[row][col])
+					items[row][col] = null;
+			}
+		}
+	}
+	
 	@Override
 	public boolean pickup(Item item) 
 	{
@@ -67,6 +74,8 @@ public class Stash implements ItemContainer
 		
 		return false;
 	}
+	
+	
 	
 	private boolean add(Item item, int row, int col) 
 	{
@@ -85,6 +94,8 @@ public class Stash implements ItemContainer
 		
 		return true;
 	}
+	
+	
 
 	
 	public void reorder()
@@ -109,5 +120,7 @@ public class Stash implements ItemContainer
 		}
 		return dragonballs;
 	}
+
+	
 	
 }

@@ -30,10 +30,16 @@ public class ItemSet implements ItemContainer
 	{
 		if (destination.pickup(item))
 		{
-			items.remove(item);
+			deleteItem(item);
 			return true;
 		}
 		return false;
+	}
+
+	@Override
+	public void deleteItem(Item item) 
+	{
+		items.remove(item);
 	}
 
 	

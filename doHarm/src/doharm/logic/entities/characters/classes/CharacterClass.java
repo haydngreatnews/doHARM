@@ -4,9 +4,14 @@ import doharm.logic.chat.Message;
 import doharm.logic.chat.MessagePart;
 import doharm.logic.chat.Taunts;
 import doharm.logic.entities.characters.Character;
-import doharm.logic.entities.characters.classes.attributes.AttributePointType;
+import doharm.logic.entities.characters.classes.attributes.AttributeType;
 import doharm.logic.entities.characters.classes.attributes.Attributes;
 import doharm.logic.entities.characters.classes.attributes.LevelupAttributes;
+
+/**
+ * A character class stores all the properties of a character - their attributes 
+ * @author Roland
+ */
 
 public class CharacterClass 
 {
@@ -20,7 +25,7 @@ public class CharacterClass
 	private float lastLevelExperience;
 	private float nextLevelExperience;
 	private int level;
-	private Taunts taunts;
+	
 	private Character character;
 	private int attributePoints;
 	private CharacterClassType classType;
@@ -38,7 +43,7 @@ public class CharacterClass
 		nextLevelExperience = INITIAL_EXPERIENCE*2;
 		experienceToAdd = 0;
 		level = 1;
-		taunts = new Taunts(character);
+		
 		attributePoints = ATTRIBUTEPOINTS_PER_LEVEL;
 		
 	}
@@ -51,7 +56,7 @@ public class CharacterClass
 			experienceToAdd = Math.max(experienceToAdd-delayedExperience,0);
 			
 			experience += delayedExperience;
-			if (experience > nextLevelExperience)
+			if (experience >= nextLevelExperience)
 			{
 				levelup();
 			}
@@ -85,9 +90,9 @@ public class CharacterClass
 		return nextLevelExperience;
 	}
 	
-	public void addExperience(int amount)
+	public void addExperience(float experience)
 	{
-		experienceToAdd += amount;
+		experienceToAdd += experience;
 		
 	}
 	
@@ -105,7 +110,7 @@ public class CharacterClass
 		return attributePoints;
 	}
 	
-	public void addPoint(AttributePointType type)
+	public void addPoint(AttributeType type)
 	{
 		if (attributePoints <= 0)
 		{
@@ -131,7 +136,7 @@ public class CharacterClass
 		
 		if (character.isHumanPlayer())
 		{
-			character.getWorld().addMessage(new Message(character.getID(), new MessagePart(type.toString() + " increased!",type.getColour())));
+			character.getWorld().addMessage(new Message(character.getID(), false, new MessagePart(type.toString() + " increased!",type.getColour())));
 		}
 		
 		attributePoints--;
@@ -147,10 +152,7 @@ public class CharacterClass
 	}
 	
 	
-
-	public Taunts getTaunts() {
-		return taunts;
-	}
+	
 
 	public CharacterClassType getClassType() {
 		return classType;

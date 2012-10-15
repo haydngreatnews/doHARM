@@ -2,5 +2,5 @@ package doharm.logic.entities.items.usable;
 
 public enum UsableItemType 
 {
-	POTION, SCROLL, 
+	HEALTH_POTION, MANA_POTION, TELEPORT_SCROLL, RARE_CANDY,
 }

@@ -1,7 +1,7 @@
 package doharm.logic.entities.characters.classes.attributes;
 
 /**
- * Amounts player attributes will be increased and multiplied when they level up.
+ * Player attributes will be increased and multiplied by these values when they level up.
  * 
  * Note BASE attributes (eg. strength) are not increased, 
  * these are controllable by the user!

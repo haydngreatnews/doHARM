@@ -3,6 +3,6 @@ package doharm.logic.world.tiles;
 
 public enum TileType
 {
-	DOOR, SLOPE; //?
+	WALL,GRASS, NOTHING, WATER, RAMP,
 
 }

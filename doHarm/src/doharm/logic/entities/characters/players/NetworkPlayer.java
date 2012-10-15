@@ -1,12 +1,15 @@
 package doharm.logic.entities.characters.players;
 
-
+/**
+ * A simple network player. They are controlled by clients.
+ * @author Roland
+ */
 
 public class NetworkPlayer extends Player
 {
 	protected NetworkPlayer() 
 	{
-		super(PlayerType.AI);
+		super(PlayerType.NETWORK);
 	}
 	
 	@Override

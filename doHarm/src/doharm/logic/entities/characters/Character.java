@@ -12,22 +12,26 @@ import doharm.logic.entities.characters.classes.warrior.Warrior;
 import doharm.logic.entities.characters.states.CharacterState;
 import doharm.logic.entities.characters.states.CharacterStateType;
 import doharm.logic.entities.characters.states.IdleState;
+import doharm.logic.entities.items.usable.UsableItem;
 import doharm.logic.inventory.Inventory;
 import doharm.logic.world.tiles.Tile;
 
+/**
+ * A character is any entity with a name, health and class.
+ * @author Roland
+ */
+
 public abstract class Character extends AbstractEntity
 {
-	//private static final float MIN_DISTANCE = 2;
+	
 	private String name;
 	private CharacterClass characterClass;
 
 	private Inventory inventory;
 	
-	
-	
-	
+	private Taunts taunts;
+
 	private float movementSpeed = 3f;//1.7f;
-	
 	
 	private float health;
 	private float mana;
@@ -44,12 +48,12 @@ public abstract class Character extends AbstractEntity
 		super(EntityType.CHARACTER);
 		this.characterType = characterType;
 		inventory = new Inventory();
-		
+		taunts = new Taunts(this);
 	}
 	
-	public Taunts getTaunts() 
-	{
-		return characterClass.getTaunts();
+	
+	public Taunts getTaunts() {
+		return taunts;
 	}
 	
 	public void setCharacterClass(CharacterClassType classType)
@@ -93,6 +97,11 @@ public abstract class Character extends AbstractEntity
 		state.process(this);
 		
 		super.process();
+	}
+	
+	public void useItem(UsableItem item) 
+	{
+		item.useItem(this);
 	}
 	
 	public CharacterState getState()
@@ -239,41 +248,51 @@ public abstract class Character extends AbstractEntity
 		
 		health -= damage;
 		rage += damage;
+		if (rage > getMaxRage())
+			rage = getMaxRage();
+		
 		if (health <= 0)
 		{
 			//kill me now
-			health = 0;
-			
-			//drop all the character's items and gold
 			
 			
-			
-			int exp = calculateExperience();
-			
-			
-			
-			attacker.addExperience(exp);//attacker gets double exp
-			
-			if (attacker.getAlliance() != null)
-			{
-				for (Character ally: attacker.getAlliance().getCharacters())
-				{
-					ally.setState(new IdleState());
-					ally.addExperience(exp);
-				}
-				
-			}
-			
-			spawnTime = System.currentTimeMillis() + Math.max((int)(1000*(Math.pow(characterClass.getLevel(), 2))),5000);
-			
-			getWorld().addMessage(new Message(-1, new MessagePart(attacker.getName() + " killed " + getName()+".")));
-			
-			die();
+			die(attacker);
 			
 		}
 		
 	}
 	
+	public void die(Character attacker) 
+	{
+		health = 0;
+		
+		//drop all the character's items and gold
+		Tile dropTile = getCurrentTile();
+		inventory.dropAll(dropTile);
+		
+
+		int exp = calculateExperience();
+
+		attacker.addExperience(exp);//attacker gets double exp
+		
+		if (attacker.getAlliance() != null)
+		{
+			for (Character ally: attacker.getAlliance().getCharacters())
+			{
+				ally.setState(new IdleState());
+				ally.addExperience(exp);
+			}
+			
+		}
+		
+		spawnTime = System.currentTimeMillis() + Math.max((int)(1000*(Math.pow(characterClass.getLevel(), 2))),5000);
+		
+		getWorld().addMessage(new Message(-1, true, new MessagePart(attacker.getName() + " killed " + getName()+".")));
+		
+		die();
+	}
+
+
 	public String getName()
 	{
 		return name;
@@ -325,5 +344,23 @@ public abstract class Character extends AbstractEntity
 	{
 		
 	}
+
+	public void increaseHealth(float increase) 
+	{
+		health += increase;
+		health = Math.min (health, getMaxHealth());
+	}
+	public void increaseMana(float increase) 
+	{
+		health += increase;
+		health = Math.min (health, getMaxHealth());
+	}
+	
+	public void levelUp()
+	{
+		characterClass.addExperience(characterClass.getNextLevelExperience()-characterClass.getExperience());
+	}
+	
+	
 	
 }

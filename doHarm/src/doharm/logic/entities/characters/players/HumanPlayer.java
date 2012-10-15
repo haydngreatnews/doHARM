@@ -9,24 +9,26 @@ import doharm.logic.entities.characters.states.MoveState;
 import doharm.logic.entities.characters.states.PickupState;
 import doharm.logic.entities.items.Item;
 import doharm.logic.entities.items.misc.dragonballs.DragonRadar;
+import doharm.logic.entities.items.usable.UsableItem;
 import doharm.logic.world.tiles.Tile;
 
-
+/**
+ * There is one human player per client, and no human players on the server.
+ * Human players differ because they have input. Depending on mouse hovers, do 
+ * certain actions when the mouse is clicked.
+ * 
+ * @author Roland
+ */
 public class HumanPlayer extends Player
 {
 	private static final int NUM_MOUSE_BUTTONS = 3;
 	private static final float MAX_DISTANCE = 999;
 	
-	private DragonRadar dragonRadar;
-	private Tile hoveringTile;
+	private Tile hoveringTile; //the tile we are hovering on. See MouseManager.
 	
-	private boolean[] mouseDown;
-	private CharacterStateType mouseIcon;
+	private boolean[] mouseDown; //whether or not the mouse buttons are down.
+	private CharacterStateType mouseIcon; //the current icon of what we are hovering over.
 	private AbstractEntity hoverEntity; //the entity we are hovering over with the mouse
-
-
-	
-	
 	
 	protected HumanPlayer() 
 	{
@@ -43,10 +45,10 @@ public class HumanPlayer extends Player
 		super.process();
 		
 		
-		
+		//reset the mouse icon
 		mouseIcon = CharacterStateType.IDLE;
-		//if (hoveringTile.getEnt)
 		
+		//check what we are hovering over.
 		if (hoveringTile != null)
 		{
 			mouseIcon = CharacterStateType.MOVE;
@@ -99,7 +101,7 @@ public class HumanPlayer extends Player
 			}
 		}
 		
-		//System.out.println("MouseIcon = " + mouseIcon.toString());
+		//process mouse input.
 		if (mouseDown[0])
 			leftClick();
 		if (mouseDown[1])
@@ -154,6 +156,9 @@ public class HumanPlayer extends Player
 	{
 		//ranged attack / cast spell, etc...
 		super.rightClick();
+		
+		//TODO!?
+		//joinAlliance();
 	}
 	
 	private void middleClick() 
@@ -161,6 +166,14 @@ public class HumanPlayer extends Player
 		// ??
 		
 	}
+
+	public void joinAlliance() 
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	
 
 	
 }

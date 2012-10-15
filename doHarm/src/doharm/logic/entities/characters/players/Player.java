@@ -6,17 +6,22 @@ import java.awt.Color;
 import doharm.logic.entities.characters.Character;
 import doharm.logic.entities.characters.CharacterType;
 
+/**
+ * A player is a type of character that is able to win the game.
+ * 
+ * @author Roland
+ */
+
 public abstract class Player extends Character
 {
 	private PlayerType playerType;
-	private Color colour;
+	private Color colour; //the player's unique colour
 	
 	
 	protected Player(PlayerType playerType)
 	{
 		super(CharacterType.PLAYER);
 		this.playerType = playerType;
-		
 	}
 
 	public Color getColour()
@@ -40,15 +45,5 @@ public abstract class Player extends Character
 		if (!isAlive())
 			return;
 		super.process();
-	}
-
-
-
-	
-
-
-	
-
-
-	
+	}	
 }

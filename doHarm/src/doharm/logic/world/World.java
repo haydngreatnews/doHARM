@@ -21,6 +21,7 @@ import doharm.logic.entities.characters.players.HumanPlayer;
 import doharm.logic.entities.characters.players.Player;
 import doharm.logic.entities.characters.players.PlayerFactory;
 import doharm.logic.entities.characters.players.PlayerType;
+import doharm.logic.entities.items.Item;
 import doharm.logic.entities.items.ItemFactory;
 import doharm.logic.entities.items.ItemQuality;
 import doharm.logic.entities.items.ItemType;
@@ -158,7 +159,7 @@ public class World
 		addDragonballs();
 		
 		
-		addMessage(new Message(-1, new MessagePart("World created.")));
+		addMessage(new Message(-1, false, new MessagePart("World created.")));
 		
 	}
 	
@@ -250,7 +251,7 @@ public class World
 	{
 		time.process();
 		weather.process();
-		resetEntities();
+		removeDeadItems();
 		respawnEntities();
 		moveEntities();
 		setCamera();
@@ -260,17 +261,23 @@ public class World
 
 	
 
-	private void resetEntities() 
+	private void removeDeadItems() 
 	{
-		/*for (AbstractEntity e: entityFactory.getEntities())
+		List<Item> itemsToRemove = new ArrayList<Item>();
+		for (Item item: itemFactory.getEntities())
 		{
-			if (e.getEntityType() == EntityType.CHARACTER)
+			if (!item.isAlive())
 			{
-				Character character = (Character)e;
-				character.resetAttackedBy();
+				itemsToRemove.add(item);
 			}
-		}*/
+		}
+		for (Item item: itemsToRemove)
+		{
+			itemFactory.removeItem(item);
+		}
 	}
+
+	
 
 	private void respawnEntities() 
 	{

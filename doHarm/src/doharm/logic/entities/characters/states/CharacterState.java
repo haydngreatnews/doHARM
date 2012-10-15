@@ -3,7 +3,7 @@ package doharm.logic.entities.characters.states;
 import doharm.logic.entities.characters.Character;
 
 /**
- * 
+ * A possible state a character can be in.
  * @author bewickrola
  */
 

@@ -52,12 +52,12 @@ public class PickupState extends CharacterState
 			{
 				if (pickedUp)
 				{
-					Message message = new Message(character.getID(), new MessagePart("you"+ pickupString +itemToPickup.toString()+exclamation,Color.yellow));
+					Message message = new Message(character.getID(),false, new MessagePart("you"+ pickupString +itemToPickup.toString()+exclamation,Color.yellow));
 					character.getWorld().addMessage(message);
 				}
 				else
 				{
-					Message message = new Message(character.getID(), new MessagePart("INVENTORY FULL",Color.red));
+					Message message = new Message(character.getID(),false, new MessagePart("INVENTORY FULL",Color.red));
 					character.getWorld().addMessage(message);
 				}
 			}
@@ -83,7 +83,7 @@ public class PickupState extends CharacterState
 					MessagePart part2 = new MessagePart(character.getName() + " now has " + numDragonBalls + " dragon balls!",colour);
 					
 					
-					Message message = new Message(-1, part,part2);
+					Message message = new Message(-1,true, part,part2);
 					character.getWorld().addMessage(message);
 					
 					
@@ -91,10 +91,12 @@ public class PickupState extends CharacterState
 					{
 						if (character.isHumanPlayer())
 						{
-							message = new Message(-1, new MessagePart("YOU WON THE GAME!",colour));
+							message = new Message(-1,false, new MessagePart("YOU WON THE GAME!",colour));
+							character.getWorld().addMessage(message);
 						}
-						else
-							message = new Message(-1, new MessagePart(character.getName() +" WON THE GAME!",colour));
+						
+						message = new Message(-1, true, new MessagePart(character.getName() +" WON THE GAME!",colour));
+						character.getWorld().addMessage(message);
 						
 						character.getWorld().getGame().end(character);
 					}

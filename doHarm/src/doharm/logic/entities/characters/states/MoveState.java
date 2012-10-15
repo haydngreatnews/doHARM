@@ -9,6 +9,11 @@ import doharm.logic.world.tiles.PathFinder;
 import doharm.logic.world.tiles.Tile;
 import doharm.logic.entities.characters.Character;
 
+/**
+ * A state where the aim is to move to a particular tile.
+ * @author Roland
+ */
+
 public class MoveState extends CharacterState
 {
 	private Stack<Tile> path;

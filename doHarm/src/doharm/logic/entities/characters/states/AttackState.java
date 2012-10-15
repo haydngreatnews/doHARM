@@ -4,6 +4,11 @@ import doharm.logic.entities.characters.Character;
 import doharm.logic.entities.items.wearable.WearableItem;
 import doharm.logic.inventory.SlotType;
 
+/**
+ * The state where the aim is to attack (and destroy) another character.
+ * @author Roland
+ */
+
 public class AttackState extends CharacterState
 {
 	private MoveState moveState;
