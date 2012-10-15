@@ -40,26 +40,28 @@ public class EditorLogic {
 		g.drawRect(0, 0, i.getWidth(null), i.getHeight(null));
 		return ret;
 	}
-	
-	public static Image makeTransparent(Image i, float alpha){
-		// Create the image using the 
-		BufferedImage aimg = new BufferedImage(i.getWidth(null), i.getHeight(null), BufferedImage.TRANSLUCENT);
-		// Get the images graphics
-		Graphics2D g = aimg.createGraphics();
-		// Set the Graphics composite to Alpha
-		g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
-		// Draw the LOADED img into the prepared reciver image
-		g.drawImage(i, 0, 0, null);
-		// let go of all system resources in this Graphics
-		g.dispose();
-		// Return the image
-		return aimg;
+
+	public static Image makeTransparent(Image i, float alpha) {
+		// // Create the image using the
+		// BufferedImage aimg = new BufferedImage(i.getWidth(null),
+		// i.getHeight(null), BufferedImage.TRANSLUCENT);
+		// // Get the images graphics
+		// Graphics2D g = aimg.createGraphics();
+		// // Set the Graphics composite to Alpha
+		// g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,
+		// alpha));
+		// // Draw the LOADED img into the prepared reciver image
+		// g.drawImage(i, 0, 0, null);
+		// // let go of all system resources in this Graphics
+		// g.dispose();
+		// // Return the image
+		// return aimg;
+		return i;
 	}
 
 	public static String toTitleCase(String s) {
 		return s.substring(0, 1).toUpperCase() + s.substring(1).toLowerCase();
 	}
-	
 
 	public static class EditorTileSetLoader {
 		private int tileWidth;
@@ -85,9 +87,7 @@ public class EditorLogic {
 			try {
 				Image tiles = ImageIO.read(new File("res/tilesets/"
 						+ tileSetImage));
-				System.out.println("tileData.size=" + tileData.size());
 				for (int i = 0; i < tileData.size(); ++i) {
-					System.out.println("Making tile image " + i);
 					Image temp = new BufferedImage(tileWidth, tileHeight,
 							BufferedImage.TYPE_INT_ARGB);
 					temp.getGraphics()

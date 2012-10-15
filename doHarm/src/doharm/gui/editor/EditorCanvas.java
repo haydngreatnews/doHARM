@@ -6,13 +6,16 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintStream;
 import java.util.ArrayList;
 
+import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 
 import doharm.gui.editor.EditorLogic.EditorTileSetLoader;
-import doharm.rendering.RenderUtil;
 import doharm.storage.WorldLoader;
 
 public class EditorCanvas extends JPanel {
@@ -33,21 +36,22 @@ public class EditorCanvas extends JPanel {
 	@Override
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		BufferedImage below = null;
-		if (currentLayer > 0 && layers.get(currentLayer - 1) != null) {
-			below = new BufferedImage(getWidth(), getHeight(),
-					BufferedImage.TYPE_INT_ARGB);
-			drawLayer(layers.get(currentLayer - 1), below.createGraphics(),
-					false);
-		}
-		// Do scaling
-		if (below != null) {
-			RenderUtil.scaleImage(below, (int) (getWidth() * .9),
-					(int) (getHeight() * .9));
-			
-			g.drawImage(EditorLogic.makeTransparent(below, .7f), (int) (getWidth() * .05),
-					(int) (getHeight() * .05), null);
-		}
+		//BufferedImage below = null;
+		// // This is commmented out to remove the lower layer drawing effect
+		// if (currentLayer > 0 && layers.get(currentLayer - 1) != null) {
+		// below = new BufferedImage(getWidth(), getHeight(),
+		// BufferedImage.TYPE_INT_ARGB);
+		// drawLayer(layers.get(currentLayer - 1), below.createGraphics(),
+		// false);
+		// }
+		// // Do scaling
+		// if (below != null) {
+		// RenderUtil.scaleImage(below, (int) (getWidth() * .9),
+		// (int) (getHeight() * .9));
+		//
+		// g.drawImage(EditorLogic.makeTransparent(below, .7f),
+		// (int) (getWidth() * .05), (int) (getHeight() * .05), null);
+		// }
 		drawLayer(layers.get(currentLayer), (Graphics2D) g, true);
 	}
 
@@ -68,7 +72,7 @@ public class EditorCanvas extends JPanel {
 						null);
 			}
 		}
-		if(drawGrid){
+		if (drawGrid) {
 			g.setStroke(new BasicStroke(3));
 			g.setColor(new Color(0xFFFFFFFF, true));
 			g.drawLine(TILE_SIZE * xDim, 0, TILE_SIZE * xDim, TILE_SIZE * yDim);
@@ -104,7 +108,8 @@ public class EditorCanvas extends JPanel {
 	}
 
 	public boolean setTileUnder(int x, int y, int tileType) {
-		if (x > xDim*TILE_SIZE || y > yDim*TILE_SIZE) return false;
+		if (x > xDim * TILE_SIZE || y > yDim * TILE_SIZE)
+			return false;
 		layers.get(currentLayer).setTileID(y / TILE_SIZE, x / TILE_SIZE,
 				tileType);
 		return true;
@@ -118,9 +123,9 @@ public class EditorCanvas extends JPanel {
 		if (currentLayer + delta >= 0 && currentLayer + delta < layers.size())
 			currentLayer += delta;
 	}
-	
-	void addLayer(){
-		layers.add(currentLayer+1, new EditorLayerData(xDim, yDim));
+
+	void addLayer() {
+		layers.add(currentLayer + 1, new EditorLayerData(xDim, yDim));
 	}
 
 	EditorTileSetLoader getTiles() {
@@ -129,20 +134,53 @@ public class EditorCanvas extends JPanel {
 
 	public void changeMapSize(int newX, int newY) {
 		ArrayList<EditorLayerData> newMap = new ArrayList<EditorLayerData>();
-		for(EditorLayerData layer: layers){
+		for (EditorLayerData layer : layers) {
 			newMap.add(new EditorLayerData(layer, xDim, yDim, newX, newY));
 		}
 		layers = newMap;
 		xDim = newX;
 		yDim = newY;
-		
+
 	}
-	
+
 	public int getXDim() {
 		return xDim;
 	}
 
 	public int getYDim() {
 		return yDim;
+	}
+
+	public void writeout() {
+		JFileChooser jfc = new JFileChooser();
+		jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		jfc.setDialogType(JFileChooser.SAVE_DIALOG);
+		jfc.setCurrentDirectory(new File("res/worlds"));
+		int result = jfc.showSaveDialog(this);
+		if ( result == JFileChooser.APPROVE_OPTION ){
+            File path=jfc.getSelectedFile();
+            String folderPath = path.getAbsolutePath();
+            System.out.println(folderPath);
+            File world = new File(folderPath+"/world.txt");
+            try {
+				new File(folderPath+"/layers").mkdirs();
+				world.createNewFile();
+				PrintStream worldps = new PrintStream(world);
+				worldps.println(xDim);
+				worldps.println(yDim);
+				worldps.println("tileset_new_format.txt");
+				for (int layer = 0; layer<layers.size(); ++layer){
+					worldps.println("layer"+layer+".txt");
+					File currentLayer = new File(folderPath+"/layers/"+"layer"+layer+".txt");
+					currentLayer.createNewFile();
+					new PrintStream(currentLayer).println(layers.get(layer).toString());
+				}
+				
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 }

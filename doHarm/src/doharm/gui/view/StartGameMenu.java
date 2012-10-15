@@ -173,8 +173,13 @@ public class StartGameMenu extends JFrame {
 			// TODO:Uncommenting these two lines will enable server connections
 			// I hope.
 			// client = new Client();
-			// client.connect(InetSocketAddress.createUnresolved(serverName,
+			// String result = client.connect(InetSocketAddress.createUnresolved(serverName,
 			// port), name, colour, selClass);
+			// if(result != null){
+			// JOptionPane.showMessageDialog(this, result, "Connect Error",
+			// JOptionPane.ERROR_MESSAGE);
+			// return;
+			// }
 
 			AbstractGame game = new ClientGame(parent, selClass, name, colour,
 					client);

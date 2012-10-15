@@ -20,7 +20,7 @@ import doharm.gui.decorations.ColorIcon;
 
 public class EditorWindow extends JFrame {
 	private EditorCanvas canvas;
-	private MouseListener listen;
+	private EditorMouseListener listen;
 	private int currentTileType = 0;
 	private JLabel currentLayer;
 	ButtonGroup tilesGroup;
@@ -94,9 +94,17 @@ public class EditorWindow extends JFrame {
 						Integer.valueOf(yDim.getText()));
 			}
 		});
+		JButton writeOut;
+		editor.add(writeOut = new JButton("Writeout"), "span 2, grow");
+		writeOut.addActionListener(new ActionListener() {			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				canvas.writeout();
+			}
+		});
 		add(editor, BorderLayout.EAST);
 		
-		canvas.addMouseListener(listen = new EditorMouseListener(this));
+		canvas.addMouseMotionListener(listen = new EditorMouseListener(this));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		new repaintThread().start();
 	}
