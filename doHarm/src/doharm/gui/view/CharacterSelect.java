@@ -47,11 +47,13 @@ public class CharacterSelect extends JFrame {
 			add(classButtons.get(c),"flowy, cell 1 1, align center, sg but");
 			classButtons.get(c).setActionCommand(c.toString());
 			classRadios.add(classButtons.get(c));
+			//If this is the last player character class, then leave
+			if (c == CharacterClassType.getLastPlayerClass()) break;
 		}
 		classRadios.setSelected(classButtons.get(CharacterClassType.values()[0]).getModel(), true);
 		add(new JLabel("Color:"), "");
 		colorRadios = new ButtonGroup();
-		int[] colors = new int[]{0x0000DD, 0x00DD00, 0xDD0000, 0xDDDD00, 0x00DDDD, 0xDD00DD};
+		int[] colors = new int[]{0x0000DD, 0x00DD00, 0xDD0000, 0xFFFF00, 0x00DDDD, 0xDD00DD};
 		String constraints = "skip 1, span 2, split 6, flowx";
 		for(int c : colors){
 		    Color color = new Color(c);
