@@ -13,6 +13,7 @@ public class CharacterClass
 	private Attributes attributes;
 	private LevelupAttributes levelupAttributes;
 	private static final int INITIAL_EXPERIENCE = 10;
+	private static final int ATTRIBUTEPOINTS_PER_LEVEL = 3;
 	
 	private float experience;
 	private float experienceToAdd;
@@ -22,20 +23,24 @@ public class CharacterClass
 	private Taunts taunts;
 	private Character character;
 	private int attributePoints;
+	private CharacterClassType classType;
 	
 	
 	
 	
-	public CharacterClass(Character character, CharacterClassType type)
+	public CharacterClass(Character character, CharacterClassType classType)
 	{
 		this.character = character;
+		this.classType = classType;
+		
 		experience = INITIAL_EXPERIENCE;
 		lastLevelExperience = INITIAL_EXPERIENCE;
 		nextLevelExperience = INITIAL_EXPERIENCE*2;
 		experienceToAdd = 0;
 		level = 1;
 		taunts = new Taunts(character);
-		attributePoints = 5;
+		attributePoints = ATTRIBUTEPOINTS_PER_LEVEL;
+		
 	}
 	
 	public void process()
@@ -92,7 +97,7 @@ public class CharacterClass
 		nextLevelExperience = (nextLevelExperience+1)*2;
 		level++;
 		attributes.levelup(levelupAttributes,character);
-		attributePoints += 5;
+		attributePoints += ATTRIBUTEPOINTS_PER_LEVEL + level;
 	}
 
 	public int getAttributePoints()
@@ -102,6 +107,10 @@ public class CharacterClass
 	
 	public void addPoint(AttributePointType type)
 	{
+		if (attributePoints <= 0)
+		{
+			throw new UnsupportedOperationException("No attribute points left");
+		}
 		switch(type)
 		{
 		case DEXTERITY:
@@ -141,5 +150,9 @@ public class CharacterClass
 
 	public Taunts getTaunts() {
 		return taunts;
+	}
+
+	public CharacterClassType getClassType() {
+		return classType;
 	}
 }
