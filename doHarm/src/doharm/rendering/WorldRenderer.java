@@ -68,15 +68,13 @@ public class WorldRenderer
 
 	private int rowC;
 	private int colC;
-	private int rowConstranint;
-	private int colConstranint;
+
 
 	public WorldRenderer(AbstractGame game){
 
 		rowC = 0;
 		colC = 0;
-		rowConstranint = 0;
-		colConstranint = 0;
+
 
 		this.game = game;
 		playerRenderer = new PlayerRenderer(game);
@@ -89,8 +87,6 @@ public class WorldRenderer
 
 		createTransparentImages();
 		generateShadowTiles();
-
-		//		System.out.println("Wall tile width:"+ wTileW+ "    wall tile height: "+wTileH);
 
 
 	}
@@ -199,57 +195,62 @@ public class WorldRenderer
 	private void renderWorldIso(){
 		World world = game.getWorld();
 		boolean isTransparent = false;
+		boolean drawLayer = true;
 		Layer[] layers = world.getLayers();
-		for(int layerCount = 0; layerCount < layers.length; layerCount++){
+		if(drawLayer)
+			for(int layerCount = 0; layerCount < layers.length; layerCount++){
 
 
-			Tile[][] tiles = layers[layerCount].getTiles();
-			isTransparent = false;
-			for (Player player: world.getPlayerFactory().getEntities()){
-				if(player.getPlayerType() == PlayerType.HUMAN &&  RenderUtil.isObscured(player, world)){
-					isTransparent = true;
-					break;
+				Tile[][] tiles = layers[layerCount].getTiles();
+
+
+
+
+
+				//TODO this must be changed when camera views are implemented.
+				//if(tile above the player with respect to the isometric view, 
+				//ie. the tile(s) obscuring view of the player, is not an invisible tile, make this entire layer transparent.
+				//and dont draw any subsequent layers.
+
+
+
+				if(isTransparent){
+					drawTiles(tiles, layerCount, floorImagesTrans, wallImagesTrans);
+					drawLayer = false;
 				}
-			}
-
-
-
-			//TODO this must be changed when camera views are implemented.
-			//if(tile above the player with respect to the isometric view, 
-			//ie. the tile(s) obscuring view of the player, is not an invisible tile, make this entire layer transparent.
-			//and dont draw any subsequent layers.
-
-
-
-			//			if(isTransparent)
-			//				drawTiles(tiles, layerCount, floorImagesTrans, wallImagesTrans);
-			//			else
-			drawTiles(tiles, layerCount, floorImages, wallImages);
+				else
+					drawTiles(tiles, layerCount, floorImages, wallImages);
 
 
 
 
-			//TODO
-			//Draw players on this layer
+				//TODO
+				//Draw players on this layer
 
-			for (Player player: world.getPlayerFactory().getEntities()){
-				if(layerCount == player.getCurrentLayer().getLayerNumber()){
-					playerRenderer.redrawPlayer(player,graphics, fTileW, fTileH);
+				for (Player player: world.getPlayerFactory().getEntities()){
+					if(layerCount == player.getCurrentLayer().getLayerNumber()){
+						playerRenderer.redrawPlayer(player,graphics, fTileW, fTileH);
+					}
 				}
-			}
 
-			//TODO
-			//Draw items on this layer
-			for (Item item: world.getItemFactory().getEntities()){
-				if (!item.isOnGround())
-					continue;
+				//TODO
+				//Draw items on this layer
+				for (Item item: world.getItemFactory().getEntities()){
+					if (!item.isOnGround())
+						continue;
 
-				if(layerCount == item.getCurrentLayer().getLayerNumber()){
-					itemRenderer.redrawPlayer(item,graphics, fTileW, fTileH);
+					if(layerCount == item.getCurrentLayer().getLayerNumber()){
+						itemRenderer.redrawPlayer(item,graphics, fTileW, fTileH);
+					}
 				}
-			}
+				for (Player player: world.getPlayerFactory().getEntities()){
+					if(player.getPlayerType() == PlayerType.HUMAN &&  RenderUtil.isObscured(player, world)){
+						isTransparent = true;
+						break;
+					}
+				}
 
-		}
+			}
 
 		for (Player player: world.getPlayerFactory().getEntities())
 		{
