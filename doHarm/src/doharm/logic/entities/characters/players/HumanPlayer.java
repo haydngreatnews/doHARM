@@ -99,7 +99,7 @@ public class HumanPlayer extends Player
 			}
 		}
 		
-		System.out.println("MouseIcon = " + mouseIcon.toString());
+		//System.out.println("MouseIcon = " + mouseIcon.toString());
 		if (mouseDown[0])
 			leftClick();
 		if (mouseDown[1])
