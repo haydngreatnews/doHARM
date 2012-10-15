@@ -42,14 +42,16 @@ public class WorldRenderer
 
 	private final int numShades = 100;
 
-	private BufferedImage[] shades;
-
+	private BufferedImage[] floorShades;
+	private BufferedImage[] wallShades;
+	
 	private BufferedImage[] floorImages;
 	private BufferedImage[] wallImages;
 
 	private BufferedImage[] floorImagesTrans;//transparent versions of flootImages and wallImages.
 	private BufferedImage[] wallImagesTrans;
-
+	
+	
 	private AffineTransform transform;
 	private AbstractGame game;
 
@@ -285,7 +287,7 @@ public class WorldRenderer
 				int y = vector.getYAsInt() - fTileH/2; //fTileH/2 added PLEASE leave in here
 				graphics.drawImage(image,x,y, null);
 
-				if(tile.isVisible()) graphics.drawImage(shades[(int)(tile.getLight()*(numShades-1))],x,y, null);
+				if(tile.isVisible()) graphics.drawImage(floorShades[(int)(tile.getLight()*(numShades-1))],x,y, null);
 
 
 				if(tile.isWalkable() && layerCount==0){
@@ -369,11 +371,14 @@ public class WorldRenderer
 
 	private void generateShadowTiles(){
 
-		shades = new BufferedImage[numShades];
-
+		floorShades = new BufferedImage[numShades];
+		int wallC = 0;
 		for (int i = 0; i < numShades; i++){
 			float alpha = 1 - (float) i / numShades;
-			shades[i] = RenderUtil.generateIsoImage(new Color(0,0,0,alpha),fTileW,fTileH);
+			floorShades[i] = RenderUtil.generateIsoImage(new Color(0,0,0,alpha),fTileW,fTileH);
+			wallShades[wallC++] = RenderUtil.generateLeftWallImage(new Color(0,0,0,alpha),fTileW,fTileH);
+			wallShades[wallC++] = RenderUtil.generateRightWallImage(new Color(0,0,0,alpha),fTileW,fTileH);
+			
 		}
 	}
 
