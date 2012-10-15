@@ -4,16 +4,16 @@ import java.nio.ByteBuffer;
 
 import doharm.net.packets.Bytes;
 
-public class ItemCreate extends EntityUpdate {
+public class ItemCreate extends EntityCreate {
 
 	public float posX, posY;
 	public int layer;
 	public int colour;
 	public String name;
 	
-	public ItemCreate(int id, ByteBuffer buff)
+	public ItemCreate(int id, EntType type, ByteBuffer buff)
 	{
-		super(id, buff);
+		super(id, type);
 		posX = buff.getFloat();
 		posY = buff.getFloat();
 		layer = buff.getInt();

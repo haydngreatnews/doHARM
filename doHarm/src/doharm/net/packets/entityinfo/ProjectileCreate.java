@@ -4,9 +4,9 @@ import java.nio.ByteBuffer;
 
 public class ProjectileCreate extends EntityCreate {
 
-	public ProjectileCreate(int id, ByteBuffer buff)
+	public ProjectileCreate(int id, EntType type, ByteBuffer buff)
 	{
-		super(id, buff);
+		super(id, type);
 	}
 	
 	@Override

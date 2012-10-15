@@ -3,6 +3,7 @@ package doharm.net.packets.entityinfo;
 import java.nio.ByteBuffer;
 
 import doharm.logic.entities.characters.players.HumanPlayer;
+import doharm.logic.entities.characters.players.Player;
 import doharm.net.packets.Bytes;
 
 public class CharacterUpdate extends EntityUpdate
@@ -17,7 +18,7 @@ public class CharacterUpdate extends EntityUpdate
 		lvl = buff.getInt();
 	}
 
-	public CharacterUpdate(HumanPlayer player) {
+	public CharacterUpdate(Player player) {
 		super(player);
 		health = player.getHealth();
 		lvl = player.getLevel();

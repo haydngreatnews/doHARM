@@ -29,7 +29,7 @@ public class ConnectedClient {
 	private ClientState state;
 	
 	// Holds on to all unack'd Snapshots we've sent the client.
-	private LinkedList<Snapshot> snapsBuffer;
+	private LinkedList<Snapshot> snapsBuffer = new LinkedList<Snapshot>();
 	
 	// Holds on to all unack'd CommandLists we've sent the client.
 	private HashMap<Integer,ArrayList<String>> commandsBuffer = new HashMap<Integer,ArrayList<String>>();
