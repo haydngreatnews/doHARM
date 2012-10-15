@@ -8,7 +8,7 @@ public enum CharacterClassType
 
 	
 	
-	public CharacterClassType getLastPlayerClass()
+	public static CharacterClassType getLastPlayerClass()
 	{
 		return RANGER;
 	}
