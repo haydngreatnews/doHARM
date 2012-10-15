@@ -122,16 +122,6 @@ public class Client {
 		return false;
 	}
 
-	private byte[] buildJoinPacket(String name, int colour)
-	{
-		byte[] join = new byte[name.length()+6];
-		ByteBuffer buff = ByteBuffer.wrap(join);
-		buff.put((byte) ClientPacket.JOIN.ordinal());
-		buff.put(Bytes.setString(name));
-		buff.putInt(colour);
-		return Bytes.compress(buff);
-	}
-
 	public void processIncomingPackets()
 	{		
 		// TODO Might want to eventually add to the condition "|| !runningLate" for if we're taking too long. Probably won't care about this for quite a while.
