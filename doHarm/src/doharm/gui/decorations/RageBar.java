@@ -23,8 +23,8 @@ public class RageBar extends JPanel {
 		super.paintComponent(g);
 		g.setColor(Color.RED.darker());
 		g.drawRect(0, 0, getWidth()-1, getHeight()-1);
-		g.fillRect(0, 0, (int) (getWidth()*player.getRage()), getHeight());
+		g.fillRect(0, 0, (int) (getWidth()*player.getRageRatio()), getHeight());
 		g.setColor(Color.WHITE);
-		g.drawString("RAGE", 2, getHeight()/4*3);
+		g.drawString("RAGE    "+(int)player.getRage()+"/"+(int)player.getMaxRage(), 2, getHeight()/4*3);
 	}
 }
