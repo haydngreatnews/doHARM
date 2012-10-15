@@ -53,17 +53,17 @@ public class Client {
 	/** Holds on to all unack'd CommandLists we've sent the server. */
 	private HashMap<Integer,ArrayList<String>> commandsBuffer = new HashMap<Integer,ArrayList<String>>();
 
-	public Client() throws IOException
+	public Client()
 	{	
 		// Setup the UDP socket.
-		udpSock = new DatagramSocket(null);
-
-		InetSocketAddress address = new InetSocketAddress(0);
-
-		udpSock.bind(address);
-
-		receiver = new UDPReceiver(udpSock);
-		receiver.start();
+		try {
+			udpSock = new DatagramSocket(null);
+			InetSocketAddress address = new InetSocketAddress(0);
+			udpSock.bind(address);
+			receiver = new UDPReceiver(udpSock);
+			receiver.start();
+		
+		} catch (SocketException e) { e.printStackTrace(); }
 	}
 
 	/** 
