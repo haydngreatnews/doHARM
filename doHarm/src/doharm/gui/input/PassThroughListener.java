@@ -10,8 +10,8 @@ import doharm.gui.view.WorldCanvas;
 
 public class PassThroughListener implements MouseListener, MouseMotionListener {
 	MouseManager receiver;
-	WorldCanvas canvas;
-	public PassThroughListener(WorldCanvas c){
+	Component canvas;
+	public PassThroughListener(Component c){
 		canvas = c;
 	}
 	@Override
@@ -50,9 +50,9 @@ public class PassThroughListener implements MouseListener, MouseMotionListener {
 	}
 	
 	public void passOn(MouseEvent e){
-		Point realPoint = canvas.getMousePosition(true);
-		new MouseEvent((Component)(e.getSource()), e.getID(), e.getWhen(), e.getModifiers(), (int)(realPoint.getX()), (int)(realPoint.getY()), e.getClickCount(), false);
-		canvas.dispatchEvent(e);
+		Point realPoint = canvas.getMousePosition();
+		MouseEvent me = new MouseEvent((Component)(e.getSource()), e.getID(), e.getWhen(), e.getModifiers(), (int)(realPoint.getX()), (int)(realPoint.getY()), e.getClickCount(), false);
+		canvas.dispatchEvent(me);
 	}
 
 }

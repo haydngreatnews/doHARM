@@ -127,6 +127,7 @@ public class MainWindow {
 		new CursorThread().start();
 		// frame.revalidate(); //Roland: Not defined in Java 6?
 		frame.validate();
+		passThrough = new PassThroughListener(canvas);
 		canvas.requestFocusInWindow();
 
 		addListeners(); // NEEDED!
@@ -180,12 +181,6 @@ public class MainWindow {
 	private void addListeners() {
 		canvas.addMouseListener(mouseManager);
 		canvas.addMouseMotionListener(mouseManager);
-
-		if (textPane != null) {
-			//textPane.addMouseListener(mouseManager);
-			//textPane.addMouseMotionListener(mouseManager);
-			
-		}
 		canvas.addKeyListener(keyboardManager);
 		canvas.requestFocusInWindow();
 		if (textPane != null){
