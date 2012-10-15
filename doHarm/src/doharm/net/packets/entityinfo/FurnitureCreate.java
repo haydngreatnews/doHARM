@@ -8,9 +8,9 @@ public class FurnitureCreate extends EntityCreate {
 
 public final String name;
 	
-	public FurnitureCreate(int id, ByteBuffer buff)
+	public FurnitureCreate(int id, EntType type, ByteBuffer buff)
 	{
-		super(id, buff);
+		super(id, type);
 		name = Bytes.getString(buff);
 	}
 	

@@ -1,25 +1,32 @@
 package doharm.net.server;
 
+import java.awt.Color;
 import java.net.InetSocketAddress;
-import java.net.SocketAddress;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.Queue;
 
 import doharm.logic.entities.characters.players.HumanPlayer;
+import doharm.logic.entities.characters.players.Player;
+import doharm.logic.world.World;
 import doharm.net.ClientState;
-import doharm.net.packets.Command;
+import doharm.net.packets.Action;
+import doharm.net.packets.Join;
 import doharm.net.packets.Snapshot;
 
 /**
  * The servers view of a Client
  */
-public class ConnectedClient {
+public class ConnectedClient
+{
 	private InetSocketAddress address;
-	public Command latestCommandPacket;
+	public Action latestActionPacket;
 	private int counter;	// counter used by various.
 	private static int RESEND_DELAY;
 	private HumanPlayer playerEntity;
+	private String name;
+	private Color colour;
 	
 	// Last time we received a packet from this client.
 	private int latestTime;
@@ -27,10 +34,16 @@ public class ConnectedClient {
 	private ClientState state;
 	
 	// Holds on to all unack'd Snapshots we've sent the client.
-	private LinkedList<Snapshot> snapsBuffer;
+	private LinkedList<Snapshot> snapsBuffer = new LinkedList<Snapshot>();
 	
-	public ConnectedClient(InetSocketAddress address)
+	// Holds on to all unack'd CommandLists we've sent the client.
+	private HashMap<Integer,ArrayList<String>> commandsBuffer = new HashMap<Integer,ArrayList<String>>();
+	
+	public ConnectedClient(InetSocketAddress address, HumanPlayer player)
 	{
+		this.playerEntity = player;
+		this.name = player.getName();
+		this.colour = player.getColour();
 		this.address = address;
 		state = ClientState.READY;
 	}
@@ -52,25 +65,23 @@ public class ConnectedClient {
 	}
 	
 	/**
-	 * Update what the latest command packet from the client is.
+	 * Update what the latest action packet from the client is.
 	 * @param data
 	 */
-	public void updateClientCommandPacket(byte[] data)
+	public void updateClientActionPacket(byte[] data)
 	{
-		if (state == ClientState.READY)		// TODO can probably optimise this by having a special kind of command packet sent on first try.
-		{
+		if (state == ClientState.READY)		// TODO can probably optimise this by having a special kind of action packet sent on first try.
 			setState(ClientState.INGAME);
-		}
 		
 		// Extract the timestamp from the packet.
-		int seqnum = Command.getSeqNum(data);
+		int seqnum = Action.getTimestamp(data);
 		
-		// If this packet isn't more recent than the latest command we've received, discard.
+		// If this packet isn't more recent than the latest action we've received, discard.
 		if ( seqnum <= latestTime )
 			return;
 		
 		latestTime = seqnum;
-		latestCommandPacket = new Command(data);
+		latestActionPacket = new Action(data);
 	}
 	
 	/** Add a new snapshot to the snap buffer. */
@@ -84,8 +95,16 @@ public class ConnectedClient {
 	public Snapshot buildTransmissionSnapshot()
 	{
 		// Remove all acknowledged snaps from the Snapshot buffer.
-		while (snapsBuffer.peek().serverTime <= latestCommandPacket.serverTimeAckd)
+		while (snapsBuffer.peek().serverTime <= latestActionPacket.serverTimeAckd)
 			snapsBuffer.poll();
+		
+		// Remove all acknowledged commands from the Command buffer.
+		ArrayList<Integer> toRemove = new ArrayList<Integer>();
+		for (int i : commandsBuffer.keySet())
+			if ( i <= latestActionPacket.serverTimeAckd )
+				toRemove.add(i);
+		for (int i : toRemove)
+			commandsBuffer.remove(i);
 		
 		/* Build the snapshot to send.
 		
@@ -100,7 +119,9 @@ public class ConnectedClient {
 		Snapshot transSnap = new Snapshot(iter.next());	// will never be null, a snapshot was just added earlier in the thread of execution
 		
 		while (iter.hasNext())
-			transSnap.addMissing(iter.next());
+			transSnap.addMissingEntities(iter.next());
+		
+		transSnap.addCommands(commandsBuffer);
 		
 		return transSnap;
 	}
@@ -111,7 +132,8 @@ public class ConnectedClient {
 	 */
 	public void flushSnaps() { snapsBuffer.clear(); }
 
-	public boolean resendGamestate() {
+	public boolean resendGamestate()
+	{
 		if (--counter == 0)
 		{
 			counter = RESEND_DELAY;
@@ -120,7 +142,12 @@ public class ConnectedClient {
 		return false;
 	}
 
-	public HumanPlayer getPlayerEntity() {
-		return playerEntity;
+	public HumanPlayer getPlayerEntity() { return playerEntity; }
+
+	public String getName() { return name; }
+
+	public void kill(World world)
+	{
+		world.getEntityFactory().removeEntity(world.getEntityFactory().getEntity(playerEntity.getID()));
 	}
 }

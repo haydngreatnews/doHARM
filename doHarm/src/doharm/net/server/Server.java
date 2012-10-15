@@ -11,11 +11,13 @@ import java.util.HashMap;
 
 import doharm.logic.entities.AbstractEntity;
 import doharm.logic.entities.characters.players.HumanPlayer;
+import doharm.logic.entities.characters.players.PlayerType;
 import doharm.logic.world.World;
 import doharm.net.ClientState;
 import doharm.net.UDPReceiver;
 import doharm.net.packets.ClientPacket;
 import doharm.net.packets.Gamestate;
+import doharm.net.packets.Join;
 import doharm.net.packets.ServerPacket;
 import doharm.net.packets.Snapshot;
 import doharm.net.packets.entityinfo.CharacterCreate;
@@ -61,47 +63,38 @@ public class Server {
 			// Check what type of packet it is.			
 			switch (ClientPacket.values()[data[0]])
 			{
-			case COMMAND:
+			case ACTION:
 				for (ConnectedClient c : clients)
 					if ( c.getAddress().equals(packet.getSocketAddress()) )
 					{
-						c.updateClientCommandPacket(data);
+						c.updateClientActionPacket(data);
 						break;
 					}
 				break;
 				
-			case JOIN:
+			case JOIN:	// TODO TODO TODO TODO TODO TODO
+				Join request = new Join(data);
+				byte[] response = new byte[2];
+				response[0] = (byte) ServerPacket.RESPONSE.ordinal();
+				
 				if (clients.size() < maxPlayers)
 				{
-					// TODO check if player is already connected with that address.
-					// If so, they must've dropped, so kill them and start them along the joining process again. 
-					createClient(packet);
+					for (ConnectedClient c : clients)
+					{
+						if (c.getName().equals(request.name))
+						{
+							createClient(new InetSocketAddress(packet.getAddress(), packet.getPort()), request);
+							break;
+						}
+					}
 				}
 				else
 				{
 					// Reject, inform them so.
-					byte[] response = new byte[2];
-					response[0] = (byte) ServerPacket.RESPONSE.ordinal();
-					response[1] = 1;	// 1 = NO at this point in time.
+					response[1] = 1;	// 1 = NO server is full.
 					transmit(response, new InetSocketAddress(packet.getAddress(), packet.getPort()));
 				}
 				break;
-				
-			case OKACK:
-				for (ConnectedClient c : clients)
-					if ( c.getAddress().equals(packet.getSocketAddress()) )
-					{
-						// blah
-					}
-				break;
-				
-			case READY:
-				for (ConnectedClient c : clients)
-					if ( c.getAddress().equals(packet.getSocketAddress()) )
-					{
-						// ready state transition?
-						// send gamestate
-					}
 			}
 		}
 	}
@@ -123,9 +116,27 @@ public class Server {
 		return false;
 	}
 	
-	private ConnectedClient createClient(DatagramPacket packet)
+	private ConnectedClient createClient(InetSocketAddress address, Join settings)
 	{
-		ConnectedClient client = new ConnectedClient(new InetSocketAddress(packet.getAddress(), packet.getPort()));
+		ConnectedClient oldClient = null;
+		for (ConnectedClient c : clients)
+		{
+			if (c.getAddress().equals(address))
+			{
+				world.getPlayerFactory().removeEntity(c.getPlayerEntity());
+				oldClient = c;
+				break;
+			}
+		}
+		if (oldClient != null)
+		{
+			oldClient.kill(world);
+			clients.remove(oldClient);
+		}
+		
+		HumanPlayer player = world.getPlayerFactory().createPlayer(world.getRandomEmptyTile(), settings.name, 
+				settings.classType, world.getIDManager().takeID(), PlayerType.NETWORK, settings.colour, true);
+		ConnectedClient client = new ConnectedClient(address, player);
 		clients.add(client);
 		return client;
 	}
@@ -170,7 +181,7 @@ public class Server {
 		{
 			if (c.getState() == ClientState.INGAME)
 			{
-				buildSnapshot(c, new Snapshot(serverTime, c.latestCommandPacket.seqNum, c.getPlayerEntity()), entityUpdates, entityCreates, entityDeletes);
+				buildSnapshot(c, new Snapshot(serverTime, c.latestActionPacket.seqNum, c.getPlayerEntity()), entityUpdates, entityCreates, entityDeletes);
 				
 				// build transmission snap and send
 				transmit( c.buildTransmissionSnapshot().convertToBytes() , c.getAddress() );
@@ -195,28 +206,15 @@ public class Server {
 	 */
 	private void buildSnapshot(ConnectedClient client, Snapshot snap, HashMap<Integer,EntityUpdate> entityUpdates, HashMap<Integer,EntityCreate> entityCreates, ArrayList<Integer> entityDeletes)
 	{		
-		// TODO temp setup is that the entire game change snap shot is sent to all clients, 
-		// eventually when we add local area only snapshots.
-		
 		for (int eID : entityDeletes)
-		{
-			// if (relavent)
 			snap.addEDelete(eID);
-		}
 		
 		for (int eID : entityCreates.keySet())
-		{
-			// if (relavent)
 			snap.addECreate(entityCreates.get(eID));
-		}
 		
 		for (int eID : entityUpdates.keySet())
-		{
-			// if (relavent)
 			snap.addEUpdate(entityUpdates.get(eID));
-		}
 		
-		// add snapshot to client
 		client.addSnapshot(snap);
 	}
 	
@@ -254,7 +252,9 @@ public class Server {
 			// process incoming packets
 			processIncomingPackets();
 			
-			// perform game logics
+			// get client actions; update pos based on client fields, and then perform commands.
+			
+			// perform moves
 			
 			// periodically check if we should drop clients (because we haven't heard from them in a while).
 			if (checkClientsCounter > CLIENT_CHECK_INTERVAL)

@@ -7,7 +7,7 @@ import doharm.logic.entities.AbstractEntity;
 /** Holds updates to an entity */
 public abstract class EntityUpdate extends EntityInfo
 {
-	public final int layer; //, velocity, health;
+	public final int layer; //velocity, 
 	public final float posX, posY, angle;
 	protected static final byte CHARACTER = 0, FURNITURE = 1, PROJECTILE = 2;
 	
@@ -19,7 +19,6 @@ public abstract class EntityUpdate extends EntityInfo
 		layer = buff.getInt();
 		angle = buff.getFloat();
 		//velocity = buff.getInt();
-		//health = buff.getInt();
 	}
 
 	public EntityUpdate(AbstractEntity ent) {
@@ -28,6 +27,7 @@ public abstract class EntityUpdate extends EntityInfo
 		posY = ent.getPosition().getY();
 		layer = ent.getCurrentLayer().getLayerNumber();
 		angle = ent.getAngle();
+		//velocity = ent.getVelocity();
 	}
 	
 	protected void toBytes(byte type, ByteBuffer buff) {

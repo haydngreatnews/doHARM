@@ -14,7 +14,7 @@ import doharm.net.packets.entityinfo.EntityCreate;
 import doharm.net.packets.entityinfo.EntityUpdate;
 
 /** Struct representing a Server Snapshot, which is then converted into a packet to send over the wire. */
-public class Snapshot {
+public class Snapshot extends Update {
 
 	public final int serverTime;
 	public final int seqAckd;
@@ -71,6 +71,8 @@ public class Snapshot {
 			int id = buff.getInt();
 			entityUpdates.put(id, EntityUpdate.newEntityUpdate(id, buff));
 		}
+		
+		readCommands(buff);
 	}
 	
 	/** Creates a Snapshot that is a copy of the given snapshot */
@@ -78,7 +80,7 @@ public class Snapshot {
 	{
 		serverTime = other.serverTime;
 		seqAckd = other.seqAckd;
-		pState = null;
+		pState = other.pState;
 		entityDeletes.addAll(other.entityDeletes);
 		entityCreates.putAll(other.entityCreates);
 		entityUpdates.putAll(other.entityUpdates);
@@ -94,83 +96,60 @@ public class Snapshot {
 		ByteArrayOutputStream buff = new ByteArrayOutputStream();
 		
 		try { 
-		
-		// Packet type
-		buff.write((byte) ServerPacket.SNAPSHOT.ordinal());		// TODO Do we need the byte cast?
-		// Servertime
-		buff.write(Bytes.setInt(serverTime)); 
-		
-		if (entityDeletes.size() > 255)
-			throw new RuntimeException("Entity deletes was over the 255 limit!");
-		if (entityCreates.size() > 255)
-			throw new RuntimeException("Entity creates was over the 255 limit!");
-		if (entityUpdates.size() > 255)
-			throw new RuntimeException("Entity updates was over the 255 limit!");
-		
-		// Write the entity deletes.
-		buff.write((byte) entityDeletes.size());
-		for (int eID : entityDeletes)
-			buff.write(Bytes.setInt(eID));
-		
-		// Write the entity creates.
-		buff.write((byte) entityCreates.size());
-		for ( EntityCreate c : entityCreates.values() )
-			buff.write(c.toBytes());
-		
-		// Write the entity updates.
-		buff.write((byte) entityUpdates.size());
-		for ( EntityUpdate u : entityUpdates.values() )
-			buff.write(u.toBytes());
-		
+			buff.write((byte) ServerPacket.SNAPSHOT.ordinal());	// Packet type
+			
+			buff.write(Bytes.setInt(serverTime));	// Servertime
+			
+			buff.write(Bytes.setInt(seqAckd));	// SeqAckd 
+
+			if (entityDeletes.size() > 255)
+				throw new RuntimeException("Entity deletes was over the 255 limit!");
+			if (entityCreates.size() > 255)
+				throw new RuntimeException("Entity creates was over the 255 limit!");
+			if (entityUpdates.size() > 255)
+				throw new RuntimeException("Entity updates was over the 255 limit!");
+
+			// Write the entity deletes.
+			buff.write((byte) entityDeletes.size());
+			for (int eID : entityDeletes)
+				buff.write(Bytes.setInt(eID));
+
+			// Write the entity creates.
+			buff.write((byte) entityCreates.size());
+			for ( EntityCreate c : entityCreates.values() )
+				buff.write(c.toBytes());
+
+			// Write the entity updates.
+			buff.write((byte) entityUpdates.size());
+			for ( EntityUpdate u : entityUpdates.values() )
+				buff.write(u.toBytes());
+			
+			// Write the commands
+			writeCommands(buff);
+
 		} catch (IOException e) {	e.printStackTrace(); }
 		
 		return buff.toByteArray();
 	}
 	
-	/** Extracts the timestamp from the byte array form of a Snapshot */
-	public static int getTimestamp(byte[] data)
-	{
-		ByteBuffer buff = ByteBuffer.wrap(data);
-		buff.position(1);
-		return buff.getInt();
-	}
+	public void addECreate(EntityCreate ent) { entityCreates.put(ent.id, ent); }
 	
-	public void addECreate(EntityCreate ent)
-	{
-		entityCreates.put(ent.id, ent);
-	}
+	public void addEDelete(int entID) { entityDeletes.add(entID); }
 	
-	public void addEDelete(int entID)
-	{
-		entityDeletes.add(entID);
-	}
+	public void addEUpdate(EntityUpdate ent) { entityUpdates.put(ent.id, ent); }
 	
-	public void addEUpdate(EntityUpdate ent)
-	{
-		entityUpdates.put(ent.id, ent);
-	}
+	public ArrayList<Integer> getEDeletes() { return (ArrayList<Integer>) Collections.unmodifiableList(entityDeletes); }
 	
-	public ArrayList<Integer> getEDeletes()
-	{
-		return (ArrayList<Integer>) Collections.unmodifiableList(entityDeletes);
-	}
+	public HashMap<Integer,EntityCreate> getECreates() { return (HashMap<Integer,EntityCreate>) Collections.unmodifiableMap(entityCreates); }
 	
-	public HashMap<Integer,EntityCreate> getECreates()
-	{
-		return (HashMap<Integer,EntityCreate>) Collections.unmodifiableMap(entityCreates);
-	}
-	
-	public HashMap<Integer,EntityUpdate> getEUpdates()
-	{
-		return (HashMap<Integer,EntityUpdate>) Collections.unmodifiableMap(entityUpdates);
-	}
+	public HashMap<Integer,EntityUpdate> getEUpdates() { return (HashMap<Integer,EntityUpdate>) Collections.unmodifiableMap(entityUpdates); }
 
 	/**
 	 * Adds any fields that are in the given snapshot that are not present in this snapshot.
 	 * This WILL NOT overwrite any fields that this snapshot already has (even if their values differ). 
 	 * @param other Snapshot to copy missing fields from.
 	 */
-	public void addMissing(Snapshot other)
+	public void addMissingEntities(Snapshot other)
 	{
 		// add deletes first, as we'll want to check when adding creates/updates
 		// if it's already been deleted, in which case shouldn't bother adding it. 
