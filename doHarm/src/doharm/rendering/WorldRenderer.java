@@ -64,8 +64,20 @@ public class WorldRenderer
 	private int wTileW;
 	private  int wTileH;
 
-	public WorldRenderer(AbstractGame game)
-	{
+
+
+	private int rowC;
+	private int colC;
+	private int rowConstranint;
+	private int colConstranint;
+
+	public WorldRenderer(AbstractGame game){
+
+		rowC = 0;
+		colC = 0;
+		rowConstranint = 0;
+		colConstranint = 0;
+
 		this.game = game;
 		playerRenderer = new PlayerRenderer(game);
 		itemRenderer = new ItemRenderer(game);
@@ -212,11 +224,7 @@ public class WorldRenderer
 			//			if(isTransparent)
 			//				drawTiles(tiles, layerCount, floorImagesTrans, wallImagesTrans);
 			//			else
-
-			if(isTransparent)
-				drawTiles(tiles, layerCount, floorImagesTrans, wallImagesTrans);
-			else
-				drawTiles(tiles, layerCount, floorImages, wallImages);
+			drawTiles(tiles, layerCount, floorImages, wallImages);
 
 
 
@@ -229,13 +237,13 @@ public class WorldRenderer
 					playerRenderer.redrawPlayer(player,graphics, fTileW, fTileH);
 				}
 			}
-			
+
 			//TODO
 			//Draw items on this layer
 			for (Item item: world.getItemFactory().getEntities()){
 				if (!item.onGround())
 					continue;
-				
+
 				if(layerCount == item.getCurrentLayer().getLayerNumber()){
 					itemRenderer.redrawPlayer(item,graphics, fTileW, fTileH);
 				}
@@ -252,21 +260,25 @@ public class WorldRenderer
 
 	private void drawTiles(Tile[][] tiles, int layerCount, BufferedImage[] FI, BufferedImage[] WI){
 		graphics.setColor(new Color(1,0,1,0.4f));
-		int row = 0;
-		int col = 0;
-		int rowConstranint = 0;
-		int colConstranint = 0;
 
 
-		for(row = 0; row < tiles.length; row++){
+		switch(game.getCamera().getDirection()){
+		case NORTH : rowC = -1; colC = -1; break;
+		case EAST : rowC = -1; colC = tiles[0].length; break;
+		case SOUTH : rowC = tiles.length; colC = tiles[0].length; break;
+		case WEST : rowC = tiles.length; colC = -1; break;
+		}
 
-			for(col = 0; col < tiles[row].length; col++){
-				Tile tile = tiles[row][col];
+
+		while(checkRowCon(tiles)){
+
+			while(checkColCon(tiles)){
+				Tile tile = tiles[rowC][colC];
 
 				BufferedImage image = FI[tile.getImageID()];
 
 
-				Vector vector = RenderUtil.convertCoordsToIso(col, row, layerCount, game.getCamera());
+				Vector vector = RenderUtil.convertCoordsToIso(colC, rowC, layerCount, game.getCamera());
 				int x = vector.getXAsInt() - fTileW/2; //fTileW/2 added PLEASE leave in here   .... ok  ._.
 				int y = vector.getYAsInt() - fTileH/2; //fTileH/2 added PLEASE leave in here
 				graphics.drawImage(image,x,y, null);
@@ -293,24 +305,40 @@ public class WorldRenderer
 				}
 
 			}
-
 			switch(game.getCamera().getDirection()){
-
-
-
+			case NORTH :colC = -1; break;
+			case EAST :colC = tiles[0].length; break;
+			case SOUTH : colC = tiles[0].length; break;
+			case WEST : colC = -1; break;
 			}
+
 		}
 
 	}
-	private boolean checkRowCon(){
+	private boolean checkRowCon(Tile[][] tiles){
+		switch(game.getCamera().getDirection()){
+
+		case NORTH : rowC++; return rowC < tiles.length;
+		case EAST : rowC++; return rowC < tiles.length;
+		case SOUTH : rowC--; return rowC >= 0;
+		case WEST : rowC--; return rowC >= 0;
+
+		}
 		return false;
 	}
-	private boolean checkColCon(){
-		
+	private boolean checkColCon(Tile[][] tiles){
+		switch(game.getCamera().getDirection()){
+
+		case NORTH : colC++; return colC < tiles[0].length;
+		case EAST : colC--; return colC >= 0;
+		case SOUTH : colC--; return colC >= 0;
+		case WEST : colC++; return colC < tiles[0].length;
+
+		}
 		return false;
-		
+
 	}
-	
+
 
 	private void createTransparentImages(){
 
