@@ -159,9 +159,20 @@ public abstract class Character extends AbstractEntity
 		return characterClass.getAttributes().getMaxHealth();
 	}
 	
-	public float getRage() {
+	public float getRage() 
+	{
 		return rage;
 	}
+	
+	public float getRageRatio()
+	{
+		return rage / getMaxRage();
+	}
+	public float getMaxRage()
+	{
+		return characterClass.getAttributes().getMaxRage();
+	}
+	
 	public void setRage(float rage)
 	{
 		this.rage = rage;
@@ -175,6 +186,18 @@ public abstract class Character extends AbstractEntity
 		this.mana = mana;
 	}
 	
+	public float getManaRatio()
+	{
+		if (getMaxMana() == 0)
+			return 0;
+		
+		return rage / getMaxMana();
+	}
+	
+	private float getMaxMana() {
+		return characterClass.getAttributes().getMaxMana();
+	}
+
 	public float getExperienceRatio() 
 	{
 		return characterClass.getExperienceRatio();
