@@ -11,6 +11,7 @@ import java.util.HashMap;
 
 import doharm.logic.entities.AbstractEntity;
 import doharm.logic.entities.characters.players.HumanPlayer;
+import doharm.logic.entities.characters.players.Player;
 import doharm.logic.entities.characters.players.PlayerType;
 import doharm.logic.world.World;
 import doharm.net.ClientState;
@@ -134,7 +135,7 @@ public class Server {
 			clients.remove(oldClient);
 		}
 		
-		HumanPlayer player = world.getPlayerFactory().createPlayer(world.getRandomEmptyTile(), settings.name, 
+		Player player = (HumanPlayer) world.getPlayerFactory().createPlayer(world.getRandomEmptyTile(), settings.name, 
 				settings.classType, world.getIDManager().takeID(), PlayerType.NETWORK, settings.colour, true);
 		ConnectedClient client = new ConnectedClient(address, player);
 		clients.add(client);

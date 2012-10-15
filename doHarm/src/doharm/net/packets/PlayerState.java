@@ -3,13 +3,14 @@ package doharm.net.packets;
 import java.nio.ByteBuffer;
 
 import doharm.logic.entities.characters.players.HumanPlayer;
+import doharm.logic.entities.characters.players.Player;
 
 /** Contains all updating information regarding the player the client controls. */
 public class PlayerState {
 	
 	public final float health, mana, rage, exp;
 	
-	public PlayerState(HumanPlayer player)
+	public PlayerState(Player player)
 	{
 		this.health = player.getHealth();
 		this.mana = player.getMana();

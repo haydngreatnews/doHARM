@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.HashMap;
 
 import doharm.logic.entities.characters.players.HumanPlayer;
+import doharm.logic.entities.characters.players.Player;
 import doharm.net.packets.entityinfo.CharacterCreate;
 import doharm.net.packets.entityinfo.CharacterUpdate;
 import doharm.net.packets.entityinfo.EntityCreate;
@@ -23,7 +24,7 @@ public class Snapshot extends Update {
 	private final HashMap<Integer,EntityCreate> entityCreates = new HashMap<Integer,EntityCreate>();
 	private final ArrayList<Integer> entityDeletes = new ArrayList<Integer>();
 	
-	public Snapshot(int serverTime, int seqAckd, HumanPlayer player)
+	public Snapshot(int serverTime, int seqAckd, Player player)
 	{
 		this.serverTime = serverTime;
 		this.seqAckd = seqAckd;

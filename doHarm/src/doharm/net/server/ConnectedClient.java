@@ -24,7 +24,7 @@ public class ConnectedClient
 	public Action latestActionPacket;
 	private int counter;	// counter used by various.
 	private static int RESEND_DELAY;
-	private HumanPlayer playerEntity;
+	private Player playerEntity;
 	private String name;
 	private Color colour;
 	
@@ -39,7 +39,7 @@ public class ConnectedClient
 	// Holds on to all unack'd CommandLists we've sent the client.
 	private HashMap<Integer,ArrayList<String>> commandsBuffer = new HashMap<Integer,ArrayList<String>>();
 	
-	public ConnectedClient(InetSocketAddress address, HumanPlayer player)
+	public ConnectedClient(InetSocketAddress address, Player player)
 	{
 		this.playerEntity = player;
 		this.name = player.getName();
@@ -142,7 +142,7 @@ public class ConnectedClient
 		return false;
 	}
 
-	public HumanPlayer getPlayerEntity() { return playerEntity; }
+	public Player getPlayerEntity() { return playerEntity; }
 
 	public String getName() { return name; }
 
