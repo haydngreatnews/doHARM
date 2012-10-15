@@ -239,7 +239,9 @@ public class Server {
 			// process incoming packets
 			processIncomingPackets();
 			
-			// perform game logics
+			// get client actions; update pos based on client fields, and then perform commands.
+			
+			// perform moves
 			
 			// periodically check if we should drop clients (because we haven't heard from them in a while).
 			if (checkClientsCounter > CLIENT_CHECK_INTERVAL)

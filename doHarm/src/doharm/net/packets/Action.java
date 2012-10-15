@@ -68,17 +68,4 @@ public class Action extends Update {
 		
 		return buff.toByteArray();
 	}
-	
-	/**
-	 * Extracts the seqNum from the byte-array form of a Action packet.
-	 * @param data Action byte-array packet.
-	 * @return
-	 */
-	public static int getSeqNum(byte[] data)
-	{
-		ByteBuffer buff = ByteBuffer.wrap(data);
-		buff.position(1);
-		return buff.getInt();
-	}
-
 }

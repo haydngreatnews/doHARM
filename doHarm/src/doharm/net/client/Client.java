@@ -32,38 +32,38 @@ import doharm.net.packets.entityinfo.EntityCreate;
 import doharm.net.packets.entityinfo.EntityUpdate;
 
 public class Client {
-	
+
 	private UDPReceiver receiver;
 	private DatagramSocket udpSock;
-	
+
 	private InetSocketAddress serverAddress;
-	
+
 	private int playerEntID;
-	
+
 	private Snapshot snapCurrent, snapNext;
-	
-	private int latestSeqSent;
-	
+
+	private int latestSeqSent = 0;
+
 	private static int RETRY_COUNT = 4;
 	private static int RETRY_DELAY = 20;
 	private int counter;	
-	
+
 	/** Holds on to all unack'd CommandLists we've sent the server. */
 	private HashMap<Integer,ArrayList<String>> commandsBuffer = new HashMap<Integer,ArrayList<String>>();
-	
+
 	public Client() throws IOException
 	{	
 		// Setup the UDP socket.
 		udpSock = new DatagramSocket(null);
-		
+
 		InetSocketAddress address = new InetSocketAddress(0);
-		 
+
 		udpSock.bind(address);
-		
+
 		receiver = new UDPReceiver(udpSock);
 		receiver.start();
 	}
-	
+
 	/** 
 	 * Attempt to connect to a Server.
 	 * @param address Server address to connect to.
@@ -73,7 +73,7 @@ public class Client {
 	{
 		serverAddress = address;
 		byte[] join = buildJoinPacket(name,colour);
-		
+
 		for (int i=0; i<RETRY_COUNT; ++i)
 		{
 			transmit(join);
@@ -83,13 +83,13 @@ public class Client {
 				while (!receiver.isEmpty())
 				{
 					DatagramPacket packet = receiver.poll();
-					
+
 					// If the packet isn't from the game server we are connected/talking to, discard.
 					if (!packet.getSocketAddress().equals(serverAddress))	// TODO Potentially doesn't work, may need to getAddress, then comapre by IP and port seperately. or something.
 						continue;
-					
+
 					byte[] data = packet.getData();
-				
+
 					if (ServerPacket.values()[data[0]] == ServerPacket.RESPONSE)
 					{
 						if (data[1] != 0)	// Response something other than OK.
@@ -122,7 +122,7 @@ public class Client {
 		serverAddress = null;
 		return false;
 	}
-	
+
 	private byte[] buildJoinPacket(String name, int colour)
 	{
 		byte[] join = new byte[name.length()+6];
@@ -139,27 +139,27 @@ public class Client {
 		while (!receiver.isEmpty())
 		{
 			DatagramPacket packet = receiver.poll();
-			
+
 			// If the packet isn't from the game server we are connected/talking to, discard.
 			if (!packet.getSocketAddress().equals(serverAddress))	// TODO Potentially doesn't work, may need to getAddress, then comapre by IP and port seperately. or something.
 				continue;
-			
+
 			byte[] data = packet.getData();
-			
+
 			// Check what type of packet it is.
 			switch (ServerPacket.values()[data[0]])
 			{
 			case SNAPSHOT:
 				updateSnapshotPacket(data, false);
 				break;
-				
+
 			case GAMESTATE:
 				updateSnapshotPacket(data, true);
 				break;
 			}
 		}
 	}
-	
+
 	/**
 	 * Update what the latest snapshot packet from the server is.
 	 * @param data
@@ -169,14 +169,14 @@ public class Client {
 	{
 		// Extract the timestamp from the packet.
 		int timestamp = Snapshot.getTimestamp(data);
-		
+
 		// If this packet isn't more recent than the latest snapshot we've received, discard.
 		if ( (snapNext != null && timestamp <= snapNext.serverTime) || (snapCurrent != null && timestamp <= snapCurrent.serverTime) )
 			return;
-		
+
 		snapNext = new Snapshot(data);
 	}
-	
+
 	/**
 	 * Builds a new Action and sends it out to the server we're connected to.
 	 */
@@ -189,22 +189,21 @@ public class Client {
 				toRemove.add(i);
 		for (int i : toRemove)
 			commandsBuffer.remove(i);
-		
+
 		int time;
 		if (snapCurrent != null)
 			time = snapCurrent.serverTime;
 		else
 			time = 0;
-		
+
 		Action action = new Action(++latestSeqSent, time, world.getHumanPlayer() );
-		
-		action.addCommands(commandsBuffer);
-		
-		// TODO
-		
+
+		if (!commandsBuffer.isEmpty())
+			action.addCommands(commandsBuffer);
+
 		transmit(action.convertToBytes());
 	}
-	
+
 	/**
 	 * Sends a UDP Packet out to the desired address.
 	 * @param data Packet contents.
@@ -221,7 +220,7 @@ public class Client {
 		catch (IOException e) {	e.printStackTrace(); }
 		return false;
 	}
-	
+
 	/**
 	 * Sends a UDP Packet to the server we are connected to.
 	 * REQUIRES: serverAddress equals valid address.
@@ -232,7 +231,7 @@ public class Client {
 	{
 		return transmit(data, serverAddress);
 	}
-	
+
 	/* Fake main method, placeholder used so coding on the flow of operations can be done.
 	private void main()
 	{
@@ -254,32 +253,32 @@ public class Client {
 			// wait for next tick
 		}
 	}*/
-	
-	private void updateWorld(World world)
+
+	public void updateWorld(World world)
 	{	
 		// We don't have a snapshot to update our world with.
 		if (snapNext == null)
 			return;
-		
+
 		EntityFactory ents = world.getEntityFactory();
-		
+
 		for (int i : snapNext.getEDeletes())
 		{
 			// skip if we've already deleted this entity (since the server will keep sending us the delete until our ack reaches them)
 			AbstractEntity e = ents.getEntity(i);
 			if (e == null)
 				continue;
-			
+
 			ents.removeEntity(e);
 		}
-		
+
 		for (EntityCreate c : snapNext.getECreates().values())
 		{
 			// skip if we've already created this entity (since the server will keep sending us the create until our ack reaches them)
 			AbstractEntity e = ents.getEntity(c.id);
 			if (e != null)
 				continue;
-			
+
 			if (c instanceof CharacterCreate)
 			{
 				CharacterCreate cc = (CharacterCreate) c;
@@ -287,30 +286,43 @@ public class Client {
 				//ents.addEntity(newEnt, c.id, true);
 			}
 		}
-		
+
 		for (EntityUpdate u : snapNext.getEUpdates().values())
 		{
 			AbstractEntity e = ents.getEntity(u.id);
 			if (e == null)
 				continue;
-			
+
 			if (u instanceof CharacterUpdate)
 			{
 				CharacterUpdate cu = (CharacterUpdate) u;
-				
+
 				if (u.id == world.getHumanPlayer().getID())		// if this is our player, don't bother with it (for now. TODO)
 					break;					
-				
+
 				e.setPosition(cu.posX, cu.posY, world.getLayer(cu.layer));
 				e.setAngle(cu.angle);
 			}
 		}
-		
+
 		if (world.getHumanPlayer() == null)
 		{
 			//world.setHumanPlayer((HumanPlayer) world.getPlayerFactory().getEntity(GAMESTATE_ID));
 		}
+
+		// Get commands to execute.
+		HashMap<Integer,ArrayList<String>> givenCmds = snapNext.getCommands();
+		ArrayList<String> cmds = new ArrayList<String>();
+		if (snapCurrent == null)
+			for (ArrayList<String> list : givenCmds.values())
+				cmds.addAll(list);
+		else
+			for (int i : givenCmds.keySet())
+				if ( i > snapCurrent.serverTime )
+					cmds.addAll(givenCmds.get(i));
 		
+		// execute cmd list.
+
 		snapCurrent = snapNext;
 		snapNext = null;
 	}

@@ -132,14 +132,6 @@ public class Snapshot extends Update {
 		return buff.toByteArray();
 	}
 	
-	/** Extracts the timestamp from the byte array form of a Snapshot */
-	public static int getTimestamp(byte[] data)
-	{
-		ByteBuffer buff = ByteBuffer.wrap(data);
-		buff.position(1);
-		return buff.getInt();
-	}
-	
 	public void addECreate(EntityCreate ent) { entityCreates.put(ent.id, ent); }
 	
 	public void addEDelete(int entID) { entityDeletes.add(entID); }

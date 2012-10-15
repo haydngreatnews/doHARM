@@ -60,4 +60,14 @@ public abstract class Update
 	}
 	
 	public HashMap<Integer,ArrayList<String>> getCommands() { return (HashMap<Integer,ArrayList<String>>) Collections.unmodifiableMap(commands); }
+	
+	
+	/** Extracts the timestamp from the byte array form of the Update
+	 * (serverTime in case of Snapshot, seqNum in case of Action) */
+	public static int getTimestamp(byte[] data)
+	{
+		ByteBuffer buff = ByteBuffer.wrap(data);
+		buff.position(1);
+		return buff.getInt();
+	}
 }

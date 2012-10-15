@@ -63,12 +63,10 @@ public class ConnectedClient {
 	public void updateClientActionPacket(byte[] data)
 	{
 		if (state == ClientState.READY)		// TODO can probably optimise this by having a special kind of action packet sent on first try.
-		{
 			setState(ClientState.INGAME);
-		}
 		
 		// Extract the timestamp from the packet.
-		int seqnum = Action.getSeqNum(data);
+		int seqnum = Action.getTimestamp(data);
 		
 		// If this packet isn't more recent than the latest action we've received, discard.
 		if ( seqnum <= latestTime )
