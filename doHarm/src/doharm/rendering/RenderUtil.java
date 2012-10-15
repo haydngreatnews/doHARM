@@ -90,7 +90,7 @@ public class RenderUtil {
 		Graphics2D g = (Graphics2D)img.getGraphics();
 		g.setColor(c);
 		int lineLength = 2;
-		int x = (width/2)-1;
+		int x = (width/2)-2;
 		for(int row = 0; row < height/2; row++){
 
 			g.drawLine(x, row, x+lineLength, row);
@@ -179,6 +179,7 @@ public class RenderUtil {
 		BufferedImage img = new BufferedImage(wTileW, wTileH, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g = (Graphics2D)img.getGraphics();
 		g.setColor(color);
+		
 		int lineLength = 1;
 		int x = 0;
 		int row = 0;
@@ -188,16 +189,15 @@ public class RenderUtil {
 
 			lineLength+=2;
 		}
-		lineLength-=2;
-		x+=2;
+		//lineLength-=2;
+		
 
 		for(; row < wTileH-(fTileH/2); row++){
 
 			g.drawLine(x, row, x+lineLength, row);
-
 		}
 
-		x+=2;
+		x+=1;
 		for(; row < wTileH; row++){
 
 			g.drawLine(x, row, x+lineLength, row);
@@ -213,45 +213,41 @@ public class RenderUtil {
 		BufferedImage img = new BufferedImage(wTileW, wTileH, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g = (Graphics2D)img.getGraphics();
 		g.setColor(color);
+		
 		int lineLength = wTileW;
-		int x = wTileW-1;
+		
+		int x = wTileW-2;
 		int row = 0;
-
-		for(; row >=0; row--){
+		//first part
+		for(; row < fTileH/2 ; row++){
 
 			g.drawLine(x, row, x+lineLength, row);
 
 			x-=2;
-
 		}
-
-
-		for(; row < fTileH/2; row++){
-
-			g.drawLine(x, row, x+lineLength, row);
-
-			lineLength+=2;
+		
+		x += 2;
+		//second part
+		for(; row < wTileH - fTileH/2; row++){
+			g.drawLine(x, row, x+lineLength, row);	
 		}
+		
+		
 		lineLength-=2;
-		x+=2;
-
-		for(; row < wTileH-(fTileH/2); row++){
-
+		
+		
+		//third part
+		for(; row < wTileH; row++){
 			g.drawLine(x, row, x+lineLength, row);
-
+			lineLength-=2;
 		}
 
-		for(; row < fTileH/2; row++){
+	
 
-			g.drawLine(x, row, x+lineLength, row);
-
-			lineLength+=2;
-		}
-
-		x+=2;
+		
 		return img;
 	}
-	}
+}
 
 
 
