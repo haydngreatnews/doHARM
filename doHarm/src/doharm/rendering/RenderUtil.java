@@ -6,6 +6,10 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
 
 import doharm.logic.camera.Camera;
 import doharm.logic.camera.CameraDirection;
@@ -19,9 +23,24 @@ public class RenderUtil {
 
 	private static int imgIsoW = 0;
 	private static int imgIsoH = 0;
-
+	private static BufferedImage pickImage;
+	
 	private static Camera camera;
 
+	
+	static
+	{
+		try 
+		{
+			pickImage = ImageIO.read(new File("res/tilesets/pick.png"));
+		} 
+		catch (IOException e) 
+		{
+			e.printStackTrace();
+			System.exit(1);
+		}
+	}
+	
 	/**
 	 * Scales the img parameter to the specified width and height.
 	 * @param width
@@ -86,7 +105,7 @@ public class RenderUtil {
 	 * @return
 	 */
 	public static BufferedImage generateIsoImage(Color c, int width, int height){
-		BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+		/*BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g = (Graphics2D)img.getGraphics();
 		g.setColor(c);
 		int lineLength = 2;
@@ -106,7 +125,24 @@ public class RenderUtil {
 			x+=2;
 			lineLength-=4;
 		}
+		return img;*/
+		
+		BufferedImage img = new BufferedImage(pickImage.getWidth(),pickImage.getHeight(),BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g = img.createGraphics();
+		g.drawImage(pickImage, 0,0,null);
+		
+		for (int x = 0; x < img.getWidth(); x++)
+		{
+			for (int y = 0; y < img.getHeight(); y++)
+			{
+				if (img.getRGB(x, y) != 0)
+				{
+					img.setRGB(x, y, c.getRGB());
+				}
+			}
+		}
 		return img;
+		
 	}
 
 	static void setImgDimensions(int imgW, int imgH){
