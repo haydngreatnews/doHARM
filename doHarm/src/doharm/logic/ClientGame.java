@@ -39,7 +39,7 @@ public class ClientGame extends AbstractGame
 		
 		
 		//TODO make player but not spawn them until server sends spawn message?
-		getWorld().createHumanPlayer(spawnPos, type, playerName, playerColour);
+		//getWorld().createHumanPlayer(spawnPos, type, playerName, playerColour);
 		
 	}
 	

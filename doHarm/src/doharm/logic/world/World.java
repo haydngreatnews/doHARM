@@ -111,7 +111,7 @@ public class World
 		
 		
 		//TEST STUFF TODO REMOVE
-		humanPlayer = (HumanPlayer)playerFactory.createPlayer(layers[0].getTiles()[5][5],"Test player",CharacterClassType.WARRIOR, idManager.takeID(),PlayerType.HUMAN,Color.white,false);
+		createHumanPlayer(layers[0].getTiles()[5][5],CharacterClassType.WARRIOR,"Test player",Color.white,idManager.takeID());
 		
 		
 		
@@ -471,9 +471,9 @@ public class World
 		return iterator.next();
 	}
 
-	public void createHumanPlayer(Tile spawnPosition, CharacterClassType type, String playerName, Color colour) 
+	public void createHumanPlayer(Tile spawnPosition, CharacterClassType type, String playerName, Color colour, int id) 
 	{
-		humanPlayer = (HumanPlayer)playerFactory.createPlayer(spawnPosition,playerName,type, 0,PlayerType.HUMAN,colour,false);
+		humanPlayer = (HumanPlayer)playerFactory.createPlayer(spawnPosition,playerName,type, id,PlayerType.HUMAN,colour,false);
 	}
 
 	public AbstractGame getGame() {
