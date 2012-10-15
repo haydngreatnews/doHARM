@@ -210,6 +210,7 @@ public class MainWindow {
 	public void addMessage(Message message) {
 		// TODO FIX TEMP CRAPPY CODE
 		String temp = message.getParts()[0].getText();
+
 		// String hex = message.getParts()[0].getColour().
 		String text = dateFormat.format(new Date()) + temp + "<br />";
 		messages.offer(text);

@@ -20,6 +20,8 @@ public class MessagePart
 
 	public MessagePart(String text, Color colour) 
 	{
+		if (text == null)
+			throw new UnsupportedOperationException("Empty message part");
 		this.text = text;
 		this.colour = colour;
 	}

@@ -331,10 +331,9 @@ public class Tile implements Comparable<Tile>, ItemContainer
 		items.deleteItem(item);
 	}
 
-	
-	
-
-	
-	
+	@Override
+	public void dropAll(Tile dropTile) {
+		items.dropAll(dropTile);
+	}
 	
 }

@@ -47,6 +47,24 @@ public class Stash implements ItemContainer
 	}
 	
 	@Override
+	public void dropAll(Tile dropTile) 
+	{
+
+		for (int row = 0; row < numRows; row++)
+		{
+			for (int col = 0; col < numCols; col++)
+			{
+				if (items[row][col] != null)
+				{
+					drop(items[row][col], dropTile);
+					dropAll(dropTile);
+					return;
+				}
+			}
+		}
+	}
+	
+	@Override
 	public void deleteItem(Item item) 
 	{
 		for (int row = 0; row < numRows; row++)
@@ -120,6 +138,8 @@ public class Stash implements ItemContainer
 		}
 		return dragonballs;
 	}
+
+	
 
 	
 	

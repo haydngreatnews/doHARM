@@ -1,6 +1,7 @@
 package doharm.logic.inventory;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import doharm.logic.entities.items.Item;
@@ -40,6 +41,16 @@ public class ItemSet implements ItemContainer
 	public void deleteItem(Item item) 
 	{
 		items.remove(item);
+	}
+
+	@Override
+	public void dropAll(Tile dropTile) 
+	{
+		while (!items.isEmpty())
+		{
+			Iterator<Item> it = items.iterator();
+			drop(it.next(), dropTile);
+		}
 	}
 
 	
