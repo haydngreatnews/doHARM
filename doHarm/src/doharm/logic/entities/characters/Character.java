@@ -57,7 +57,7 @@ public abstract class Character extends AbstractEntity
 		switch(classType)
 		{
 		case WARRIOR:
-			characterClass = new Warrior(this,classType);
+			characterClass = new Warrior(this);
 			break;
 		default:
 			throw new UnsupportedOperationException("Character class type not implemented: " + classType);

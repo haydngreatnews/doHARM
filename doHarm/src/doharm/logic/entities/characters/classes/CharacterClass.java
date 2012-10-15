@@ -1,10 +1,12 @@
 package doharm.logic.entities.characters.classes;
 
+import doharm.logic.chat.Message;
+import doharm.logic.chat.MessagePart;
 import doharm.logic.chat.Taunts;
-import doharm.logic.entities.AbstractEntity;
+import doharm.logic.entities.characters.Character;
+import doharm.logic.entities.characters.classes.attributes.AttributePointType;
 import doharm.logic.entities.characters.classes.attributes.Attributes;
 import doharm.logic.entities.characters.classes.attributes.LevelupAttributes;
-import doharm.logic.entities.characters.Character;
 
 public class CharacterClass 
 {
@@ -19,6 +21,7 @@ public class CharacterClass
 	private int level;
 	private Taunts taunts;
 	private Character character;
+	private int attributePoints;
 	
 	
 	
@@ -32,6 +35,7 @@ public class CharacterClass
 		experienceToAdd = 0;
 		level = 1;
 		taunts = new Taunts(character);
+		attributePoints = 5;
 	}
 	
 	public void process()
@@ -88,8 +92,41 @@ public class CharacterClass
 		nextLevelExperience = (nextLevelExperience+1)*2;
 		level++;
 		attributes.levelup(levelupAttributes,character);
+		attributePoints += 5;
 	}
 
+	public int getAttributePoints()
+	{
+		return attributePoints;
+	}
+	
+	public void addPoint(AttributePointType type)
+	{
+		switch(type)
+		{
+		case DEXTERITY:
+			attributes.increaseDexterity();
+			break;
+		case INTELLIGENCE:
+			attributes.increaseIntelligence();
+			break;
+		case STRENGTH:
+			attributes.increaseStrength();
+			break;
+		case VITALITY:
+			attributes.increaseVitality();
+			break;
+		default:
+			throw new UnsupportedOperationException("Unknown AttributePointType: " + type);
+		}
+		
+		if (character.isHumanPlayer())
+		{
+			character.getWorld().addMessage(new Message(character.getID(), new MessagePart(type.toString() + " increased!",type.getColour())));
+		}
+		
+		attributePoints--;
+	}
 
 	public float getExperienceRatio() 
 	{

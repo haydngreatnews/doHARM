@@ -2,6 +2,9 @@ package doharm.logic;
 
 public class TODO {
 	/**
+	 * winning
+	 * particles
+	 * 
 	 * hasbelt
 	 * picking up items
 	 * attacking with projectiles
