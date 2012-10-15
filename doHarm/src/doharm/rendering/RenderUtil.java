@@ -8,6 +8,7 @@ import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 
 import doharm.logic.camera.Camera;
+import doharm.logic.camera.Direction;
 import doharm.logic.entities.characters.players.Player;
 import doharm.logic.physics.Vector;
 import doharm.logic.world.Layer;
@@ -18,7 +19,7 @@ public class RenderUtil {
 
 	private static int imgIsoW = 0;
 	private static int imgIsoH = 0;
-	
+
 	private static Camera camera;
 
 	/**
@@ -45,14 +46,31 @@ public class RenderUtil {
 	 * @param row
 	 * @return
 	 */
-	public static Vector convertCoordsToIso(float col, float row, float layer){
+	public static Vector convertCoordsToIso(float col, float row, float layer, Camera c){
+		Direction d = c.getDirection();
+		float x = 0;
+		float y = 0;
 		
-		
-		
-		float x = -((row*(imgIsoW/2)))+(col*(imgIsoW/2));
-		float y = (row*(imgIsoH/2))+(col*(imgIsoH/2)) -layer*imgIsoH ;
-		
-		
+		switch(d){
+		case NORTH : 
+			x = -((row*(imgIsoW/2)))+(col*(imgIsoW/2));
+			y = (row*(imgIsoH/2))+(col*(imgIsoH/2)) -layer*imgIsoH ;
+			break;
+		case EAST : 
+			x = ((row*(imgIsoW/2)))+(col*(imgIsoW/2));
+			y = (row*(imgIsoH/2))-(col*(imgIsoH/2)) -layer*imgIsoH ;
+			break;
+		case WEST : 
+			x = -((row*(imgIsoW/2)))-(col*(imgIsoW/2));
+			y = -(row*(imgIsoH/2))+(col*(imgIsoH/2)) -layer*imgIsoH ;
+			break;
+		case SOUTH : 
+			x = +((row*(imgIsoW/2)))-(col*(imgIsoW/2));
+			y = -(row*(imgIsoH/2))-(col*(imgIsoH/2)) -layer*imgIsoH ;
+			break;
+		}
+
+
 		return new Vector(x, y);
 
 	}
@@ -95,11 +113,11 @@ public class RenderUtil {
 	static void setImgDimensions(int imgW, int imgH){
 		imgIsoW = imgW;
 		imgIsoH = imgH;
-	
-		
+
+
 	}
-	
-	
+
+
 	/**
 	 * Sets the Camera the Renderer will use to decide which orientation to 
 	 * render from, this must be set before the world is rendered.
@@ -108,51 +126,51 @@ public class RenderUtil {
 	public static void setCamera(Camera c){
 		camera = c;
 	}
-	
+
 	public static boolean isObscured(Player player, World world){
 		Layer[] layers = world.getLayers();
 		int x = player.getCurrentTile().getRow();
 		int y = player.getCurrentTile().getCol();
 		int layerNum = player.getCurrentLayer().getLayerNumber();
-		
+
 		if(layers.length-1 == layerNum){
 			return false;
 		}
 		Layer next = layers[layerNum];
 		Tile[][] tiles = next.getTiles();
-		
-		
+
+
 		int range = 3;
 		int xStart = x-1;
 		int yStart = y-1;
 		int xRange = range;
 		int yRange = range;
-		
+
 		if(x >= tiles[0].length){
 			xRange -= range/2;
 		}
 		if(y >= tiles.length){
 			yRange -= range/2;
 		}
-		
+
 		if(x < 0){
 			xRange -= range/2;
 		}
 		if(y >= tiles.length){
 			yRange -= range/2;
 		}
-		
-		
+
+
 		for(int col = yStart-yRange/2; col < yStart+yRange/2; col++){
 			for(int row = xStart-xRange/2; row < xStart+xRange/2; row++){
 				if(tiles[col][row].getImageID() != 2){
 					return true;
 				}
-				
+
 			}
 		}
-		
-		
+
+
 		return false;
 	}
 }

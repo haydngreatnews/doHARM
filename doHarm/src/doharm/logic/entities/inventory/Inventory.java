@@ -12,6 +12,7 @@ public class Inventory implements ItemContainer
 	
 	private Item[] slots;
 	private Stash stash;
+	private Belt belt;
 	
 	
 
@@ -34,14 +35,23 @@ public class Inventory implements ItemContainer
 	public boolean pickup(Item item)
 	{
 		//First check if can add to a slot.
-		
+		boolean pickedup = false;
 		if (item.getItemType() == ItemType.WEARABLE)
 		{
 			addItemToSlot((WearableItem)item);
-			return true;
+			pickedup = true;
 		}
 		
-		return stash.pickup(item);
+		if (!pickedup)
+			pickedup = stash.pickup(item);
+		
+		
+		if (pickedup)
+		{
+			item.setOnGround(false);
+		}
+		
+		return pickedup;
 	}
 
 	

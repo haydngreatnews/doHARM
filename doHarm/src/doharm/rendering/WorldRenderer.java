@@ -16,6 +16,7 @@ import doharm.logic.camera.Camera;
 import doharm.logic.entities.characters.players.HumanPlayer;
 import doharm.logic.entities.characters.players.Player;
 import doharm.logic.entities.characters.players.PlayerType;
+import doharm.logic.entities.items.Item;
 
 import doharm.logic.maths.MathUtils;
 
@@ -38,9 +39,9 @@ public class WorldRenderer
 	private Graphics2D pickGraphics;
 
 	private Dimension canvasSize;
-	
+
 	private final int numShades = 100;
-	
+
 	private BufferedImage[] shades;
 
 	private BufferedImage[] floorImages;
@@ -53,6 +54,7 @@ public class WorldRenderer
 	private AbstractGame game;
 
 	private PlayerRenderer playerRenderer;
+	private ItemRenderer itemRenderer;
 
 
 
@@ -66,16 +68,17 @@ public class WorldRenderer
 	{
 		this.game = game;
 		playerRenderer = new PlayerRenderer(game);
+		itemRenderer = new ItemRenderer(game);
 		canvasSize = new Dimension();
 		transform = new AffineTransform();
 
 		newLoadTileSets();
 		RenderUtil.setImgDimensions(fTileW, fTileH);
-		
+
 		createTransparentImages();
 		generateShadowTiles();
-		
-//		System.out.println("Wall tile width:"+ wTileW+ "    wall tile height: "+wTileH);
+
+		//		System.out.println("Wall tile width:"+ wTileW+ "    wall tile height: "+wTileH);
 
 
 	}
@@ -151,23 +154,23 @@ public class WorldRenderer
 		//		graphics.drawImage(pickImage, 0, 0, null);
 		//		graphics.setComposite(old);
 		//////////////////////////////////////////////////////////////////////////////////////////
-		
-		
+
+
 		transform.setToIdentity();
 		graphics.setTransform(transform);
-		
+
 		graphics.setColor(Color.white);
 		graphics.drawString("Direction: " + camera.getDirection().toString(), 10, 10);
 		graphics.drawString("Year: " + time.getYear() + ", Month: " + time.getMonth()+", Day: " + time.getDay(), 10, 30);
 		graphics.drawString("Time: " + (int)(time.getTimeOfDay()/1000) + " ("+time.getDayType().toString()+")", 10, 50);
 		graphics.drawString("Light: " + MathUtils.toDP(time.getLight(),2), 10, 70);
 		graphics.drawString("Weather: " + weather.getWeatherType().toString() + "("+MathUtils.toDP(weather.getConditions(),2)+")", 10, 90);
-	
+
 		if (!humanPlayer.isAlive())
 		{
 			graphics.drawString("Respawning in " + humanPlayer.getTimeTillSpawn()/1000 +"s...", 10, 110);
 		}
-		
+
 	}
 
 	public int getPickColourAt(int mouseX, int mouseY)
@@ -196,9 +199,9 @@ public class WorldRenderer
 					break;
 				}
 			}
-			
-			
-			
+
+
+
 			//TODO this must be changed when camera views are implemented.
 			//if(tile above the player with respect to the isometric view, 
 			//ie. the tile(s) obscuring view of the player, is not an invisible tile, make this entire layer transparent.
@@ -206,17 +209,18 @@ public class WorldRenderer
 
 
 
-//			if(isTransparent)
-//				drawTiles(tiles, layerCount, floorImagesTrans, wallImagesTrans);
-//			else
+			//			if(isTransparent)
+			//				drawTiles(tiles, layerCount, floorImagesTrans, wallImagesTrans);
+			//			else
 
 			if(isTransparent)
 				drawTiles(tiles, layerCount, floorImagesTrans, wallImagesTrans);
 			else
+				drawTiles(tiles, layerCount, floorImages, wallImages);
 
 
-			
-			
+
+
 			//TODO
 			//Draw players on this layer
 
@@ -225,31 +229,48 @@ public class WorldRenderer
 					playerRenderer.redrawPlayer(player,graphics, fTileW, fTileH);
 				}
 			}
+			
+			//TODO
+			//Draw items on this layer
+			for (Item item: world.getItemFactory().getEntities()){
+				if (!item.isOnGround())
+					continue;
+				
+				if(layerCount == item.getCurrentLayer().getLayerNumber()){
+					itemRenderer.redrawPlayer(item,graphics, fTileW, fTileH);
+				}
+			}
 
 		}
-		
+
 		for (Player player: world.getPlayerFactory().getEntities())
 		{
 			playerRenderer.drawInfo(player,graphics, fTileW, fTileH);
 		}
 
 	}
-	
+
 	private void drawTiles(Tile[][] tiles, int layerCount, BufferedImage[] FI, BufferedImage[] WI){
 		graphics.setColor(new Color(1,0,1,0.4f));
-		for(int row = 0; row < tiles.length; row++){
+		int row = 0;
+		int col = 0;
+		int rowConstranint = 0;
+		int colConstranint = 0;
 
-			for(int col = 0; col < tiles[row].length; col++){
+
+		for(row = 0; row < tiles.length; row++){
+
+			for(col = 0; col < tiles[row].length; col++){
 				Tile tile = tiles[row][col];
 
 				BufferedImage image = FI[tile.getImageID()];
 
 
-				Vector vector = RenderUtil.convertCoordsToIso(col, row, layerCount);
-				int x = vector.getXAsInt() - fTileW/2; //fTileW/2 added PLEASE leave in here
+				Vector vector = RenderUtil.convertCoordsToIso(col, row, layerCount, game.getCamera());
+				int x = vector.getXAsInt() - fTileW/2; //fTileW/2 added PLEASE leave in here   .... ok  ._.
 				int y = vector.getYAsInt() - fTileH/2; //fTileH/2 added PLEASE leave in here
 				graphics.drawImage(image,x,y, null);
-				
+
 				if(tile.isVisible()) graphics.drawImage(shades[(int)(tile.getLight()*(numShades-1))],x,y, null);
 
 
@@ -272,10 +293,24 @@ public class WorldRenderer
 				}
 
 			}
+
+			switch(game.getCamera().getDirection()){
+
+
+
+			}
 		}
-		
 
 	}
+	private boolean checkRowCon(){
+		return false;
+	}
+	private boolean checkColCon(){
+		
+		return false;
+		
+	}
+	
 
 	private void createTransparentImages(){
 
@@ -288,7 +323,7 @@ public class WorldRenderer
 			transparentGraphics.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.1f));
 			transparentGraphics.drawImage(img, 0,0,null);
 			floorImagesTrans[count++] = transparentImage;
-			
+
 		}
 
 		count = 0;
@@ -299,35 +334,19 @@ public class WorldRenderer
 			transparentGraphics.drawImage(img, 0,0,null);
 			wallImagesTrans[count++] = transparentImage;
 		}
-		
-		
-		
-		
-		
-//			Composite old = backbufferGraphics.getComposite();
-//			backbufferGraphics.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.1f));
-//			backbufferGraphics.drawImage(boardImage, 0, 0,boardImage.getWidth(),boardImage.getHeight(),null);	
-//			backbufferGraphics.setComposite(old);
-//			drawBoard();
-//			backbufferGraphics.setComposite(old);
-//	
-
-
-
-
 
 	}
 
 	private void generateShadowTiles(){
-		
+
 		shades = new BufferedImage[numShades];
-		
+
 		for (int i = 0; i < numShades; i++){
 			float alpha = 1 - (float) i / numShades;
 			shades[i] = RenderUtil.generateIsoImage(new Color(0,0,0,alpha),fTileW,fTileH);
 		}
 	}
-	
+
 
 	private void newLoadTileSets(){
 		World world = game.getWorld();

@@ -16,4 +16,10 @@ public class DragonBall extends MiscItem
 		return star;
 	}
 	
+	@Override
+	public String toString()
+	{
+		return star +" star dragonball";
+	}
+	
 }

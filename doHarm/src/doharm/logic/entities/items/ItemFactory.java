@@ -7,6 +7,7 @@ import doharm.logic.entities.inventory.ItemContainer;
 import doharm.logic.entities.items.misc.DragonBall;
 import doharm.logic.entities.items.misc.MiscItemType;
 import doharm.logic.world.World;
+import doharm.logic.world.tiles.Tile;
 
 public class ItemFactory extends AbstractEntityFactory<Item>
 {
@@ -43,6 +44,17 @@ public class ItemFactory extends AbstractEntityFactory<Item>
 		}
 		
 		
+		
+		item.setQuality(quality);
+		
+		container.pickup(item);
+		if (container instanceof Tile)
+		{
+			item.spawn((Tile)container);
+		}
+		
+		
+		
 		addEntity(item, id,fromNetwork);
 		return item;
 	}
@@ -58,6 +70,7 @@ public class ItemFactory extends AbstractEntityFactory<Item>
 			break;
 		case DRAGONBALL:	
 			item = new DragonBall(dragonBallStar);
+			item.setUnique(true);
 			
 			dragonRadar.add((DragonBall)item);
 			break;

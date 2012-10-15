@@ -47,6 +47,11 @@ public abstract class AbstractEntity
 		reset();
 	}
 	
+	public void setSize(Dimension size)
+	{
+		this.size = size;
+	}
+	
 	public boolean fromNetwork()
 	{
 		return fromNetwork;

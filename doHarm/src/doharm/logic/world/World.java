@@ -107,7 +107,7 @@ public class World
 		
 		
 		//TEST STUFF TODO REMOVE
-		humanPlayer = (HumanPlayer)playerFactory.createPlayer(layers[0].getTiles()[5][5],"Test player",CharacterClassType.WARRIOR, 0,PlayerType.HUMAN,Color.white,false);
+		humanPlayer = (HumanPlayer)playerFactory.createPlayer(layers[0].getTiles()[5][5],"Test player",CharacterClassType.WARRIOR, idManager.takeID(),PlayerType.HUMAN,Color.white,false);
 		
 		
 		
@@ -125,7 +125,7 @@ public class World
 			} while(!tile.isWalkable());
 			
 			
-			playerFactory.createPlayer(tile, "AI"+(i+1), CharacterClassType.WARRIOR, i+1,PlayerType.AI, new Color((i+102)*10213%255,(i+102)*223%255,(i+23)*1013%255),false);
+			playerFactory.createPlayer(tile, "AI"+(i+1), CharacterClassType.WARRIOR, idManager.takeID(),PlayerType.AI, new Color((i+102)*10213%255,(i+102)*223%255,(i+23)*1013%255),false);
 			
 		}
 		
@@ -166,7 +166,7 @@ public class World
 	{
 		for (int i = 0; i < 7; i++)
 		{
-			itemFactory.setDragonBallStar(i);
+			itemFactory.setDragonBallStar(i+1);
 			Tile tile = getRandomEmptyTile();
 			itemFactory.createItem(ItemType.MISC, MiscItemType.DRAGONBALL.ordinal(), ItemQuality.LEGENDARY, idManager.takeID(), tile, false);
 		}
