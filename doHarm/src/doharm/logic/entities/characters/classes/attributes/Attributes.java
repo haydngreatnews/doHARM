@@ -152,7 +152,19 @@ public class Attributes
 		this.vitality = vitality;
 	}
 
-	
+	public int getAttr(AttributePointType t){
+		switch(t){
+		case DEXTERITY:
+			return getDexterity();
+		case INTELLIGENCE:
+			return getIntelligence();
+		case STRENGTH:
+			return getStrength();
+		case VITALITY:
+			return getVitality();
+		}
+		throw new UnsupportedOperationException("The enum type "+t.toString()+" is not yet supported");
+	}
 
 	
 

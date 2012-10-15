@@ -3,7 +3,7 @@ package doharm.gui.input;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import doharm.gui.view.CharacterSelect;
+import doharm.gui.view.StartGameMenu;
 import doharm.gui.view.MainWindow;
 import doharm.gui.view.PictureButton;
 
@@ -31,7 +31,7 @@ public class MenuButtonListener implements ActionListener {
 		if (action.equals("runserver")){
 			//TODO:Start a server
 		} else if (action.equals("join")){
-			new CharacterSelect(parent);
+			new StartGameMenu(parent);
 		} else if (action.equals("resume")){
 			parent.toggleMenu();
 		}  else if (action.equals("quit")){

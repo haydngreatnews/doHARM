@@ -42,14 +42,16 @@ public class WorldRenderer
 
 	private final int numShades = 100;
 
-	private BufferedImage[] shades;
-
+	private BufferedImage[] floorShades;
+	private BufferedImage[] wallShades;
+	
 	private BufferedImage[] floorImages;
 	private BufferedImage[] wallImages;
 
 	private BufferedImage[] floorImagesTrans;//transparent versions of flootImages and wallImages.
 	private BufferedImage[] wallImagesTrans;
-
+	
+	
 	private AffineTransform transform;
 	private AbstractGame game;
 
@@ -64,8 +66,18 @@ public class WorldRenderer
 	private int wTileW;
 	private  int wTileH;
 
-	public WorldRenderer(AbstractGame game)
-	{
+
+
+	private int rowC;
+	private int colC;
+
+
+	public WorldRenderer(AbstractGame game){
+
+		rowC = 0;
+		colC = 0;
+
+
 		this.game = game;
 		playerRenderer = new PlayerRenderer(game);
 		itemRenderer = new ItemRenderer(game);
@@ -77,8 +89,6 @@ public class WorldRenderer
 
 		createTransparentImages();
 		generateShadowTiles();
-
-		//		System.out.println("Wall tile width:"+ wTileW+ "    wall tile height: "+wTileH);
 
 
 	}
@@ -187,61 +197,63 @@ public class WorldRenderer
 	private void renderWorldIso(){
 		World world = game.getWorld();
 		boolean isTransparent = false;
+		boolean drawLayer = true;
 		Layer[] layers = world.getLayers();
-		for(int layerCount = 0; layerCount < layers.length; layerCount++){
+		if(drawLayer)
+			for(int layerCount = 0; layerCount < layers.length; layerCount++){
 
 
-			Tile[][] tiles = layers[layerCount].getTiles();
-			isTransparent = false;
-			for (Player player: world.getPlayerFactory().getEntities()){
-				if(player.getPlayerType() == PlayerType.HUMAN &&  RenderUtil.isObscured(player, world)){
-					isTransparent = true;
-					break;
+				Tile[][] tiles = layers[layerCount].getTiles();
+
+
+
+
+
+				//TODO this must be changed when camera views are implemented.
+				//if(tile above the player with respect to the isometric view, 
+				//ie. the tile(s) obscuring view of the player, is not an invisible tile, make this entire layer transparent.
+				//and dont draw any subsequent layers.
+
+
+
+				if(isTransparent){
+					drawTiles(tiles, layerCount, floorImagesTrans, wallImagesTrans);
+					drawLayer = false;
 				}
-			}
-
-
-
-			//TODO this must be changed when camera views are implemented.
-			//if(tile above the player with respect to the isometric view, 
-			//ie. the tile(s) obscuring view of the player, is not an invisible tile, make this entire layer transparent.
-			//and dont draw any subsequent layers.
-
-
-
-			//			if(isTransparent)
-			//				drawTiles(tiles, layerCount, floorImagesTrans, wallImagesTrans);
-			//			else
-
-			if(isTransparent)
-				drawTiles(tiles, layerCount, floorImagesTrans, wallImagesTrans);
-			else
-				drawTiles(tiles, layerCount, floorImages, wallImages);
-
-
-
-
-			//TODO
-			//Draw players on this layer
-
-			for (Player player: world.getPlayerFactory().getEntities()){
-				if(layerCount == player.getCurrentLayer().getLayerNumber()){
-					playerRenderer.redrawPlayer(player,graphics, fTileW, fTileH);
+				else{
+					drawTiles(tiles, layerCount, floorImages, wallImages);
 				}
-			}
-			
-			//TODO
-			//Draw items on this layer
-			for (Item item: world.getItemFactory().getEntities()){
-				if (!item.isOnGround())
-					continue;
-				
-				if(layerCount == item.getCurrentLayer().getLayerNumber()){
-					itemRenderer.redrawPlayer(item,graphics, fTileW, fTileH);
-				}
-			}
 
-		}
+
+
+
+				//TODO
+				//Draw players on this layer
+
+				for (Player player: world.getPlayerFactory().getEntities()){
+					if(layerCount == player.getCurrentLayer().getLayerNumber()){
+						playerRenderer.redrawPlayer(player,graphics, fTileW, fTileH);
+					}
+				}
+
+				//TODO
+				//Draw items on this layer
+				for (Item item: world.getItemFactory().getEntities()){
+					if (!item.isOnGround())
+						continue;
+
+					if(layerCount == item.getCurrentLayer().getLayerNumber()){
+						itemRenderer.redrawPlayer(item,graphics, fTileW, fTileH);
+					}
+				}
+				for (Player player: world.getPlayerFactory().getEntities()){
+					if(player.getPlayerType() == PlayerType.HUMAN &&  RenderUtil.isObscured(player, world)){
+						isTransparent = true;
+						break;
+					}
+				}
+
+			}
 
 		for (Player player: world.getPlayerFactory().getEntities())
 		{
@@ -252,26 +264,30 @@ public class WorldRenderer
 
 	private void drawTiles(Tile[][] tiles, int layerCount, BufferedImage[] FI, BufferedImage[] WI){
 		graphics.setColor(new Color(1,0,1,0.4f));
-		int row = 0;
-		int col = 0;
-		int rowConstranint = 0;
-		int colConstranint = 0;
 
 
-		for(row = 0; row < tiles.length; row++){
+		switch(game.getCamera().getDirection()){
+		case NORTH : rowC = -1; colC = -1; break;
+		case EAST : rowC = -1; colC = tiles[0].length; break;
+		case SOUTH : rowC = tiles.length; colC = tiles[0].length; break;
+		case WEST : rowC = tiles.length; colC = -1; break;
+		}
 
-			for(col = 0; col < tiles[row].length; col++){
-				Tile tile = tiles[row][col];
+
+		while(checkRowCon(tiles)){
+
+			while(checkColCon(tiles)){
+				Tile tile = tiles[rowC][colC];
 
 				BufferedImage image = FI[tile.getImageID()];
 
 
-				Vector vector = RenderUtil.convertCoordsToIso(col, row, layerCount, game.getCamera());
+				Vector vector = RenderUtil.convertCoordsToIso(colC, rowC, layerCount, game.getCamera());
 				int x = vector.getXAsInt() - fTileW/2; //fTileW/2 added PLEASE leave in here   .... ok  ._.
 				int y = vector.getYAsInt() - fTileH/2; //fTileH/2 added PLEASE leave in here
 				graphics.drawImage(image,x,y, null);
 
-				if(tile.isVisible()) graphics.drawImage(shades[(int)(tile.getLight()*(numShades-1))],x,y, null);
+				if(tile.isVisible()) graphics.drawImage(floorShades[(int)(tile.getLight()*(numShades-1))],x,y, null);
 
 
 				if(tile.isWalkable() && layerCount==0){
@@ -293,24 +309,40 @@ public class WorldRenderer
 				}
 
 			}
-
 			switch(game.getCamera().getDirection()){
-
-
-
+			case NORTH :colC = -1; break;
+			case EAST :colC = tiles[0].length; break;
+			case SOUTH : colC = tiles[0].length; break;
+			case WEST : colC = -1; break;
 			}
+
 		}
 
 	}
-	private boolean checkRowCon(){
+	private boolean checkRowCon(Tile[][] tiles){
+		switch(game.getCamera().getDirection()){
+
+		case NORTH : rowC++; return rowC < tiles.length;
+		case EAST : rowC++; return rowC < tiles.length;
+		case SOUTH : rowC--; return rowC >= 0;
+		case WEST : rowC--; return rowC >= 0;
+
+		}
 		return false;
 	}
-	private boolean checkColCon(){
-		
+	private boolean checkColCon(Tile[][] tiles){
+		switch(game.getCamera().getDirection()){
+
+		case NORTH : colC++; return colC < tiles[0].length;
+		case EAST : colC--; return colC >= 0;
+		case SOUTH : colC--; return colC >= 0;
+		case WEST : colC++; return colC < tiles[0].length;
+
+		}
 		return false;
-		
+
 	}
-	
+
 
 	private void createTransparentImages(){
 
@@ -339,11 +371,14 @@ public class WorldRenderer
 
 	private void generateShadowTiles(){
 
-		shades = new BufferedImage[numShades];
-
+		floorShades = new BufferedImage[numShades];
+		int wallC = 0;
 		for (int i = 0; i < numShades; i++){
 			float alpha = 1 - (float) i / numShades;
-			shades[i] = RenderUtil.generateIsoImage(new Color(0,0,0,alpha),fTileW,fTileH);
+			floorShades[i] = RenderUtil.generateIsoImage(new Color(0,0,0,alpha),fTileW,fTileH);
+			wallShades[wallC++] = RenderUtil.generateLeftWallImage(new Color(0,0,0,alpha),fTileW,fTileH);
+			wallShades[wallC++] = RenderUtil.generateRightWallImage(new Color(0,0,0,alpha),fTileW,fTileH);
+			
 		}
 	}
 

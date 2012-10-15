@@ -24,8 +24,8 @@ public class ManaBar extends JPanel {
 		g.setColor(Color.BLUE.darker());
 		g.drawRect(0, 0, getWidth()-1, getHeight()-1);
 		g.setColor(Color.BLUE.darker());
-		g.fillRect(0, 0, (int) (getWidth()*player.getMana()), getHeight());
+		g.fillRect(0, 0, (int) (getWidth()*player.getManaRatio()), getHeight());
 		g.setColor(Color.WHITE);
-		g.drawString("MANA", 2, getHeight()/4*3);
+		g.drawString("MANA    "+(int)player.getMana()+"/"+(int)player.getMaxMana(), 2, getHeight()/4*3);
 	}
 }
