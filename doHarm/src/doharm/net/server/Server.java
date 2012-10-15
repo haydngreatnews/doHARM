@@ -12,6 +12,7 @@ import doharm.logic.entities.AbstractEntity;
 import doharm.logic.entities.characters.players.HumanPlayer;
 import doharm.logic.entities.characters.players.Player;
 import doharm.logic.entities.characters.players.PlayerType;
+import doharm.logic.entities.items.Item;
 import doharm.logic.world.World;
 import doharm.net.ClientState;
 import doharm.net.UDPReceiver;
@@ -24,6 +25,7 @@ import doharm.net.packets.entityinfo.CharacterCreate;
 import doharm.net.packets.entityinfo.CharacterUpdate;
 import doharm.net.packets.entityinfo.EntityCreate;
 import doharm.net.packets.entityinfo.EntityUpdate;
+import doharm.net.packets.entityinfo.ItemCreate;
 
 public class Server {
 
@@ -154,9 +156,13 @@ public class Server {
 		// Created Entities.
 		for (AbstractEntity e : world.getEntityFactory().getAddedEntities() )
 		{
-			if (e instanceof HumanPlayer)
+			if (e instanceof Player)
 			{
-				entityCreates.put(e.getID(), new CharacterCreate((HumanPlayer)e));	// TODO
+				entityCreates.put(e.getID(), new CharacterCreate((Player)e));	// TODO
+			}
+			else if (e instanceof Item)
+			{
+				entityCreates.put(e.getID(), new ItemCreate((Item)e));
 			}
 		}
 		world.getEntityFactory().clearAddedEntities();
@@ -164,9 +170,9 @@ public class Server {
 		// Updated Entities (presently is just ALL entities)
 		for (AbstractEntity e : world.getEntityFactory().getEntities() )
 		{
-			if (e instanceof HumanPlayer)
+			if (e instanceof Player)
 			{
-				entityUpdates.put(e.getID(), new CharacterUpdate((HumanPlayer)e));	// TODO
+				entityUpdates.put(e.getID(), new CharacterUpdate((Player)e));	// TODO
 			}
 		}
 		
