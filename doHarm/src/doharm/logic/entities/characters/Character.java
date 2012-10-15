@@ -37,13 +37,12 @@ public abstract class Character extends AbstractEntity
 	private CharacterState state;
 	private long spawnTime;
 	private Character attackedBy;
+	private CharacterType characterType;
 	
-	
-	
-	
-	protected Character() 
+	protected Character(CharacterType characterType) 
 	{
 		super(EntityType.CHARACTER);
+		this.characterType = characterType;
 		inventory = new Inventory();
 		
 	}
@@ -284,5 +283,14 @@ public abstract class Character extends AbstractEntity
 		return Math.max((int)(spawnTime - System.currentTimeMillis()),0);
 	}
 
+	public boolean isHumanPlayer() 
+	{
+		return this == getWorld().getHumanPlayer();
+	}
+
+	public CharacterType getCharacterType()
+	{
+		return characterType;
+	}
 	
 }

@@ -24,14 +24,17 @@ public abstract class Item extends AbstractEntity
 {
 	private Attributes minimumAttributes;
 	
+	private ItemQuality quality;
 	private Dimension stashSize; 
 	private ItemImage inventoryImage;
 	private ItemImage droppedImage;
 	private ItemImage holdingImage;
 	
+	
 	private ItemType itemType;
 
 	private boolean onGround;
+	private boolean unique;
 	
 	public boolean canUse(Character character)
 	{
@@ -44,6 +47,7 @@ public abstract class Item extends AbstractEntity
 		this.itemType = type;
 		setSize(new Dimension(6,6));
 		onGround = false;
+		stashSize = new Dimension(1, 1);
 	}
 	
 	@Override
@@ -53,6 +57,20 @@ public abstract class Item extends AbstractEntity
 		onGround = true;
 	}
 	
+	@Override 
+	public String toString()
+	{
+		return "Item["+itemType.toString()+"]";
+	}
+	
+	public boolean isUnique()
+	{
+		return unique;
+	}
+	public void setUnique(boolean unique)
+	{
+		this.unique = unique;
+	}
 	
 	public ItemType getItemType()
 	{
@@ -103,13 +121,23 @@ public abstract class Item extends AbstractEntity
 		this.itemType = itemType;
 	}
 
-	public boolean onGround() 
+	public boolean isOnGround() 
 	{
 		return onGround;
 	}
 	public void setOnGround(boolean onGround)
 	{
 		this.onGround = onGround;
+	}
+
+	public ItemQuality getQuality() 
+	{
+		return quality;
+	}
+
+	public void setQuality(ItemQuality quality) 
+	{
+		this.quality = quality;
 	}
 	
 	

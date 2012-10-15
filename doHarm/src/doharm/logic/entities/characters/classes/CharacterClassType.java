@@ -4,7 +4,12 @@ public enum CharacterClassType
 {
 	WIZARD, WARRIOR, RANGER, //Player classes
 	
-	//, //Monster classes TODO
+	TROLL, DRAGON; //, //Monster classes TODO
 
 	
+	
+	public CharacterClassType getLastPlayerClass()
+	{
+		return RANGER;
+	}
 }

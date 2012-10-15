@@ -38,7 +38,7 @@ public class ItemRenderer {
 
 
 		//TODO get item colour or image
-		graphics.setColor(Color.CYAN);
+		graphics.setColor(item.getQuality().getColour());
 
 		Vector v = RenderUtil.convertCoordsToIso(col, row, item.getCurrentLayer().getLayerNumber(), game.getCamera());
 
