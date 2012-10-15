@@ -4,26 +4,16 @@ import java.awt.Color;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.net.SocketAddress;
 import java.net.SocketException;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Queue;
-
 import doharm.logic.entities.AbstractEntity;
 import doharm.logic.entities.EntityFactory;
 import doharm.logic.entities.characters.classes.CharacterClassType;
-import doharm.logic.entities.characters.players.PlayerType;
+import doharm.logic.entities.characters.players.Player;
 import doharm.logic.world.World;
-import doharm.net.ClientState;
 import doharm.net.UDPReceiver;
-import doharm.net.packets.Bytes;
-import doharm.net.packets.ClientPacket;
 import doharm.net.packets.Action;
 import doharm.net.packets.Join;
 import doharm.net.packets.ServerPacket;
@@ -285,12 +275,14 @@ public class Client {
 			if (u instanceof CharacterUpdate)
 			{
 				CharacterUpdate cu = (CharacterUpdate) u;
+				Player p = (Player) e;
 
 				if (u.id == world.getHumanPlayer().getID())		// if this is our player, don't bother with it (for now. TODO)
 					break;					
 
-				e.setPosition(cu.posX, cu.posY, world.getLayer(cu.layer));
-				e.setAngle(cu.angle);
+				p.setPosition(cu.posX, cu.posY, world.getLayer(cu.layer));
+				p.setAngle(cu.angle);
+				p.setHealth(cu.health);				
 			}
 		}
 

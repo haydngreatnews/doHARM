@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
-import java.net.SocketAddress;
 import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,6 +12,7 @@ import doharm.logic.entities.AbstractEntity;
 import doharm.logic.entities.characters.players.HumanPlayer;
 import doharm.logic.entities.characters.players.Player;
 import doharm.logic.entities.characters.players.PlayerType;
+import doharm.logic.entities.items.Item;
 import doharm.logic.world.World;
 import doharm.net.ClientState;
 import doharm.net.UDPReceiver;
@@ -24,8 +24,8 @@ import doharm.net.packets.Snapshot;
 import doharm.net.packets.entityinfo.CharacterCreate;
 import doharm.net.packets.entityinfo.CharacterUpdate;
 import doharm.net.packets.entityinfo.EntityCreate;
-import doharm.net.packets.entityinfo.EntityInfo;
 import doharm.net.packets.entityinfo.EntityUpdate;
+import doharm.net.packets.entityinfo.ItemCreate;
 
 public class Server {
 
@@ -156,9 +156,13 @@ public class Server {
 		// Created Entities.
 		for (AbstractEntity e : world.getEntityFactory().getAddedEntities() )
 		{
-			if (e instanceof HumanPlayer)
+			if (e instanceof Player)
 			{
-				entityCreates.put(e.getID(), new CharacterCreate((HumanPlayer)e));	// TODO
+				entityCreates.put(e.getID(), new CharacterCreate((Player)e));	// TODO
+			}
+			else if (e instanceof Item)
+			{
+				entityCreates.put(e.getID(), new ItemCreate((Item)e));
 			}
 		}
 		world.getEntityFactory().clearAddedEntities();
@@ -166,9 +170,9 @@ public class Server {
 		// Updated Entities (presently is just ALL entities)
 		for (AbstractEntity e : world.getEntityFactory().getEntities() )
 		{
-			if (e instanceof HumanPlayer)
+			if (e instanceof Player)
 			{
-				entityUpdates.put(e.getID(), new CharacterUpdate((HumanPlayer)e));	// TODO
+				entityUpdates.put(e.getID(), new CharacterUpdate((Player)e));	// TODO
 			}
 		}
 		
@@ -182,7 +186,7 @@ public class Server {
 		{
 			if (c.getState() == ClientState.INGAME)
 			{
-				buildSnapshot(c, new Snapshot(serverTime, c.latestActionPacket.seqNum, c.getPlayerEntity()), entityUpdates, entityCreates, entityDeletes);
+				buildSnapshot(c, new Snapshot(serverTime, c.latestActionPacket.seqNum, world), entityUpdates, entityCreates, entityDeletes);
 				
 				// build transmission snap and send
 				transmit( c.buildTransmissionSnapshot().convertToBytes() , c.getAddress() );
@@ -192,13 +196,13 @@ public class Server {
 				if (c.resendGamestate())
 					sendGamestate(c);
 				else
-					buildSnapshot(c, new Snapshot(serverTime, -1, null), entityUpdates, entityCreates, entityDeletes);
+					buildSnapshot(c, new Snapshot(serverTime, -1, world), entityUpdates, entityCreates, entityDeletes);
 			}
 		}
 	}
 	
 	/**
-	 * Builds a snapshot for .
+	 * Adds entity deletes, creates and updates to a Snapshot, and then adds it to the clients snap buffer.
 	 * @param client
 	 * @param snap Freshly constructed snapshot (does not include entity info)
 	 * @param entityUpdates
@@ -227,7 +231,7 @@ public class Server {
 	{
 		client.flushSnaps();
 		
-		Snapshot gamestate = new Gamestate(serverTime);
+		Snapshot gamestate = new Gamestate(serverTime, -1, world);
 		
 		for (AbstractEntity e : world.getEntityFactory().getEntities() )
 		{

@@ -2,8 +2,6 @@ package doharm.net.packets.entityinfo;
 
 import java.nio.ByteBuffer;
 
-import doharm.net.packets.Bytes;
-
 /** Holds changes in entity state */
 abstract public class EntityInfo
 {

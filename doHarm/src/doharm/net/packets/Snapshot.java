@@ -7,31 +7,31 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
-import doharm.logic.entities.characters.players.HumanPlayer;
-import doharm.logic.entities.characters.players.Player;
-import doharm.net.packets.entityinfo.CharacterCreate;
-import doharm.net.packets.entityinfo.CharacterUpdate;
+import doharm.logic.world.World;
 import doharm.net.packets.entityinfo.EntityCreate;
 import doharm.net.packets.entityinfo.EntityUpdate;
 
-/** Struct representing a Server Snapshot, which is then converted into a packet to send over the wire. */
+/**
+ * Struct representing a Server Snapshot, which is then converted into a packet to send over the wire.
+ * @author Adam McLaren (300248714)
+ */
 public class Snapshot extends Update {
 
 	public final int serverTime;
 	public final int seqAckd;
-	public final PlayerState pState;
+	public final float weather;
+	public final float timeOfDay;
+	private PlayerState pState = null;
 	private final HashMap<Integer,EntityUpdate> entityUpdates = new HashMap<Integer,EntityUpdate>();
 	private final HashMap<Integer,EntityCreate> entityCreates = new HashMap<Integer,EntityCreate>();
 	private final ArrayList<Integer> entityDeletes = new ArrayList<Integer>();
 	
-	public Snapshot(int serverTime, int seqAckd, Player player)
+	public Snapshot(int serverTime, int seqAckd, World world)
 	{
 		this.serverTime = serverTime;
 		this.seqAckd = seqAckd;
-		if (player != null)
-			pState = new PlayerState(player);
-		else
-			pState = null;
+		this.weather = world.getWeather().getConditions();
+		this.timeOfDay = world.getTime().getTimeOfDay();
 	}
 	
 	/**
@@ -49,8 +49,12 @@ public class Snapshot extends Update {
 		
 		seqAckd = buff.getInt();
 		
+		weather = buff.getFloat();
+		
+		timeOfDay = buff.getFloat();
+		
 		// Read playerstate
-		pState = new PlayerState(buff);
+		pState = PlayerState.getPlayerState(buff);
 		
 		// Read deletes
 		int count = (int) buff.get();
@@ -76,11 +80,13 @@ public class Snapshot extends Update {
 		readCommands(buff);
 	}
 	
-	/** Creates a Snapshot that is a copy of the given snapshot */
+	/** Creates a Snapshot that is a copy of the given snapshot (minus Commands) */
 	public Snapshot(Snapshot other)
 	{
 		serverTime = other.serverTime;
 		seqAckd = other.seqAckd;
+		weather = other.weather;
+		timeOfDay = other.timeOfDay;
 		pState = other.pState;
 		entityDeletes.addAll(other.entityDeletes);
 		entityCreates.putAll(other.entityCreates);
@@ -102,6 +108,10 @@ public class Snapshot extends Update {
 			buff.write(Bytes.setInt(serverTime));	// Servertime
 			
 			buff.write(Bytes.setInt(seqAckd));	// SeqAckd 
+			
+			buff.write(Bytes.setFloat(weather));
+			
+			buff.write(Bytes.setFloat(timeOfDay));
 
 			if (entityDeletes.size() > 255)
 				throw new RuntimeException("Entity deletes was over the 255 limit!");
@@ -144,6 +154,14 @@ public class Snapshot extends Update {
 	public HashMap<Integer,EntityCreate> getECreates() { return (HashMap<Integer,EntityCreate>) Collections.unmodifiableMap(entityCreates); }
 	
 	public HashMap<Integer,EntityUpdate> getEUpdates() { return (HashMap<Integer,EntityUpdate>) Collections.unmodifiableMap(entityUpdates); }
+	
+	public PlayerState getPlayerState() { return pState; }
+	
+	public void setPlayerState(PlayerState state)
+	{
+		if (pState == null)
+			pState = state;
+	}
 
 	/**
 	 * Adds any fields that are in the given snapshot that are not present in this snapshot.

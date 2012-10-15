@@ -1,18 +1,17 @@
 package doharm.net.server;
 
-import java.awt.Color;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import doharm.logic.entities.characters.players.HumanPlayer;
 import doharm.logic.entities.characters.players.Player;
 import doharm.logic.world.World;
 import doharm.net.ClientState;
 import doharm.net.packets.Action;
-import doharm.net.packets.Join;
+import doharm.net.packets.PlayerState;
+import doharm.net.packets.PlayerStateFull;
 import doharm.net.packets.Snapshot;
 
 /**
@@ -26,7 +25,7 @@ public class ConnectedClient
 	private static int RESEND_DELAY;
 	private Player playerEntity;
 	private String name;
-	private Color colour;
+	private int lastFullPlayerState;	// Server time at which we created the latest FullPlayerState, so keep sending PlayerStateFull until it's been ack'd.
 	
 	// Last time we received a packet from this client.
 	private int latestTime;
@@ -43,7 +42,6 @@ public class ConnectedClient
 	{
 		this.playerEntity = player;
 		this.name = player.getName();
-		this.colour = player.getColour();
 		this.address = address;
 		state = ClientState.READY;
 	}
@@ -117,6 +115,12 @@ public class ConnectedClient
 		Iterator<Snapshot> iter = snapsBuffer.descendingIterator();
 		
 		Snapshot transSnap = new Snapshot(iter.next());	// will never be null, a snapshot was just added earlier in the thread of execution
+		
+		// if the latest full player state hasn't been ack'd send the full state.
+		if (lastFullPlayerState > latestActionPacket.serverTimeAckd)
+			transSnap.setPlayerState(new PlayerStateFull(playerEntity));
+		else
+			transSnap.setPlayerState(new PlayerState(playerEntity));
 		
 		while (iter.hasNext())
 			transSnap.addMissingEntities(iter.next());

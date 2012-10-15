@@ -6,9 +6,6 @@ import java.net.DatagramSocket;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import doharm.net.client.Client;
-import doharm.net.server.Server;
-
 /**
  * Thread for listening on a UDP Socket, adding packets to a queue.
  */

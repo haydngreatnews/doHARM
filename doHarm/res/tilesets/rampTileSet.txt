@@ -1,0 +1,4 @@
+rampTileSet.png
+31
+32
+standard 0 1 2 3

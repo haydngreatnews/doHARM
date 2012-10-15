@@ -1,31 +1,46 @@
 package doharm.net.packets;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 
-import doharm.logic.entities.characters.players.HumanPlayer;
+import doharm.logic.entities.characters.players.Player;
 
 /** Full PlayerState. Contains the Network ID of the Player and all attributes that only change on level up. */
 public class PlayerStateFull extends PlayerState {
 
 	/** Entity ID number for the current Player this client controls. */
-	public final int id;
-	public final float maxHealth;
+	public final float maxHealth, maxMana, maxRage;
 	
-	public PlayerStateFull(HumanPlayer player)
+	public PlayerStateFull(Player playerEntity)
 	{
-		super(player);
-		this.id = player.getID();
-		this.maxHealth = player.getMaxHealth();
+		super(playerEntity);
+		this.maxHealth = playerEntity.getMaxHealth();
+		this.maxMana = playerEntity.getMaxMana();
+		this.maxRage = playerEntity.getMaxRage();
 	}
 	
-	public PlayerStateFull(ByteBuffer buff) {
+	protected PlayerStateFull(ByteBuffer buff)
+	{
 		super(buff);
-		id = buff.getInt();
 		maxHealth = buff.getFloat();
+		maxMana = buff.getFloat();
+		maxRage = buff.getFloat();
 	}
 
 	public byte[] convertToBytes()
 	{
-		return null;
+		byte[] pState = super.convertToBytes();
+		pState[0] = (byte)2;	// 2 = Full Player State.
+		ByteArrayOutputStream buff = new ByteArrayOutputStream();
+		try
+		{
+			buff.write(pState);	// Copy the playerstate over into our new full playerstate array.
+			buff.write(Bytes.setFloat(maxHealth));
+			buff.write(Bytes.setFloat(maxMana));
+			buff.write(Bytes.setFloat(maxRage));
+		} catch (IOException e) { e.printStackTrace(); }
+		
+		return buff.toByteArray();
 	}
 }
