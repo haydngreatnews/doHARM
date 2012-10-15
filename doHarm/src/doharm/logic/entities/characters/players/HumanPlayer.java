@@ -59,6 +59,9 @@ public class HumanPlayer extends Player
 				if (!entity.isAlive())
 					continue;
 				
+				if (entity.getEntityType() == EntityType.ITEM && !((Item)entity).isOnGround())
+					continue;
+				
 				float distance = (float) Math.hypot(hoveringTile.getX()-entity.getX(), hoveringTile.getY()-entity.getY());
 				
 				float entitySize = (float)Math.hypot(entity.getSize().width, entity.getSize().height);
@@ -88,6 +91,10 @@ public class HumanPlayer extends Player
 					{
 						//show info about yourself TODO
 					}
+				}
+				else if (hoverEntity.getEntityType() == EntityType.ITEM)
+				{
+					mouseIcon = CharacterStateType.PICKUP;
 				}
 			}
 		}
@@ -136,9 +143,10 @@ public class HumanPlayer extends Player
 			break;
 		case ATTACK:
 			setState(new AttackState((Character)hoverEntity));
+			break;
 		case PICKUP:
 			setState(new PickupState((Item)hoverEntity));
-			
+			break;
 		}
 	}
 	

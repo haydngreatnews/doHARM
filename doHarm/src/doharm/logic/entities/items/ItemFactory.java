@@ -44,11 +44,16 @@ public class ItemFactory extends AbstractEntityFactory<Item>
 		}
 		
 		
+		
+		item.setQuality(quality);
+		
 		container.pickup(item);
 		if (container instanceof Tile)
 		{
 			item.spawn((Tile)container);
 		}
+		
+		
 		
 		addEntity(item, id,fromNetwork);
 		return item;
@@ -65,6 +70,7 @@ public class ItemFactory extends AbstractEntityFactory<Item>
 			break;
 		case DRAGONBALL:	
 			item = new DragonBall(dragonBallStar);
+			item.setUnique(true);
 			
 			dragonRadar.add((DragonBall)item);
 			break;

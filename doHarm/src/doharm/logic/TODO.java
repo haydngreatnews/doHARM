@@ -2,6 +2,7 @@ package doharm.logic;
 
 public class TODO {
 	/**
+	 * hasbelt
 	 * picking up items
 	 * attacking with projectiles
 	 * collision detection

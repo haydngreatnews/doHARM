@@ -65,6 +65,7 @@ public class Stash implements ItemContainer
 		}
 		
 		items[row][col] = item;
+		
 		return true;
 	}
 

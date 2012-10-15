@@ -4,6 +4,7 @@ package doharm.logic.entities.characters.players;
 import java.awt.Color;
 
 import doharm.logic.entities.characters.Character;
+import doharm.logic.entities.characters.CharacterType;
 
 public abstract class Player extends Character
 {
@@ -13,7 +14,7 @@ public abstract class Player extends Character
 	
 	protected Player(PlayerType playerType)
 	{
-		super();
+		super(CharacterType.PLAYER);
 		this.playerType = playerType;
 		
 	}

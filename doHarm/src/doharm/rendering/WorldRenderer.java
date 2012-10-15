@@ -241,7 +241,7 @@ public class WorldRenderer
 			//TODO
 			//Draw items on this layer
 			for (Item item: world.getItemFactory().getEntities()){
-				if (!item.onGround())
+				if (!item.isOnGround())
 					continue;
 
 				if(layerCount == item.getCurrentLayer().getLayerNumber()){

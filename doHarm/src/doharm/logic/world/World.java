@@ -166,7 +166,7 @@ public class World
 	{
 		for (int i = 0; i < 7; i++)
 		{
-			itemFactory.setDragonBallStar(i);
+			itemFactory.setDragonBallStar(i+1);
 			Tile tile = getRandomEmptyTile();
 			itemFactory.createItem(ItemType.MISC, MiscItemType.DRAGONBALL.ordinal(), ItemQuality.LEGENDARY, idManager.takeID(), tile, false);
 		}
