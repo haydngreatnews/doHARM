@@ -7,12 +7,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
-import doharm.logic.entities.characters.players.HumanPlayer;
-import doharm.logic.entities.characters.players.Player;
-import doharm.logic.time.Time;
 import doharm.logic.world.World;
-import doharm.net.packets.entityinfo.CharacterCreate;
-import doharm.net.packets.entityinfo.CharacterUpdate;
 import doharm.net.packets.entityinfo.EntityCreate;
 import doharm.net.packets.entityinfo.EntityUpdate;
 

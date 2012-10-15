@@ -4,7 +4,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
-import doharm.logic.entities.characters.players.Player;
 import doharm.logic.time.Time;
 import doharm.logic.world.World;
 

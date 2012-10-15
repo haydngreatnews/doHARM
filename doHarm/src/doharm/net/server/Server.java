@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
-import java.net.SocketAddress;
 import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,7 +23,6 @@ import doharm.net.packets.Snapshot;
 import doharm.net.packets.entityinfo.CharacterCreate;
 import doharm.net.packets.entityinfo.CharacterUpdate;
 import doharm.net.packets.entityinfo.EntityCreate;
-import doharm.net.packets.entityinfo.EntityInfo;
 import doharm.net.packets.entityinfo.EntityUpdate;
 
 public class Server {
