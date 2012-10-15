@@ -2,10 +2,10 @@ package doharm.logic.entities.items;
 
 import doharm.logic.entities.AbstractEntityFactory;
 import doharm.logic.entities.EntityFactory;
-import doharm.logic.entities.inventory.DragonRadar;
-import doharm.logic.entities.inventory.ItemContainer;
-import doharm.logic.entities.items.misc.DragonBall;
 import doharm.logic.entities.items.misc.MiscItemType;
+import doharm.logic.entities.items.misc.dragonballs.DragonBall;
+import doharm.logic.entities.items.misc.dragonballs.DragonRadar;
+import doharm.logic.inventory.ItemContainer;
 import doharm.logic.world.World;
 import doharm.logic.world.tiles.Tile;
 

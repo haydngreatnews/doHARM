@@ -43,7 +43,8 @@ public class WorldRenderer
 	private final int numShades = 100;
 
 	private BufferedImage[] floorShades;
-	private BufferedImage[] wallShades;
+	private BufferedImage[] leftWallShades;
+	private BufferedImage[] rightWallShades;
 	
 	private BufferedImage[] floorImages;
 	private BufferedImage[] wallImages;
@@ -246,6 +247,8 @@ public class WorldRenderer
 						itemRenderer.redrawPlayer(item,graphics, fTileW, fTileH);
 					}
 				}
+				
+				//Check if the next layer should be transparent
 				for (Player player: world.getPlayerFactory().getEntities()){
 					if(player.getPlayerType() == PlayerType.HUMAN &&  RenderUtil.isObscured(player, world)){
 						isTransparent = true;
@@ -271,6 +274,8 @@ public class WorldRenderer
 		case EAST : rowC = -1; colC = tiles[0].length; break;
 		case SOUTH : rowC = tiles.length; colC = tiles[0].length; break;
 		case WEST : rowC = tiles.length; colC = -1; break;
+		
+		
 		}
 
 
@@ -287,8 +292,10 @@ public class WorldRenderer
 				int y = vector.getYAsInt() - fTileH/2; //fTileH/2 added PLEASE leave in here
 				graphics.drawImage(image,x,y, null);
 
-				if(tile.isVisible()) graphics.drawImage(floorShades[(int)(tile.getLight()*(numShades-1))],x,y, null);
-
+				if(tile.isVisible()){ 
+					graphics.drawImage(floorShades[(int)(tile.getLight()*(numShades-1))],x,y, null);
+					
+				}
 
 				if(tile.isWalkable() && layerCount==0){
 					pickGraphics.drawImage(tile.getPickImage(), x,y,null);
@@ -303,9 +310,14 @@ public class WorldRenderer
 					y+=fTileH/2;
 
 					graphics.drawImage(image,x,y, null);
+					
+//					draw the shade on the left wall
+					graphics.drawImage(leftWallShades[(int)(tile.getLight()*(numShades-1))],x,y, null);
 					image = WI[imgID];
 					x+=wTileW;
+					//draw the shade on the right wall
 					graphics.drawImage(image,x,y, null);
+					graphics.drawImage(rightWallShades[(int)(tile.getLight()*(numShades-1))],x,y, null);
 				}
 
 			}
@@ -372,13 +384,14 @@ public class WorldRenderer
 	private void generateShadowTiles(){
 
 		floorShades = new BufferedImage[numShades];
-		wallShades = new BufferedImage[numShades*2];
+		leftWallShades = new BufferedImage[numShades];
+		rightWallShades = new BufferedImage[numShades];
 		int wallC = 0;
 		for (int i = 0; i < numShades; i++){
 			float alpha = 1 - (float) i / numShades;
 			floorShades[i] = RenderUtil.generateIsoImage(new Color(0,0,0,alpha),fTileW,fTileH);
-			wallShades[wallC++] = RenderUtil.generateLeftWallImage(new Color(0,0,0,alpha),fTileH,wTileW,wTileH);
-			wallShades[wallC++] = RenderUtil.generateRightWallImage(new Color(0,0,0,alpha),fTileH,wTileW,wTileH);
+			leftWallShades[wallC] = RenderUtil.generateLeftWallImage(new Color(0,0,0,alpha),fTileH,wTileW,wTileH);
+			rightWallShades[wallC++] = RenderUtil.generateRightWallImage(new Color(0,0,0,alpha),fTileH,wTileW,wTileH);
 			
 		}
 	}

@@ -7,8 +7,8 @@ import doharm.logic.entities.characters.states.AttackState;
 import doharm.logic.entities.characters.states.CharacterStateType;
 import doharm.logic.entities.characters.states.MoveState;
 import doharm.logic.entities.characters.states.PickupState;
-import doharm.logic.entities.inventory.DragonRadar;
 import doharm.logic.entities.items.Item;
+import doharm.logic.entities.items.misc.dragonballs.DragonRadar;
 import doharm.logic.world.tiles.Tile;
 
 

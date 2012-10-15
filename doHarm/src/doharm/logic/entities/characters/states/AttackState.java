@@ -1,8 +1,8 @@
 package doharm.logic.entities.characters.states;
 
 import doharm.logic.entities.characters.Character;
-import doharm.logic.entities.inventory.SlotType;
 import doharm.logic.entities.items.wearable.WearableItem;
+import doharm.logic.inventory.SlotType;
 
 public class AttackState extends CharacterState
 {

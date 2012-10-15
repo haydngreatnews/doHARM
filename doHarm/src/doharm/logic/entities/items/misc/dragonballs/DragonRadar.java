@@ -1,14 +1,13 @@
-package doharm.logic.entities.inventory;
+package doharm.logic.entities.items.misc.dragonballs;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
 import doharm.logic.entities.characters.players.HumanPlayer;
-import doharm.logic.entities.items.misc.DragonBall;
 
 public class DragonRadar 
 {
-	private HumanPlayer player;
 	private Set<DragonBall> balls;
 
 	public DragonRadar()
@@ -20,9 +19,9 @@ public class DragonRadar
 		balls.add(ball);
 	}
 	
-	public void setPlayer(HumanPlayer player)
+	public Set<DragonBall> getBalls()
 	{
-		this.player = player;
+		return Collections.unmodifiableSet(balls);
 	}
 	
 	

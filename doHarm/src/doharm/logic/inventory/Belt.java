@@ -1,6 +1,7 @@
-package doharm.logic.entities.inventory;
+package doharm.logic.inventory;
 
 import doharm.logic.entities.items.Item;
+import doharm.logic.entities.items.ItemType;
 
 public class Belt extends Stash
 {
@@ -16,6 +17,9 @@ public class Belt extends Stash
 	@Override
 	public boolean pickup(Item item)
 	{
+		if (item.getItemType() != ItemType.USABLE)
+			return false;
+		
 		if (item.getSize().width > MAX_ITEM_AREA || item.getSize().height > MAX_ITEM_AREA)
 			return false;
 		return super.pickup(item);
