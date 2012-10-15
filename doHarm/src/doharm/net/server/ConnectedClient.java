@@ -2,6 +2,8 @@ package doharm.net.server;
 
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -16,7 +18,7 @@ import doharm.net.packets.Snapshot;
  */
 public class ConnectedClient {
 	private InetSocketAddress address;
-	public Action latestCommandPacket;
+	public Action latestActionPacket;
 	private int counter;	// counter used by various.
 	private static int RESEND_DELAY;
 	private HumanPlayer playerEntity;
@@ -28,6 +30,9 @@ public class ConnectedClient {
 	
 	// Holds on to all unack'd Snapshots we've sent the client.
 	private LinkedList<Snapshot> snapsBuffer;
+	
+	// Holds on to all unack'd CommandLists we've sent the client.
+	private HashMap<Integer,ArrayList<String>> commandsBuffer = new HashMap<Integer,ArrayList<String>>();
 	
 	public ConnectedClient(InetSocketAddress address)
 	{
@@ -52,12 +57,12 @@ public class ConnectedClient {
 	}
 	
 	/**
-	 * Update what the latest command packet from the client is.
+	 * Update what the latest action packet from the client is.
 	 * @param data
 	 */
-	public void updateClientCommandPacket(byte[] data)
+	public void updateClientActionPacket(byte[] data)
 	{
-		if (state == ClientState.READY)		// TODO can probably optimise this by having a special kind of command packet sent on first try.
+		if (state == ClientState.READY)		// TODO can probably optimise this by having a special kind of action packet sent on first try.
 		{
 			setState(ClientState.INGAME);
 		}
@@ -65,12 +70,12 @@ public class ConnectedClient {
 		// Extract the timestamp from the packet.
 		int seqnum = Action.getSeqNum(data);
 		
-		// If this packet isn't more recent than the latest command we've received, discard.
+		// If this packet isn't more recent than the latest action we've received, discard.
 		if ( seqnum <= latestTime )
 			return;
 		
 		latestTime = seqnum;
-		latestCommandPacket = new Action(data);
+		latestActionPacket = new Action(data);
 	}
 	
 	/** Add a new snapshot to the snap buffer. */
@@ -84,8 +89,16 @@ public class ConnectedClient {
 	public Snapshot buildTransmissionSnapshot()
 	{
 		// Remove all acknowledged snaps from the Snapshot buffer.
-		while (snapsBuffer.peek().serverTime <= latestCommandPacket.serverTimeAckd)
+		while (snapsBuffer.peek().serverTime <= latestActionPacket.serverTimeAckd)
 			snapsBuffer.poll();
+		
+		// Remove all acknowledged commands from the Command buffer.
+		ArrayList<Integer> toRemove = new ArrayList<Integer>();
+		for (int i : commandsBuffer.keySet())
+			if ( i <= latestActionPacket.serverTimeAckd )
+				toRemove.add(i);
+		for (int i : toRemove)
+			commandsBuffer.remove(i);
 		
 		/* Build the snapshot to send.
 		
@@ -100,7 +113,9 @@ public class ConnectedClient {
 		Snapshot transSnap = new Snapshot(iter.next());	// will never be null, a snapshot was just added earlier in the thread of execution
 		
 		while (iter.hasNext())
-			transSnap.addMissing(iter.next());
+			transSnap.addMissingEntities(iter.next());
+		
+		transSnap.addCommands(commandsBuffer);
 		
 		return transSnap;
 	}
@@ -111,7 +126,8 @@ public class ConnectedClient {
 	 */
 	public void flushSnaps() { snapsBuffer.clear(); }
 
-	public boolean resendGamestate() {
+	public boolean resendGamestate()
+	{
 		if (--counter == 0)
 		{
 			counter = RESEND_DELAY;
@@ -120,7 +136,5 @@ public class ConnectedClient {
 		return false;
 	}
 
-	public HumanPlayer getPlayerEntity() {
-		return playerEntity;
-	}
+	public HumanPlayer getPlayerEntity() { return playerEntity; }
 }

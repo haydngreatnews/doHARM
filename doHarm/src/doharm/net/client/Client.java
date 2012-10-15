@@ -10,6 +10,7 @@ import java.net.SocketException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -47,8 +48,8 @@ public class Client {
 	private static int RETRY_DELAY = 20;
 	private int counter;	
 	
-	/** Holds on to all unack'd Commands we've sent the server. */
-	private LinkedList<Action> cmdsBuffer = new LinkedList<Action>();
+	/** Holds on to all unack'd CommandLists we've sent the server. */
+	private HashMap<Integer,ArrayList<String>> commandsBuffer = new HashMap<Integer,ArrayList<String>>();
 	
 	public Client() throws IOException
 	{	
@@ -177,13 +178,17 @@ public class Client {
 	}
 	
 	/**
-	 * Builds a new Command and sends it out to the server we're connected to.
+	 * Builds a new Action and sends it out to the server we're connected to.
 	 */
-	public void dispatchCommand(World world)
+	public void dispatchAction(World world)
 	{
 		// Remove all acknowledged commands from the Command buffer.
-		while (!cmdsBuffer.isEmpty() && cmdsBuffer.peek().seqNum <= snapNext.seqAckd)
-			cmdsBuffer.poll();
+		ArrayList<Integer> toRemove = new ArrayList<Integer>();
+		for (int i : commandsBuffer.keySet())
+			if ( i <= snapNext.seqAckd )
+				toRemove.add(i);
+		for (int i : toRemove)
+			commandsBuffer.remove(i);
 		
 		int time;
 		if (snapCurrent != null)
@@ -191,11 +196,13 @@ public class Client {
 		else
 			time = 0;
 		
-		Action cmd = new Action(++latestSeqSent, time, world.getHumanPlayer() );
+		Action action = new Action(++latestSeqSent, time, world.getHumanPlayer() );
+		
+		action.addCommands(commandsBuffer);
 		
 		// TODO
 		
-		transmit(cmd.convertToBytes());
+		transmit(action.convertToBytes());
 	}
 	
 	/**

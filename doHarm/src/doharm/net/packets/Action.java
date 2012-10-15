@@ -7,9 +7,9 @@ import java.nio.ByteBuffer;
 import doharm.logic.entities.characters.players.HumanPlayer;
 
 /** Struct representing a Clients Actions, which is then converted into a packet to send over the wire. */
-public class Action {
+public class Action extends Update {
 
-	public int seqNum;
+	public final int seqNum;
 	public final int serverTimeAckd;
 	
 	// HumanPlayer movement.
@@ -32,7 +32,6 @@ public class Action {
 		ByteBuffer buff = ByteBuffer.wrap(packet);
 		
 		buff.position(1);	// Skip packet type, as we obviously already know what it is.
-		
 		seqNum = buff.getInt();
 		serverTimeAckd = buff.getInt();
 		
@@ -40,43 +39,39 @@ public class Action {
 		posY = buff.getFloat();
 		layer = buff.getInt();
 		angle = buff.getFloat();
+		
+		readCommands(buff);
 	}
 	
 	/**
-	 * Translates the Command object into a byte-array for transmission.
-	 * @param cmd Command object to convert
+	 * Translates the Action object into a byte-array for transmission.
 	 * @return 
 	 */
 	public byte[] convertToBytes()
 	{
 		ByteArrayOutputStream buff = new ByteArrayOutputStream();
 		
-		try {
-		// Packet type
-		buff.write((byte) ClientPacket.ACTION.ordinal());		// Need the byte cast otherwise it'll write it as a 4-byte int
-		// SeqNum
-		 buff.write(Bytes.setInt(seqNum)); 
-		// ServertimeAckd
-		buff.write(Bytes.setInt(serverTimeAckd));
-		
-		// my desired viewing direction
-		// my desired movement
-		// my selected weapon
-		// my commands
-		buff.write(Bytes.setFloat(posX));
-		buff.write(Bytes.setFloat(posY));
-		buff.write(Bytes.setInt(layer));
-		buff.write(Bytes.setFloat(angle));
-		
-		
-		} catch (IOException e) {	e.printStackTrace(); }
+		try
+		{
+			buff.write((byte) ClientPacket.ACTION.ordinal());	// Packet type
+			buff.write(Bytes.setInt(seqNum));			
+			buff.write(Bytes.setInt(serverTimeAckd));
+
+			buff.write(Bytes.setFloat(posX));
+			buff.write(Bytes.setFloat(posY));
+			buff.write(Bytes.setInt(layer));
+			buff.write(Bytes.setFloat(angle));
+
+			writeCommands(buff);
+		}
+		catch (IOException e) { e.printStackTrace(); }
 		
 		return buff.toByteArray();
 	}
 	
 	/**
-	 * Extracts the timestamp from the byte-array form of a Command packet.
-	 * @param data Command byte-array packet.
+	 * Extracts the seqNum from the byte-array form of a Action packet.
+	 * @param data Action byte-array packet.
 	 * @return
 	 */
 	public static int getSeqNum(byte[] data)

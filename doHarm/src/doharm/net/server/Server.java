@@ -65,7 +65,7 @@ public class Server {
 				for (ConnectedClient c : clients)
 					if ( c.getAddress().equals(packet.getSocketAddress()) )
 					{
-						c.updateClientCommandPacket(data);
+						c.updateClientActionPacket(data);
 						break;
 					}
 				break;
@@ -86,14 +86,6 @@ public class Server {
 					transmit(response, new InetSocketAddress(packet.getAddress(), packet.getPort()));
 				}
 				break;
-				
-			case READY:
-				for (ConnectedClient c : clients)
-					if ( c.getAddress().equals(packet.getSocketAddress()) )
-					{
-						// ready state transition?
-						// send gamestate
-					}
 			}
 		}
 	}
@@ -117,6 +109,20 @@ public class Server {
 	
 	private ConnectedClient createClient(DatagramPacket packet)
 	{
+		InetSocketAddress newAddress = new InetSocketAddress(packet.getAddress(), packet.getPort());
+		ConnectedClient oldClient = null;
+		for (ConnectedClient c : clients)
+		{
+			if (c.getAddress().equals(newAddress))
+			{
+				world.getPlayerFactory().removeEntity(c.getPlayerEntity());
+				oldClient = c;
+				break;
+			}
+		}
+		if (oldClient != null)
+			clients.remove(oldClient);
+		
 		ConnectedClient client = new ConnectedClient(new InetSocketAddress(packet.getAddress(), packet.getPort()));
 		clients.add(client);
 		return client;
@@ -162,7 +168,7 @@ public class Server {
 		{
 			if (c.getState() == ClientState.INGAME)
 			{
-				buildSnapshot(c, new Snapshot(serverTime, c.latestCommandPacket.seqNum, c.getPlayerEntity()), entityUpdates, entityCreates, entityDeletes);
+				buildSnapshot(c, new Snapshot(serverTime, c.latestActionPacket.seqNum, c.getPlayerEntity()), entityUpdates, entityCreates, entityDeletes);
 				
 				// build transmission snap and send
 				transmit( c.buildTransmissionSnapshot().convertToBytes() , c.getAddress() );
