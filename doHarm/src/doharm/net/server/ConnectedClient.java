@@ -1,27 +1,32 @@
 package doharm.net.server;
 
+import java.awt.Color;
 import java.net.InetSocketAddress;
-import java.net.SocketAddress;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.Queue;
 
 import doharm.logic.entities.characters.players.HumanPlayer;
+import doharm.logic.entities.characters.players.Player;
+import doharm.logic.world.World;
 import doharm.net.ClientState;
 import doharm.net.packets.Action;
+import doharm.net.packets.Join;
 import doharm.net.packets.Snapshot;
 
 /**
  * The servers view of a Client
  */
-public class ConnectedClient {
+public class ConnectedClient
+{
 	private InetSocketAddress address;
 	public Action latestActionPacket;
 	private int counter;	// counter used by various.
 	private static int RESEND_DELAY;
 	private HumanPlayer playerEntity;
+	private String name;
+	private Color colour;
 	
 	// Last time we received a packet from this client.
 	private int latestTime;
@@ -34,8 +39,11 @@ public class ConnectedClient {
 	// Holds on to all unack'd CommandLists we've sent the client.
 	private HashMap<Integer,ArrayList<String>> commandsBuffer = new HashMap<Integer,ArrayList<String>>();
 	
-	public ConnectedClient(InetSocketAddress address)
+	public ConnectedClient(InetSocketAddress address, HumanPlayer player)
 	{
+		this.playerEntity = player;
+		this.name = player.getName();
+		this.colour = player.getColour();
 		this.address = address;
 		state = ClientState.READY;
 	}
@@ -135,4 +143,11 @@ public class ConnectedClient {
 	}
 
 	public HumanPlayer getPlayerEntity() { return playerEntity; }
+
+	public String getName() { return name; }
+
+	public void kill(World world)
+	{
+		world.getEntityFactory().removeEntity(world.getEntityFactory().getEntity(playerEntity.getID()));
+	}
 }

@@ -11,11 +11,13 @@ import java.util.HashMap;
 
 import doharm.logic.entities.AbstractEntity;
 import doharm.logic.entities.characters.players.HumanPlayer;
+import doharm.logic.entities.characters.players.PlayerType;
 import doharm.logic.world.World;
 import doharm.net.ClientState;
 import doharm.net.UDPReceiver;
 import doharm.net.packets.ClientPacket;
 import doharm.net.packets.Gamestate;
+import doharm.net.packets.Join;
 import doharm.net.packets.ServerPacket;
 import doharm.net.packets.Snapshot;
 import doharm.net.packets.entityinfo.CharacterCreate;
@@ -71,13 +73,20 @@ public class Server {
 				break;
 				
 			case JOIN:	// TODO TODO TODO TODO TODO TODO
+				Join request = new Join(data);
 				byte[] response = new byte[2];
 				response[0] = (byte) ServerPacket.RESPONSE.ordinal();
 				
 				if (clients.size() < maxPlayers)
 				{
-					createClient(packet);
-					break;
+					for (ConnectedClient c : clients)
+					{
+						if (c.getName().equals(request.name))
+						{
+							createClient(new InetSocketAddress(packet.getAddress(), packet.getPort()), request);
+							break;
+						}
+					}
 				}
 				else
 				{
@@ -107,13 +116,12 @@ public class Server {
 		return false;
 	}
 	
-	private ConnectedClient createClient(DatagramPacket packet)
+	private ConnectedClient createClient(InetSocketAddress address, Join settings)
 	{
-		InetSocketAddress newAddress = new InetSocketAddress(packet.getAddress(), packet.getPort());
 		ConnectedClient oldClient = null;
 		for (ConnectedClient c : clients)
 		{
-			if (c.getAddress().equals(newAddress))
+			if (c.getAddress().equals(address))
 			{
 				world.getPlayerFactory().removeEntity(c.getPlayerEntity());
 				oldClient = c;
@@ -121,9 +129,14 @@ public class Server {
 			}
 		}
 		if (oldClient != null)
+		{
+			oldClient.kill(world);
 			clients.remove(oldClient);
+		}
 		
-		ConnectedClient client = new ConnectedClient(new InetSocketAddress(packet.getAddress(), packet.getPort()));
+		HumanPlayer player = world.getPlayerFactory().createPlayer(world.getRandomEmptyTile(), settings.name, 
+				settings.classType, world.getIDManager().takeID(), PlayerType.NETWORK, settings.colour, true);
+		ConnectedClient client = new ConnectedClient(address, player);
 		clients.add(client);
 		return client;
 	}

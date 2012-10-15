@@ -1,5 +1,6 @@
 package doharm.net.client;
 
+import java.awt.Color;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -24,6 +25,7 @@ import doharm.net.UDPReceiver;
 import doharm.net.packets.Bytes;
 import doharm.net.packets.ClientPacket;
 import doharm.net.packets.Action;
+import doharm.net.packets.Join;
 import doharm.net.packets.ServerPacket;
 import doharm.net.packets.Snapshot;
 import doharm.net.packets.entityinfo.CharacterCreate;
@@ -69,10 +71,10 @@ public class Client {
 	 * @param address Server address to connect to.
 	 * @return If the connection was successful.
 	 */
-	public boolean connect(InetSocketAddress address, String name, int colour)
+	public boolean connect(InetSocketAddress address, String name, Color colour, CharacterClassType classType)
 	{
 		serverAddress = address;
-		byte[] join = buildJoinPacket(name,colour);
+		byte[] join = new Join(name,colour,classType).toBytes();
 
 		for (int i=0; i<RETRY_COUNT; ++i)
 		{
@@ -101,9 +103,6 @@ public class Client {
 								break;
 							case 2:
 								System.out.println("Name already in use.");
-								break;
-							case 3:
-								System.out.println("Colour already in use.");
 								break;
 							}
 							serverAddress = null;
