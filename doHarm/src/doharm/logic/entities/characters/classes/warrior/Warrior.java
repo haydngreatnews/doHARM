@@ -7,9 +7,9 @@ import doharm.logic.entities.characters.classes.CharacterClassType;
 public class Warrior extends CharacterClass
 {
 
-	public Warrior(Character character,CharacterClassType characterType) 
+	public Warrior(Character character) 
 	{
-		super(character,characterType);
+		super(character,CharacterClassType.WARRIOR);
 		
 		setAttributes(new WarriorAttributes());
 		setLevelupAttributes(new WarriorLevelupAttributes());

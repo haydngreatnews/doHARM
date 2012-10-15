@@ -9,10 +9,10 @@ import doharm.logic.world.World;
 public class Attributes 
 {
 	//BASE ATTRIBUTES
-	private int resistance = 0;
 	private int intelligence = 0;
 	private int strength = 0;
 	private int dexterity = 0;
+	private int vitality = 0;
 	
 	//
 	private float maxRage = 100;
@@ -67,10 +67,6 @@ public class Attributes
 		
 	}
 
-	public int getResistance() {
-		return resistance;
-	}
-
 	public int getIntelligence() {
 		return intelligence;
 	}
@@ -103,10 +99,6 @@ public class Attributes
 		return manaRegeneration;
 	}
 
-	public void setResistance(int resistance) {
-		this.resistance = resistance;
-	}
-
 	public void setIntelligence(int intelligence) {
 		this.intelligence = intelligence;
 	}
@@ -133,6 +125,31 @@ public class Attributes
 
 	public void setManaRegeneration(float manaRegeneration) {
 		this.manaRegeneration = manaRegeneration;
+	}
+
+	public void increaseDexterity() 
+	{
+		dexterity++;
+	}
+
+	public void increaseIntelligence() {
+		intelligence++;
+	}
+
+	public void increaseStrength() {
+		strength++;
+	}
+
+	public void increaseVitality() {
+		setVitality(getVitality() + 1);
+	}
+
+	public int getVitality() {
+		return vitality;
+	}
+
+	public void setVitality(int vitality) {
+		this.vitality = vitality;
 	}
 
 	

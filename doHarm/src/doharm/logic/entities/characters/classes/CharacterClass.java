@@ -1,16 +1,19 @@
 package doharm.logic.entities.characters.classes;
 
+import doharm.logic.chat.Message;
+import doharm.logic.chat.MessagePart;
 import doharm.logic.chat.Taunts;
-import doharm.logic.entities.AbstractEntity;
+import doharm.logic.entities.characters.Character;
+import doharm.logic.entities.characters.classes.attributes.AttributePointType;
 import doharm.logic.entities.characters.classes.attributes.Attributes;
 import doharm.logic.entities.characters.classes.attributes.LevelupAttributes;
-import doharm.logic.entities.characters.Character;
 
 public class CharacterClass 
 {
 	private Attributes attributes;
 	private LevelupAttributes levelupAttributes;
 	private static final int INITIAL_EXPERIENCE = 10;
+	private static final int ATTRIBUTEPOINTS_PER_LEVEL = 3;
 	
 	private float experience;
 	private float experienceToAdd;
@@ -19,19 +22,25 @@ public class CharacterClass
 	private int level;
 	private Taunts taunts;
 	private Character character;
+	private int attributePoints;
+	private CharacterClassType classType;
 	
 	
 	
 	
-	public CharacterClass(Character character, CharacterClassType type)
+	public CharacterClass(Character character, CharacterClassType classType)
 	{
 		this.character = character;
+		this.classType = classType;
+		
 		experience = INITIAL_EXPERIENCE;
 		lastLevelExperience = INITIAL_EXPERIENCE;
 		nextLevelExperience = INITIAL_EXPERIENCE*2;
 		experienceToAdd = 0;
 		level = 1;
 		taunts = new Taunts(character);
+		attributePoints = ATTRIBUTEPOINTS_PER_LEVEL;
+		
 	}
 	
 	public void process()
@@ -88,8 +97,45 @@ public class CharacterClass
 		nextLevelExperience = (nextLevelExperience+1)*2;
 		level++;
 		attributes.levelup(levelupAttributes,character);
+		attributePoints += ATTRIBUTEPOINTS_PER_LEVEL + level;
 	}
 
+	public int getAttributePoints()
+	{
+		return attributePoints;
+	}
+	
+	public void addPoint(AttributePointType type)
+	{
+		if (attributePoints <= 0)
+		{
+			throw new UnsupportedOperationException("No attribute points left");
+		}
+		switch(type)
+		{
+		case DEXTERITY:
+			attributes.increaseDexterity();
+			break;
+		case INTELLIGENCE:
+			attributes.increaseIntelligence();
+			break;
+		case STRENGTH:
+			attributes.increaseStrength();
+			break;
+		case VITALITY:
+			attributes.increaseVitality();
+			break;
+		default:
+			throw new UnsupportedOperationException("Unknown AttributePointType: " + type);
+		}
+		
+		if (character.isHumanPlayer())
+		{
+			character.getWorld().addMessage(new Message(character.getID(), new MessagePart(type.toString() + " increased!",type.getColour())));
+		}
+		
+		attributePoints--;
+	}
 
 	public float getExperienceRatio() 
 	{
@@ -104,5 +150,9 @@ public class CharacterClass
 
 	public Taunts getTaunts() {
 		return taunts;
+	}
+
+	public CharacterClassType getClassType() {
+		return classType;
 	}
 }
