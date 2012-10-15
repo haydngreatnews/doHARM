@@ -182,7 +182,7 @@ public class Server {
 		{
 			if (c.getState() == ClientState.INGAME)
 			{
-				buildSnapshot(c, new Snapshot(serverTime, c.latestActionPacket.seqNum, world, c.getPlayerEntity()), entityUpdates, entityCreates, entityDeletes);
+				buildSnapshot(c, new Snapshot(serverTime, c.latestActionPacket.seqNum, world), entityUpdates, entityCreates, entityDeletes);
 				
 				// build transmission snap and send
 				transmit( c.buildTransmissionSnapshot().convertToBytes() , c.getAddress() );
@@ -192,7 +192,7 @@ public class Server {
 				if (c.resendGamestate())
 					sendGamestate(c);
 				else
-					buildSnapshot(c, new Snapshot(serverTime, -1, world, null), entityUpdates, entityCreates, entityDeletes);
+					buildSnapshot(c, new Snapshot(serverTime, -1, world), entityUpdates, entityCreates, entityDeletes);
 			}
 		}
 	}
@@ -227,7 +227,7 @@ public class Server {
 	{
 		client.flushSnaps();
 		
-		Snapshot gamestate = new Gamestate(serverTime, -1, world, null);
+		Snapshot gamestate = new Gamestate(serverTime, -1, world);
 		
 		for (AbstractEntity e : world.getEntityFactory().getEntities() )
 		{

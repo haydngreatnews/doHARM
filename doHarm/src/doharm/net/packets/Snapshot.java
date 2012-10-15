@@ -16,28 +16,27 @@ import doharm.net.packets.entityinfo.CharacterUpdate;
 import doharm.net.packets.entityinfo.EntityCreate;
 import doharm.net.packets.entityinfo.EntityUpdate;
 
-/** Struct representing a Server Snapshot, which is then converted into a packet to send over the wire. */
+/**
+ * Struct representing a Server Snapshot, which is then converted into a packet to send over the wire.
+ * @author Adam McLaren (300248714)
+ */
 public class Snapshot extends Update {
 
 	public final int serverTime;
 	public final int seqAckd;
 	public final float weather;
 	public final float timeOfDay;
-	public final PlayerState pState;
+	private PlayerState pState = null;
 	private final HashMap<Integer,EntityUpdate> entityUpdates = new HashMap<Integer,EntityUpdate>();
 	private final HashMap<Integer,EntityCreate> entityCreates = new HashMap<Integer,EntityCreate>();
 	private final ArrayList<Integer> entityDeletes = new ArrayList<Integer>();
 	
-	public Snapshot(int serverTime, int seqAckd, World world, Player player)
+	public Snapshot(int serverTime, int seqAckd, World world)
 	{
 		this.serverTime = serverTime;
 		this.seqAckd = seqAckd;
 		this.weather = world.getWeather().getConditions();
 		this.timeOfDay = world.getTime().getTimeOfDay();
-		if (player != null)
-			pState = new PlayerState(player);
-		else
-			pState = null;
 	}
 	
 	/**
@@ -160,6 +159,14 @@ public class Snapshot extends Update {
 	public HashMap<Integer,EntityCreate> getECreates() { return (HashMap<Integer,EntityCreate>) Collections.unmodifiableMap(entityCreates); }
 	
 	public HashMap<Integer,EntityUpdate> getEUpdates() { return (HashMap<Integer,EntityUpdate>) Collections.unmodifiableMap(entityUpdates); }
+	
+	public PlayerState getPlayerState() { return pState; }
+	
+	public void setPlayerState(PlayerState state)
+	{
+		if (pState == null)
+			pState = state;
+	}
 
 	/**
 	 * Adds any fields that are in the given snapshot that are not present in this snapshot.

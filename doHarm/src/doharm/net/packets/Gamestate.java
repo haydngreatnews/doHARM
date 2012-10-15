@@ -12,9 +12,9 @@ public class Gamestate extends Snapshot {
 
 	public final int year, month, day;
 	
-	public Gamestate(int serverTime, int seqAckd, World world, Player player)
+	public Gamestate(int serverTime, int seqAckd, World world)
 	{
-		super(serverTime, seqAckd, world, player);
+		super(serverTime, seqAckd, world);
 		
 		Time t = world.getTime();
 		this.year = t.getYear();

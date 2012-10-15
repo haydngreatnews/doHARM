@@ -1,5 +1,7 @@
 package doharm.net.packets;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 
 import doharm.logic.entities.characters.players.HumanPlayer;
@@ -18,7 +20,7 @@ public class PlayerState {
 		this.exp = player.getExperienceRatio();
 	}
 	
-	public PlayerState(ByteBuffer buff)
+	protected PlayerState(ByteBuffer buff)
 	{
 		health = buff.getFloat();
 		mana = buff.getFloat();
@@ -28,7 +30,15 @@ public class PlayerState {
 
 	public byte[] convertToBytes()
 	{
-		return null;
+		ByteArrayOutputStream buff = new ByteArrayOutputStream();
+		buff.write((byte)1);	// 1 = Normal Player State.
+		try {
+			buff.write(Bytes.setFloat(health));
+			buff.write(Bytes.setFloat(mana));
+			buff.write(Bytes.setFloat(rage));
+			buff.write(Bytes.setFloat(exp));			
+		} catch (IOException e) {	e.printStackTrace(); }
+		return buff.toByteArray();
 	}
 
 	public static PlayerState getPlayerState(ByteBuffer buff)
