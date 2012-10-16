@@ -22,13 +22,14 @@ public class ItemRenderer {
 		this.world = game.getWorld();
 	}
 
-	public void redrawPlayer(Item item, Graphics2D graphics, int fTileW, int wTileH) {
+	public void redrawPlayer(int cx, int cy, Item item, Graphics2D graphics, int fTileW, int wTileH) {
 
-		drawPlayer(item ,graphics, fTileW, wTileH);
+		drawPlayer(cx,cy,item ,graphics, fTileW, wTileH);
 
 	}
 
-	private void drawPlayer(Item item, Graphics2D graphics, int tileW, int tileH) {
+	Vector v = new Vector(0, 0);
+	private void drawPlayer(int cx, int cy, Item item, Graphics2D graphics, int tileW, int tileH) {
 
 		Dimension size = item.getSize();
 
@@ -40,11 +41,11 @@ public class ItemRenderer {
 		//TODO get item colour or image
 		graphics.setColor(item.getQuality().getColour());
 
-		Vector v = RenderUtil.convertCoordsToIso(col, row, item.getCurrentLayer().getLayerNumber(), game.getCamera());
+		RenderUtil.convertCoordsToIso(col, row, item.getCurrentLayer().getLayerNumber(), game.getCamera(), v);
 
 
-		int x = (int)v.getX()-size.width/2;
-		int y = (int)v.getY()-size.height/4;
+		int x = cx+(int)v.getX()-size.width/2;
+		int y = cy+(int)v.getY()-size.height/4;
 
 		graphics.fillOval(x, y, size.width, size.height/2);
 

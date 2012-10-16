@@ -44,7 +44,7 @@ public class PickupState extends CharacterState
 		
 		if (distance < 2)
 		{
-			boolean pickedUp = character.getInventory().pickup(itemToPickup);
+			boolean pickedUp = itemToPickup.getCurrentTile().drop(itemToPickup, character.getInventory());
 			String pickupString = " picked up "+(itemToPickup.isUnique()?"the ":"a ");
 			String exclamation = itemToPickup.getQuality() == ItemQuality.LEGENDARY?"!":"";
 			

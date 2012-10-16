@@ -115,7 +115,7 @@ public class World
 		
 		
 		//TEST STUFF TODO REMOVE
-		createHumanPlayer(layers[0].getTiles()[5][5],CharacterClassType.WARRIOR,"Test player",Color.white,idManager.takeID());
+		createHumanPlayer(getRandomEmptyTile(),CharacterClassType.WARRIOR,"Test player",Color.white,idManager.takeID());
 		
 		
 		

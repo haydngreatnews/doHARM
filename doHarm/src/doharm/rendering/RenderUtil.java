@@ -65,32 +65,26 @@ public class RenderUtil {
 	 * @param row
 	 * @return
 	 */
-	public static Vector convertCoordsToIso(float col, float row, float layer, Camera c){
+	public static Vector convertCoordsToIso(float col, float row, float layer, Camera c, Vector toReturn){
 		CameraDirection d = c.getDirection();
-		float x = 0;
-		float y = 0;
 
 		switch(d){
 		case NORTH : 
-			x = -((row*(imgIsoW/2)))+(col*(imgIsoW/2));
-			y = (row*(imgIsoH/2))+(col*(imgIsoH/2)) -layer*imgIsoH ;
+			toReturn.set(-((row*(imgIsoW/2)))+(col*(imgIsoW/2)), (row*(imgIsoH/2))+(col*(imgIsoH/2)) -layer*imgIsoH);
 			break;
 		case EAST : 
-			x = ((row*(imgIsoW/2)))+(col*(imgIsoW/2));
-			y = (row*(imgIsoH/2))-(col*(imgIsoH/2)) -layer*imgIsoH ;
+			toReturn.set(((row*(imgIsoW/2)))+(col*(imgIsoW/2)), (row*(imgIsoH/2))-(col*(imgIsoH/2)) -layer*imgIsoH);
 			break;
 		case WEST : 
-			x = -((row*(imgIsoW/2)))-(col*(imgIsoW/2));
-			y = -(row*(imgIsoH/2))+(col*(imgIsoH/2)) -layer*imgIsoH ;
+			toReturn.set(-((row*(imgIsoW/2)))-(col*(imgIsoW/2)), -(row*(imgIsoH/2))+(col*(imgIsoH/2)) -layer*imgIsoH);
 			break;
 		case SOUTH : 
-			x = +((row*(imgIsoW/2)))-(col*(imgIsoW/2));
-			y = -(row*(imgIsoH/2))-(col*(imgIsoH/2)) -layer*imgIsoH ;
+			toReturn.set(+((row*(imgIsoW/2)))-(col*(imgIsoW/2)), -(row*(imgIsoH/2))-(col*(imgIsoH/2)) -layer*imgIsoH);
 			break;
 		}
 
 
-		return new Vector(x, y);
+		return toReturn;
 
 	}
 
@@ -105,28 +99,28 @@ public class RenderUtil {
 	 * @return
 	 */
 	public static BufferedImage generateIsoImage(Color c, int width, int height){
-		/*BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-		Graphics2D g = (Graphics2D)img.getGraphics();
-		g.setColor(c);
-		int lineLength = 2;
-		int x = (width/2)-2;
-		for(int row = 0; row < height/2; row++){
-
-			g.drawLine(x, row, x+lineLength, row);
-			x-=2;
-			lineLength+=4;
-		}
-		lineLength-=4;
-		x+=2;
-		for(int row = (height/2); row < height; row++){
-
-			g.drawLine(x, row, x+lineLength, row);
-
-			x+=2;
-			lineLength-=4;
-		}
-		return img;*/
-		
+//		BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+//		Graphics2D g = (Graphics2D)img.getGraphics();
+//		g.setColor(c);
+//		int lineLength = 2;
+//		int x = (width/2)-2;
+//		for(int row = 0; row < height/2; row++){
+//
+//			g.drawLine(x, row, x+lineLength, row);
+//			x-=2;
+//			lineLength+=4;
+//		}
+//		lineLength-=4;
+//		x+=2;
+//		for(int row = (height/2); row < height; row++){
+//
+//			g.drawLine(x, row, x+lineLength, row);
+//
+//			x+=2;
+//			lineLength-=4;
+//		}
+//		return img;
+//		
 		BufferedImage img = new BufferedImage(pickImage.getWidth(),pickImage.getHeight(),BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g = img.createGraphics();
 		g.drawImage(pickImage, 0,0,null);

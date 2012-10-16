@@ -56,7 +56,7 @@ public class KeyboardManager implements KeyListener
 			break;
 			
 		case KeyEvent.VK_F9:
-			if (game.getWorld().getHumanPlayer() != null) //test suicide method
+			if (altDown && game.getWorld().getHumanPlayer() != null) //test suicide method
 				game.getWorld().getHumanPlayer().die(game.getWorld().getHumanPlayer());
 			break;
 		case KeyEvent.VK_F11:

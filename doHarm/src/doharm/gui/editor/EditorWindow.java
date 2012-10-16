@@ -59,9 +59,9 @@ public class EditorWindow extends JFrame {
 					else
 						delta = e.getActionCommand() + "1";
 					canvas.changeLayer(Integer.valueOf(delta));
-					System.out.println("delta=" + delta);
 					currentLayer.setText("" + canvas.getCurrentLayer());
 				}
+				canvas.requestFocusInWindow();
 			}
 		};
 		upButton.addActionListener(layerChange);
@@ -92,6 +92,7 @@ public class EditorWindow extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				canvas.changeMapSize(Integer.valueOf(xDim.getText()),
 						Integer.valueOf(yDim.getText()));
+				canvas.requestFocusInWindow();
 			}
 		});
 		JButton writeOut;
@@ -100,12 +101,17 @@ public class EditorWindow extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				canvas.writeout();
+				canvas.requestFocusInWindow();
 			}
 		});
 		add(editor, BorderLayout.EAST);
 		
 		canvas.addMouseMotionListener(listen = new EditorMouseListener(this));
+		EditorKeyListener edk;
+		canvas.addKeyListener(edk = new EditorKeyListener(canvas));
+		addKeyListener(edk);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		canvas.requestFocusInWindow();
 		new repaintThread().start();
 	}
 
