@@ -6,6 +6,11 @@ import doharm.logic.time.Clock;
 import doharm.logic.world.World;
 import doharm.net.NetworkMode;
 
+/**
+ * 
+ * @author Roland Bewick and Adam McLaren (300248714)
+ *
+ */
 public abstract class AbstractGame 
 {
 	private Camera camera;
@@ -25,13 +30,17 @@ public abstract class AbstractGame
 
 		
 		
+		if (networkMode != NetworkMode.CLIENT)
+			world = new World(this, worldName, networkMode);
+		else
+			world = null;
 		
-		world = new World(this, worldName, networkMode);
-		camera = world.getCamera();
-		
+		if (networkMode != NetworkMode.OFFLINE)
+			camera = null;
+		else
+			camera = world.getCamera();
 		
 		clock = new Clock(this);
-		clock.start();
 		ended = false;
 	}
 	
@@ -76,5 +85,10 @@ public abstract class AbstractGame
 	public boolean hasEnded()
 	{
 		return ended;
+	}
+	
+	public void start()
+	{
+		clock.start();
 	}
 }

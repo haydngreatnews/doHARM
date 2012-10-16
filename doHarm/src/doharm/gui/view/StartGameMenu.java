@@ -165,24 +165,19 @@ public class StartGameMenu extends JFrame {
 					.valueOf(classRadios.getSelection().getActionCommand());
 			String serverName = serverField.getText();
 			int port = Integer.valueOf(portField.getText());
-			// TODO:Use a new Game constructor
 			Color colour = new Color(Integer.parseInt(colorRadios
 					.getSelection().getActionCommand()));
-
-			Client client = null;
-			// TODO:Uncommenting these two lines will enable server connections
-			// I hope.
-			// client = new Client();
-			// String result = client.connect(InetSocketAddress.createUnresolved(serverName,
-			// port), name, colour, selClass);
-			// if(result != null){
-			// JOptionPane.showMessageDialog(this, result, "Connect Error",
-			// JOptionPane.ERROR_MESSAGE);
-			// return;
-			// }
+		
+			Client client = new Client();			
+			String result = client.connect(new InetSocketAddress(serverName,port), name, colour, selClass);
+			if(result != null){
+				JOptionPane.showMessageDialog(this, result, "Connect Error",
+				JOptionPane.ERROR_MESSAGE);
+				return;
+			}
 
 			AbstractGame game = new ClientGame(parent, client);
-			parent.setGame(game);
+			game.start();
 			this.dispose();
 		} else {
 			// Display the last error

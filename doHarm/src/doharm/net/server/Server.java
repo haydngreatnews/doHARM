@@ -44,18 +44,13 @@ public class Server {
 	{
 		this.world = world;
 		
-		try {
-		
 		// Setup the UDP socket.
-		udpSock = new DatagramSocket(null);
-		
-		InetSocketAddress address = new InetSocketAddress(port);
-		
-		udpSock.bind(address);
-		
-		receiver = new UDPReceiver(udpSock);
-		receiver.start();
-		
+		try {
+			udpSock = new DatagramSocket(null);
+			InetSocketAddress address = new InetSocketAddress(port);
+			udpSock.bind(address);
+			receiver = new UDPReceiver(udpSock);
+			receiver.start();
 		} catch (SocketException e) { e.printStackTrace(); }
 	}
 	
@@ -63,11 +58,12 @@ public class Server {
 	{		
 		while (!receiver.isEmpty())
 		{
+			System.out.println("Dealing with packet...");
 			DatagramPacket packet = receiver.poll();
 			byte[] data = packet.getData();
 			
 			// Check what type of packet it is.			
-			switch (ClientPacket.values()[data[0]])
+			switch (ClientPacket.values()[data[0]&0xff])
 			{
 			case ACTION:
 				for (ConnectedClient c : clients)
@@ -78,26 +74,34 @@ public class Server {
 					}
 				break;
 				
-			case JOIN:	// TODO TODO TODO TODO TODO TODO
+			case JOIN:
 				Join request = new Join(data);
 				byte[] response = new byte[2];
 				response[0] = (byte) ServerPacket.RESPONSE.ordinal();
 				
 				if (clients.size() < maxPlayers)
 				{
+					boolean goodToGo = true; 
 					for (ConnectedClient c : clients)
 					{
 						if (c.getName().equals(request.name))
 						{
-							createClient(new InetSocketAddress(packet.getAddress(), packet.getPort()), request);
+							goodToGo = false;
+							response[1] = (byte)2;
 							break;
 						}
 					}
+					if (goodToGo)
+					{
+						createClient(new InetSocketAddress(packet.getAddress(), packet.getPort()), request);
+						response[1] = (byte)0;
+					}
+					transmit(response, new InetSocketAddress(packet.getAddress(), packet.getPort()));
 				}
 				else
 				{
 					// Reject, inform them so.
-					response[1] = 1;	// 1 = NO server is full.
+					response[1] = (byte)1;	// 1 = NO server is full.
 					transmit(response, new InetSocketAddress(packet.getAddress(), packet.getPort()));
 				}
 				break;
@@ -113,6 +117,7 @@ public class Server {
 	 */
 	public boolean transmit(byte[] data, InetSocketAddress address)
 	{
+		System.out.println("Transmitting packet to " + address.toString());
 		try {
 			udpSock.send(new DatagramPacket(data, data.length, address.getAddress(), address.getPort()));
 			return true;
@@ -139,7 +144,7 @@ public class Server {
 			clients.remove(oldClient);
 		}
 		
-		Player player = (HumanPlayer) world.getPlayerFactory().createPlayer(world.getRandomEmptyTile(), settings.name, 
+		Player player = world.getPlayerFactory().createPlayer(world.getRandomEmptyTile(), settings.name, 
 				settings.classType, world.getIDManager().takeID(), PlayerType.NETWORK, settings.colour, true);
 		ConnectedClient client = new ConnectedClient(address, player);
 		clients.add(client);
@@ -164,10 +169,10 @@ public class Server {
 			{
 				entityCreates.put(e.getID(), new CharacterCreate((Player)e));	// TODO
 			}
-			else if (e instanceof Item)
-			{
-				entityCreates.put(e.getID(), new ItemCreate((Item)e));
-			}
+//			else if (e instanceof Item)
+//			{
+//				entityCreates.put(e.getID(), new ItemCreate((Item)e));
+//			}
 		}
 		world.getEntityFactory().clearAddedEntities();
 		
