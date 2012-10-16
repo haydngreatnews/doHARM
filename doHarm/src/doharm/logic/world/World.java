@@ -113,58 +113,59 @@ public class World
 		linkTiles();
 		
 		
-		
-		//TEST STUFF TODO REMOVE
-		//getRandomEmptyTile()
-		//layers[0].getTiles()[90][90]
-		createHumanPlayer(getRandomEmptyTile(),CharacterClassType.WARRIOR,"Test player",Color.white,idManager.takeID());
-		
-		
-		
-		//Add some noob AIs
-		for (int i = 0; i < 3; i++)
+		if (networkMode != NetworkMode.CLIENT)
 		{
-			Tile tile = null;
-			do
+			//TEST STUFF TODO REMOVE
+			//getRandomEmptyTile()
+			//layers[0].getTiles()[90][90]
+			createHumanPlayer(getRandomEmptyTile(),CharacterClassType.WARRIOR,"Test player",Color.white,idManager.takeID());
+
+
+
+			//Add some noob AIs
+			for (int i = 0; i < 3; i++)
 			{
-				int r = (int)(Math.random()*numRows-2);
-				int c = (int)(Math.random()*numCols-2);
-				if (r < 2) r = 2;
-				if (c < 2) c = 2;
-				tile = layers[0].getTiles()[r][c];
-			} while(!tile.isWalkable());
-			
-			
-			playerFactory.createPlayer(tile, "AI"+(i+1), CharacterClassType.WARRIOR, idManager.takeID(),PlayerType.AI, new Color((i+102)*10213%255,(i+102)*223%255,(i+23)*1013%255),false);
-			
-		}
-		
-		
-		//TODO add some random items!!!!!!!!
-		
-		
-		for (int i = 0; i < 3; i++)
-		{
-			Tile tile = null;
-			do
+				Tile tile = null;
+				do
+				{
+					int r = (int)(Math.random()*numRows-2);
+					int c = (int)(Math.random()*numCols-2);
+					if (r < 2) r = 2;
+					if (c < 2) c = 2;
+					tile = layers[0].getTiles()[r][c];
+				} while(!tile.isWalkable());
+
+
+				playerFactory.createPlayer(tile, "AI"+(i+1), CharacterClassType.WARRIOR, idManager.takeID(),PlayerType.AI, new Color((i+102)*10213%255,(i+102)*223%255,(i+23)*1013%255),false);
+
+			}
+
+
+			//TODO add some random items!!!!!!!!
+
+
+			for (int i = 0; i < 3; i++)
 			{
-				int r = (int)(Math.random()*numRows-2);
-				int c = (int)(Math.random()*numCols-2);
-				if (r < 2) r = 2;
-				if (c < 2) c = 2;
-				tile = layers[0].getTiles()[r][c];
-			} while(!tile.isWalkable());
-			
-			
-			
-			//players.add(ai);
-			//
-			
+				Tile tile = null;
+				do
+				{
+					int r = (int)(Math.random()*numRows-2);
+					int c = (int)(Math.random()*numCols-2);
+					if (r < 2) r = 2;
+					if (c < 2) c = 2;
+					tile = layers[0].getTiles()[r][c];
+				} while(!tile.isWalkable());
+
+
+
+				//players.add(ai);
+				//
+
+			}
+
+			addDragonballs();
+
 		}
-		
-		addDragonballs();
-		
-		
 		addMessage(new Message(-1, false, new MessagePart("World created.")));
 		
 	}
@@ -261,11 +262,14 @@ public class World
 
 	public void process()
 	{
-		time.process();
-		weather.process();
-		removeDeadItems();
-		respawnEntities();
-		moveEntities();
+		if (networkMode != NetworkMode.CLIENT)
+		{
+			time.process();
+			weather.process();
+			removeDeadItems();
+			respawnEntities();
+			moveEntities();
+		}
 		setCamera();
 	}
 	
