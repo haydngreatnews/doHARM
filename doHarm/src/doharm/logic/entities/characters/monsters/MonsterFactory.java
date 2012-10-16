@@ -6,7 +6,6 @@ import doharm.logic.entities.AbstractEntityFactory;
 import doharm.logic.entities.EntityFactory;
 import doharm.logic.entities.characters.classes.CharacterClassType;
 import doharm.logic.world.World;
-import doharm.logic.world.tiles.Tile;
 
 public class MonsterFactory extends AbstractEntityFactory<Monster>
 {
@@ -15,7 +14,7 @@ public class MonsterFactory extends AbstractEntityFactory<Monster>
 		super(world,entityFactory);
 	}
 	
-	public Monster createMonster(CharacterClassType classType, Tile spawnPos, int id, boolean fromNetwork)
+	public Monster createMonster(CharacterClassType classType, int id, boolean fromNetwork)
 	{
 		Monster monster = new Monster();
 		
@@ -24,7 +23,7 @@ public class MonsterFactory extends AbstractEntityFactory<Monster>
 		monster.setWorld(getWorld());
 		monster.setCharacterClass(classType);
 		monster.setColour(Color.white);
-
+		
 		
 		
 		//add this player to the global list of entities.

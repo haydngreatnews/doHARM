@@ -1,15 +1,12 @@
 package doharm.logic.entities;
 
 import java.awt.Dimension;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.PriorityQueue;
-import java.util.Queue;
-import java.util.Stack;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.imageio.ImageIO;
 
@@ -17,7 +14,6 @@ import doharm.logic.physics.Vector;
 import doharm.logic.world.Layer;
 import doharm.logic.world.World;
 import doharm.logic.world.tiles.Tile;
-import doharm.rendering.RenderUtil;
 
 public abstract class AbstractEntity
 {
@@ -43,12 +39,13 @@ public abstract class AbstractEntity
 	//private Vector renderPos;
 	private static BufferedImage unknownImage;
 	private BufferedImage image;
+	private static Map<String, BufferedImage> imageCache;
 	
 	
 	static
 	{
-		unknownImage = new BufferedImage(16,16,BufferedImage.TYPE_INT_ARGB);
-		unknownImage.createGraphics().drawString("?", 0, 0);
+		createUnknownImage();
+		imageCache = new HashMap<String, BufferedImage>();
 	}
 	
 	
@@ -59,6 +56,17 @@ public abstract class AbstractEntity
 		reset();
 	}
 	
+	
+	private static void createUnknownImage() 
+	{
+		int size = 64;
+		unknownImage = new BufferedImage(size,size,BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g = unknownImage.createGraphics();
+		g.fillRect(0, 0, size, size);
+		g.drawString("?", size/2, size/2);
+		
+	}
+
 	@Deprecated
 	public int getImageID()
 	{
@@ -119,8 +127,13 @@ public abstract class AbstractEntity
 	{
 		try 
 		{
+			image = imageCache.get(imageName);
+			if (image != null)
+				return;
+			
 			System.out.println("Reading " + imageName);
 			image = ImageIO.read(new File(imageName));
+			imageCache.put(imageName, image);
 		} 
 		catch (IOException e) 
 		{

@@ -50,6 +50,7 @@ public abstract class Character extends AbstractEntity
 	private Character attackedBy;
 	private CharacterType characterType;
 	private Color colour = Color.white;
+	private float frame;
 	
 	protected Character(CharacterType characterType) 
 	{
@@ -57,6 +58,7 @@ public abstract class Character extends AbstractEntity
 		this.characterType = characterType;
 		inventory = new Inventory();
 		taunts = new Taunts(this);
+		frame = 0;
 	}
 	
 	
@@ -133,7 +135,14 @@ public abstract class Character extends AbstractEntity
 		
 		state.process(this);
 		
+		frame += getVelocity().getLength() * 0.1f;
+		
 		super.process();
+	}
+	
+	public float getFrame()
+	{
+		return frame;
 	}
 	
 	public void useItem(UsableItem item) 

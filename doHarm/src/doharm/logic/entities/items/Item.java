@@ -44,7 +44,7 @@ public abstract class Item extends AbstractEntity
 	{
 		super(EntityType.ITEM);
 		this.itemType = type;
-		setSize(new Dimension(6,6));
+		setSize(new Dimension(8,8));
 		onGround = false;
 		stashSize = new Dimension(1, 1);
 		loadImage(imageName);
