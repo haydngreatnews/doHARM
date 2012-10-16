@@ -57,7 +57,7 @@ public class WorldRenderer
 
 	private BufferedImage[] floorImagesTrans;//transparent versions of flootImages and wallImages.
 	private BufferedImage[] wallImagesTrans;
-	
+
 	private BufferedImage[] itemImages;
 
 
@@ -216,7 +216,7 @@ public class WorldRenderer
 		boolean isTransparent = false;
 		boolean drawLayer = true;
 		Layer[] layers = world.getLayers();
-		if(drawLayer)
+		if(drawLayer){
 			for(int layerCount = 0; layerCount < layers.length; layerCount++){
 
 
@@ -245,7 +245,7 @@ public class WorldRenderer
 				{
 					if (!entity.isAlive())
 						continue;
-					
+
 					if (entity.getEntityType() == EntityType.CHARACTER)
 					{
 						if(layerCount == entity.getCurrentLayer().getLayerNumber()){
@@ -278,14 +278,17 @@ public class WorldRenderer
 						break;
 					}
 				}
-
+				drawFloorShades(cx,cy,tiles, layerCount);
 			}
 
-		for (AbstractEntity entity: world.getEntityFactory().getEntities())
-		{
-			if (entity.getEntityType() == EntityType.CHARACTER)
+			
+			
+			for (AbstractEntity entity: world.getEntityFactory().getEntities())
 			{
-				playerRenderer.drawInfo(cx,cy,(Character)entity,graphics, fTileW, fTileH);
+				if (entity.getEntityType() == EntityType.CHARACTER)
+				{
+					playerRenderer.drawInfo(cx,cy,(Character)entity,graphics, fTileW, fTileH);
+				}
 			}
 		}
 
@@ -318,6 +321,10 @@ public class WorldRenderer
 
 	Vector vb = new Vector(0, 0);
 	Vector vp = new Vector(0, 0);
+
+	/**
+	 * 
+	 */
 	private void drawRadar(){
 
 		int x = (int)canvasSize.getWidth()/2  - (int)radarImg.getWidth()/2;
@@ -411,11 +418,6 @@ public class WorldRenderer
 				int y = cy+vector.getYAsInt() - fTileH/2; //fTileH/2 added PLEASE leave in here
 				graphics.drawImage(image,x,y, null);
 
-				if(tile.isVisible()){ 
-					graphics.drawImage(floorShades[(int)(tile.getLight()*(numShades-1))],x,y, null);
-
-				}
-
 				if(tile.isWalkable() && layerCount==0){
 					pickGraphics.drawImage(tile.getPickImage(), x,y,null);
 				}
@@ -439,6 +441,54 @@ public class WorldRenderer
 					graphics.drawImage(image,x,y, null);
 					graphics.drawImage(rightWallShades[(int)(tile.getLight()*(numShades-1))],x,y, null);
 				}
+
+			}
+			switch(game.getCamera().getDirection()){
+			case NORTH :colC = startCol; break;
+			case EAST :colC = toCol; break;
+			case SOUTH : colC = toCol; break;
+			case WEST : colC = startCol; break;
+			}
+
+
+		}
+
+	}
+
+
+	private void drawFloorShades(int cx, int cy, Tile[][] tiles, int layerCount){
+		graphics.setColor(new Color(1,0,1,0.4f));
+
+
+		setStartTo(tiles);
+
+
+		switch(game.getCamera().getDirection()){
+		case NORTH : rowC = startRow; colC = startCol; break;
+		case EAST : rowC = startRow; colC = toCol; break;
+		case SOUTH : rowC = toRow; colC = toCol; break;
+		case WEST : rowC = toRow; colC = startCol; break;
+		}
+
+
+		while(checkRowCon(tiles)){
+
+			while(checkColCon(tiles)){
+				if (rowC < 0 || rowC >= tiles.length || colC < 0 || colC >= tiles[0].length)
+					break;
+
+				Tile tile = tiles[rowC][colC];
+
+				RenderUtil.convertCoordsToIso(colC, rowC, layerCount, game.getCamera(), vector);
+				int x = cx+vector.getXAsInt() - fTileW/2; //fTileW/2 added PLEASE leave in here   .... ok  ._.
+				int y = cy+vector.getYAsInt() - fTileH/2; //fTileH/2 added PLEASE leave in here
+
+
+				if(tile.isVisible()){ 
+					graphics.drawImage(floorShades[(int)(tile.getLight()*(numShades-1))],x,y, null);
+
+				}
+
 
 			}
 			switch(game.getCamera().getDirection()){
