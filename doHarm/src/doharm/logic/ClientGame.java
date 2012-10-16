@@ -1,13 +1,14 @@
 package doharm.logic;
 
-import java.awt.Color;
 
 import doharm.gui.view.MainWindow;
-import doharm.logic.entities.characters.classes.CharacterClassType;
-import doharm.logic.world.tiles.Tile;
+import doharm.logic.world.World;
 import doharm.net.NetworkMode;
 import doharm.net.client.Client;
 
+/**
+ * @author Roland Bewick and Adam McLaren (300248714)
+ */
 public class ClientGame extends AbstractGame
 {
 	private Client client;
@@ -22,32 +23,27 @@ public class ClientGame extends AbstractGame
 	 * @param playerName
 	 * @param playerColour
 	 */
-	public ClientGame(MainWindow window, CharacterClassType type, String playerName, Color playerColour, Client client)
+	public ClientGame(MainWindow window, Client client)
 	{
 		super(NetworkMode.CLIENT);
 		getClock().setWindow(window);
 		this.client = client;
-		
-		
-		//TODO COnnect to server
-		
-		//AND check player name, get spawn position, etc.
-		Tile spawnPos = null; //TODO!
-		
-		
-		spawnPos = getWorld().getLayers()[0].getTiles()[5][5]; //TODO REMOVE.
-		
-		
-		//TODO make player but not spawn them until server sends spawn message?
-		//getWorld().createHumanPlayer(spawnPos, type, playerName, playerColour);
-		
+		setWorld(null);
 	}
 	
 	@Override
 	public void run()
 	{
-		super.run();
-		//TODO STUFF HERE
+		client.processIncomingPackets();
+		World newWorld = client.updateWorld(getWorld(), this);
+		if (newWorld != null)
+			setWorld(newWorld);
+		
+		if (getWorld() != null)
+		{
+			super.run();
+			client.dispatchAction(getWorld());
+		}
 	}
 	
 }

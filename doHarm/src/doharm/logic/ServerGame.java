@@ -1,8 +1,16 @@
 package doharm.logic;
 
+import java.util.ArrayList;
+
 import doharm.net.NetworkMode;
+import doharm.net.server.ConnectedClient;
 import doharm.net.server.Server;
 
+/**
+ * 
+ * @author Roland Bewick and Adam McLaren (300248714)
+ *
+ */
 public class ServerGame extends AbstractGame
 {
 	private Server server;
@@ -15,17 +23,21 @@ public class ServerGame extends AbstractGame
 	{
 		super(NetworkMode.SERVER);
 		
-		//TODO Create server
-		//server = new Server(port);
-		
-		
+		server = new Server(port, getWorld());
 	}
 	
 	
 	@Override
 	public void run()
 	{
+		server.processIncomingPackets();
+		
+		// TODO get client actions; update pos based on client fields, and then perform commands.
+		
 		super.run();
-		//TODO STUFF HERE
+		
+		server.checkClients();
+		server.dispatchSnapshots();
+		
 	}
 }
