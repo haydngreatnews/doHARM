@@ -3,6 +3,7 @@ package doharm.logic.entities.characters.players;
 import doharm.logic.entities.AbstractEntity;
 import doharm.logic.entities.EntityType;
 import doharm.logic.entities.characters.Character;
+import doharm.logic.entities.characters.alliances.AllianceName;
 import doharm.logic.entities.characters.states.AttackState;
 import doharm.logic.entities.characters.states.CharacterStateType;
 import doharm.logic.entities.characters.states.MoveState;
@@ -155,7 +156,7 @@ public class HumanPlayer extends Player
 	protected void rightClick() 
 	{
 		//ranged attack / cast spell, etc...
-		super.rightClick();
+		
 		
 		//TODO!?
 		//joinAlliance();
@@ -164,16 +165,25 @@ public class HumanPlayer extends Player
 	private void middleClick() 
 	{
 		// ??
-		
 	}
 
-	public void joinAlliance() 
+	public void joinAlliance(int allianceNumber) 
 	{
-		// TODO Auto-generated method stub
+		AllianceName name = AllianceName.values()[allianceNumber];
 		
+		if (getAlliance() != null)
+		{
+			boolean leaving = false;
+			if (getAlliance().getName() == name)
+			{
+				leaving = true;
+			}
+			getAlliance().removeCharacter(this);
+			
+			if (leaving)
+				return;
+		}
+
+		getWorld().getAllianceManager().getAlliance(allianceNumber).addCharacter(this);
 	}
-
-	
-
-	
 }

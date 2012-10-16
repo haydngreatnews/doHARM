@@ -47,6 +47,11 @@ public abstract class AbstractEntity
 		reset();
 	}
 	
+	public int getImageID()
+	{
+		return -1;
+	}
+	
 	public void setSize(Dimension size)
 	{
 		this.size = size;

@@ -268,9 +268,12 @@ public class WorldRenderer
 
 			}
 
-		for (Player player: world.getPlayerFactory().getEntities())
+		for (AbstractEntity entity: world.getEntityFactory().getEntities())
 		{
-			playerRenderer.drawInfo(cx,cy,player,graphics, fTileW, fTileH);
+			if (entity.getEntityType() == EntityType.CHARACTER)
+			{
+				playerRenderer.drawInfo(cx,cy,(Character)entity,graphics, fTileW, fTileH);
+			}
 		}
 
 	}

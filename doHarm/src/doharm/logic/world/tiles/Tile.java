@@ -359,8 +359,8 @@ public class Tile implements Comparable<Tile>, ItemContainer
 		
 		if (pickedup)
 		{
-			item.spawn(this);
 			item.setOnGround(true);
+			item.spawn(this);
 		}
 		
 		return pickedup;

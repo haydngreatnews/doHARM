@@ -14,6 +14,7 @@ public class KeyboardManager implements KeyListener
 	private Camera camera;
 	private boolean altDown;
 	private AbstractGame game;
+	private boolean jDown;
 	
 	public KeyboardManager(MainWindow m, AbstractGame game){
 		this.game = game;
@@ -38,14 +39,20 @@ public class KeyboardManager implements KeyListener
 		{
 			if (e.getKeyCode() == i)
 			{
-				if (game.getWorld().getHumanPlayer() != null)
+				if (!jDown)
 				{
-					UsableItem item = game.getWorld().getHumanPlayer().getInventory().getBelt().getItem(i-KeyEvent.VK_1);
-					if (item != null)
-						game.getWorld().getHumanPlayer().useItem(item);
-					
+					if (game.getWorld().getHumanPlayer() != null)
+					{
+						UsableItem item = game.getWorld().getHumanPlayer().getInventory().getBelt().getItem(i-KeyEvent.VK_1);
+						if (item != null)
+							game.getWorld().getHumanPlayer().useItem(item);
+					}
 				}
-				
+				else
+				{
+					if (game.getWorld().getHumanPlayer() != null)
+						game.getWorld().getHumanPlayer().joinAlliance(i-KeyEvent.VK_1);
+				}
 			}
 		}
 		
@@ -69,7 +76,9 @@ public class KeyboardManager implements KeyListener
 		
 			
 		
-		
+		case KeyEvent.VK_J:
+			jDown = true;
+			break;
 			
 		case KeyEvent.VK_ALT:
 			altDown = true;
@@ -93,6 +102,10 @@ public class KeyboardManager implements KeyListener
 			break;
 		case KeyEvent.VK_ALT:
 			altDown = false;
+			break;
+		case KeyEvent.VK_J:
+			jDown = false;
+			break;
 		}
 	}
 	
