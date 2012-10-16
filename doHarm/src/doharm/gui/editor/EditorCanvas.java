@@ -110,9 +110,9 @@ public class EditorCanvas extends JPanel {
     }
 
     public boolean setTileUnder(int x, int y, int tileType) {
-	if (x > (xDim - offsetX) * TILE_SIZE || y > (yDim - offsetY) * TILE_SIZE || y < offsetY * TILE_SIZE || x < offsetX * TILE_SIZE)
-	    return false;
-	layers.get(currentLayer).setTileID(y / TILE_SIZE - offsetY, x / TILE_SIZE - offsetX, tileType);
+//	if (x > (xDim - offsetX) * TILE_SIZE || y > (yDim - offsetY) * TILE_SIZE || y < offsetY * TILE_SIZE || x < offsetX * TILE_SIZE)
+//	    return false;
+	layers.get(currentLayer).setTileID(y / TILE_SIZE + offsetY, x / TILE_SIZE + offsetX, tileType);
 	return true;
     }
 
