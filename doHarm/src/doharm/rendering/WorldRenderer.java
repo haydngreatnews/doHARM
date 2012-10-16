@@ -57,6 +57,8 @@ public class WorldRenderer
 
 	private BufferedImage[] floorImagesTrans;//transparent versions of flootImages and wallImages.
 	private BufferedImage[] wallImagesTrans;
+	
+	private BufferedImage[] itemImages;
 
 
 	//private AffineTransform transform;
@@ -64,7 +66,7 @@ public class WorldRenderer
 
 	private PlayerRenderer playerRenderer;
 	private ItemRenderer itemRenderer;
-	
+
 	private BufferedImage radarImg;
 	private BufferedImage radarIcon;
 
@@ -157,8 +159,8 @@ public class WorldRenderer
 
 		graphics.setTransform(transform);
 		pickGraphics.setTransform(transform);*/
-		
-		
+
+
 		//draw the current game, based on the camera, etc.
 
 
@@ -236,8 +238,6 @@ public class WorldRenderer
 				}
 
 
-
-
 				//TODO
 				//Draw players on this layer
 
@@ -278,61 +278,81 @@ public class WorldRenderer
 		}
 
 	}
-	
-	
+
+
 
 	private void createRadarBack() {
-		
+
 		int width = 400;
 		int height = width/2;
-		
+
 		radarImg = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-		
+
 		Graphics2D g = (Graphics2D)radarImg.getGraphics();
 		g.setColor(new Color(0, 0.5f, 0.6f, 0.3f));
 		//g.fillOval(0, 0, radarImg.getWidth(), radarImg.getHeight());
-		
+
 		for(int i = 0; i < 10; i++){
 			g.drawOval(i, i, radarImg.getWidth()-i*2, radarImg.getHeight()-i*2);
 		}		
-		
+
 		int iconSize = 10;
 		radarIcon = new BufferedImage(iconSize, iconSize, BufferedImage.TYPE_INT_ARGB);
 		g = (Graphics2D)radarIcon.getGraphics();
 		g.setColor(new Color(1, 0.7f, 0, 0.3f));
 		g.fillOval(0, 0, iconSize, iconSize);
-		
+
 	}
-	
+
 	Vector vb = new Vector(0, 0);
 	Vector vp = new Vector(0, 0);
 	private void drawRadar(){
-		
+
 		int x = (int)canvasSize.getWidth()/2  - (int)radarImg.getWidth()/2;
 		int y = (int)canvasSize.getHeight()/2  - (int)radarImg.getHeight()/2;
 		graphics.drawImage(radarImg, x, y, null);
-		
+
 		Set<DragonBall> balls = game.getWorld().getDragonRadar().getBalls();
-		Tile ptile = game.getWorld().getHumanPlayer().getCurrentTile();
+		//		Tile ptile = game.getWorld().getHumanPlayer().getCurrentTile();
 		for(DragonBall b : balls){
-			Tile ballTile = b.getCurrentTile();
-			int rowPlayer = ptile.getRow();
-			int colPlayer = ptile.getCol();
-			
-			int rowBall = ballTile.getRow();
-			int colBall = ballTile.getCol();
-			
-			RenderUtil.convertCoordsToIso(rowBall, colBall, game.getWorld().getHumanPlayer().getCurrentLayer().getLayerNumber(), game.getCamera(), vb);
-			vb = RenderUtil.convertCoordsToIso(rowPlayer, colPlayer, game.getWorld().getHumanPlayer().getCurrentLayer().getLayerNumber(), game.getCamera(), vp);
-			
-			
-			
-			
+			if(b.isOnGround()){
+				int colPlayer = (int)((game.getWorld().getHumanPlayer().getPosition().getX())/game.getWorld().getTileWidth());
+				int rowPlayer = (int)((game.getWorld().getHumanPlayer().getPosition().getY())/game.getWorld().getTileHeight());;
+
+				int colBall = (int) (b.getPosition().getX()/game.getWorld().getTileWidth());
+				int rowBall = (int) (b.getPosition().getY()/game.getWorld().getTileHeight());
+
+				RenderUtil.convertCoordsToIso(colBall, rowBall, game.getWorld().getHumanPlayer().getCurrentLayer().getLayerNumber(), game.getCamera(), vb);
+				RenderUtil.convertCoordsToIso(colPlayer, rowPlayer, game.getWorld().getHumanPlayer().getCurrentLayer().getLayerNumber(), game.getCamera(), vp);
+
+
+
+				double theta = Math.atan2(vb.getY() -vp.getY(), vp.getX() - vb.getX())+Math.PI;
+
+
+
+				if(2*Math.pow(vb.getY() -vp.getY(), 2) + Math.pow(vb.getY() -vp.getY(), 2) >= (radarImg.getHeight()/2)){
+					//equation of required ellipse: x = r2*cosT        y =  rsineT 
+
+
+					float maxDistance = (radarImg.getHeight()/2);
+					float distance = (float) Math.hypot(vp.getX() - vb.getX(), vb.getY() -vp.getY());
+
+					int r = (int)((radarImg.getHeight()/2));
+
+
+					int xpos = (worldImage.getWidth()/2) + (int)(r*2*Math.cos(theta)) - radarIcon.getWidth() ;
+					int ypos = (worldImage.getHeight()/2) - (int)(r*Math.sin(theta)) ;
+
+					graphics.drawImage(radarIcon, xpos, ypos, null);
+				}
+			}
+
 		}
-		
-		
+
+
 	}
-	
+
 
 	//for checking which tiles actually need to be rendered.
 	private int startRow = 0;
@@ -348,12 +368,12 @@ public class WorldRenderer
 		setStartTo(tiles);
 
 
-//		switch(game.getCamera().getDirection()){
-//		case NORTH : rowC = -1; colC = -1; break;
-//		case EAST : rowC = -1; colC = tiles[0].length; break;
-//		case SOUTH : rowC = tiles.length; colC = tiles[0].length; break;
-//		case WEST : rowC = tiles.length; colC = -1; break;
-//		}
+		//		switch(game.getCamera().getDirection()){
+		//		case NORTH : rowC = -1; colC = -1; break;
+		//		case EAST : rowC = -1; colC = tiles[0].length; break;
+		//		case SOUTH : rowC = tiles.length; colC = tiles[0].length; break;
+		//		case WEST : rowC = tiles.length; colC = -1; break;
+		//		}
 
 		switch(game.getCamera().getDirection()){
 		case NORTH : rowC = startRow; colC = startCol; break;
@@ -361,14 +381,14 @@ public class WorldRenderer
 		case SOUTH : rowC = toRow; colC = toCol; break;
 		case WEST : rowC = toRow; colC = startCol; break;
 		}
-		
-		
+
+
 		while(checkRowCon(tiles)){
 
 			while(checkColCon(tiles)){
 				if (rowC < 0 || rowC >= tiles.length || colC < 0 || colC >= tiles[0].length)
 					break;
-				
+
 				Tile tile = tiles[rowC][colC];
 
 				BufferedImage image = FI[tile.getImageID()];
@@ -415,7 +435,7 @@ public class WorldRenderer
 			case SOUTH : colC = toCol; break;
 			case WEST : colC = startCol; break;
 			}
-			
+
 
 		}
 
@@ -438,7 +458,7 @@ public class WorldRenderer
 
 		startRow = Math.max(middleY-ans, -1);
 		startCol = Math.max(middleX-ans, -1);
-		
+
 		toRow = Math.min(tiles.length-1, middleY + ans);
 		toCol = Math.min(tiles[0].length-1, middleX + ans);
 
@@ -528,15 +548,15 @@ public class WorldRenderer
 		wTileH = tsl.getWallTileHeight();
 
 
-		
-		
+
+
 
 		try{
 			tileSet = ImageIO.read(new File("res/tilesets/"+tsl.getFloorTileSetImage()));
 
 			int numFloorImages = (tileSet.getHeight()/fTileH)*(tileSet.getWidth()/fTileW);
 			floorImages = new BufferedImage[numFloorImages];
-			
+
 
 
 			for(int r = 0; r < tileSet.getHeight()/fTileH; r++){
@@ -554,7 +574,7 @@ public class WorldRenderer
 
 			int numWallImages = (tileSet.getHeight()/fTileH)*(tileSet.getWidth()/fTileW);
 			wallImages = new BufferedImage[numWallImages];
-			
+
 			//load the wall tiles
 
 			tileSet = ImageIO.read(new File("res/tilesets/"+tsl.getWallTileSetImage()));
