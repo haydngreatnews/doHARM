@@ -28,6 +28,7 @@ public class ItemRenderer {
 
 	}
 
+	Vector v = new Vector(0, 0);
 	private void drawPlayer(Item item, Graphics2D graphics, int tileW, int tileH) {
 
 		Dimension size = item.getSize();
@@ -40,7 +41,7 @@ public class ItemRenderer {
 		//TODO get item colour or image
 		graphics.setColor(item.getQuality().getColour());
 
-		Vector v = RenderUtil.convertCoordsToIso(col, row, item.getCurrentLayer().getLayerNumber(), game.getCamera());
+		RenderUtil.convertCoordsToIso(col, row, item.getCurrentLayer().getLayerNumber(), game.getCamera(), v);
 
 
 		int x = (int)v.getX()-size.width/2;

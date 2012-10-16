@@ -22,7 +22,7 @@ public abstract class AbstractGame
 		this.networkMode = mode;
 		
 		
-		String worldName = "world1";
+		String worldName = "world2";
 		
 		
 		

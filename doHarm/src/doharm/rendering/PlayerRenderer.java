@@ -44,7 +44,7 @@ public class PlayerRenderer {
 		float col = position.getX()/tileW;
 		
 		
-		Vector v = RenderUtil.convertCoordsToIso(col, row, player.getCurrentLayer().getLayerNumber(), game.getCamera());
+		RenderUtil.convertCoordsToIso(col, row, player.getCurrentLayer().getLayerNumber(), game.getCamera(), v);
 		
 		Dimension size = player.getSize();
 		
@@ -74,7 +74,7 @@ public class PlayerRenderer {
 		
 		
 	}
-
+	Vector v = new Vector();
 	private void drawPlayer(Player player, Graphics2D graphics, int tileW, int tileH) 
 	{
 		if (!player.isAlive())
@@ -102,7 +102,7 @@ public class PlayerRenderer {
 		
 		graphics.setColor(player.getColour());
 
-		Vector v = RenderUtil.convertCoordsToIso(col, row, player.getCurrentLayer().getLayerNumber(), game.getCamera());
+		RenderUtil.convertCoordsToIso(col, row, player.getCurrentLayer().getLayerNumber(), game.getCamera(), v);
 		
 	
 		
