@@ -27,8 +27,6 @@ import doharm.logic.world.World;
 public class Alliance 
 {
 	private Set<Character> characters; //set of characters in this alliance
-	private float combinedRage;
-	private float maxRage;
 	private AllianceName name;
 	private World world;
 	
@@ -43,7 +41,6 @@ public class Alliance
 	{
 		this.world = world;
 		this.name = name;
-		combinedRage = 0;
 		characters = new HashSet<Character>();
 	}
 
@@ -57,21 +54,22 @@ public class Alliance
 		if (characters.size() < 1)
 			return;
 		
-		//increase player rage
+
 		
-		
-		//increase total rage
-		combinedRage += 0.1f;
-		combinedRage *= 1.01f;
-		
-		//calculate total rage
-		
-		//calculate max rage
-		
-		if (combinedRage > maxRage)
+		float combinedRage = 0;
+				
+		for (Character character: characters)
 		{
-			//explode();
-			
+			character.increaseRage();
+			combinedRage += character.getRageRatio();
+		}
+		combinedRage /= characters.size();
+		
+		
+		
+		if (combinedRage > 0.7f)
+		{
+			explode();
 		}
 		
 	}

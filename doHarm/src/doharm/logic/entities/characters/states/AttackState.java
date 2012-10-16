@@ -49,11 +49,9 @@ public class AttackState extends CharacterState
 		
 		float distance = character.getCurrentTile().distanceToTile(victim.getCurrentTile());
 		
-		//TODO increased distance for ranged attack.
-		
 		if (distance < minDistance)
 		{
-			float damage = 1;
+			float damage = 1 + character.getCharacterClass().getAttributes().getStrength();
 			victim.receiveDamage(damage,character);
 		}
 		else

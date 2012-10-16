@@ -333,6 +333,7 @@ public class World
 			time.process();
 			weather.process();
 			allianceManager.process();
+			updateLights();
 			removeDeadItems();
 			respawnEntities();
 			moveEntities();
@@ -347,6 +348,27 @@ public class World
 	
 	
 	
+
+	private void updateLights() 
+	{
+		for (Layer layer: layers)
+		{
+			for (Tile[] tiles: layer.getTiles())
+			{
+				for (Tile tile: tiles)
+				{
+					if (tile.getType() == TileType.DARK)
+					{
+						tile.updateLights();
+					}
+				}
+			}
+		}
+		
+		
+	}
+
+
 
 	private void removeDeadItems() 
 	{

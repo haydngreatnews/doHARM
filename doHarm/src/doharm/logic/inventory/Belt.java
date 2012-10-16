@@ -10,8 +10,8 @@ import doharm.logic.world.World;
 public class Belt extends Stash
 {
 	private static final int MAX_ITEM_AREA = 1;
-	private static final int NUM_ROWS = 1;
-	private static final int NUM_COLS = 8;
+	public static final int NUM_ROWS = 1;
+	public static final int NUM_COLS = 8;
 	
 	public Belt()
 	{

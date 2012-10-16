@@ -144,6 +144,11 @@ public class Inventory implements ItemContainer
 		
 	}
 
+	public boolean hasLight() 
+	{
+		return false;
+	}
+
 	
 
 

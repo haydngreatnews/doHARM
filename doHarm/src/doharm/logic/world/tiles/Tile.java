@@ -1,6 +1,7 @@
 package doharm.logic.world.tiles;
 
 import java.awt.Color;
+
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -9,7 +10,10 @@ import java.util.List;
 import java.util.Set;
 
 import doharm.logic.entities.AbstractEntity;
+import doharm.logic.entities.EntityType;
+import doharm.logic.entities.characters.players.Player;
 import doharm.logic.entities.items.Item;
+import doharm.logic.entities.characters.Character;
 import doharm.logic.inventory.ItemContainer;
 import doharm.logic.inventory.ItemSet;
 import doharm.logic.physics.Vector;
@@ -140,6 +144,28 @@ public class Tile implements Comparable<Tile>, ItemContainer
 		
 		
 		return light;
+	}
+	
+	public void updateLights()
+	{
+		dynamicLight = 0;
+		
+		for (AbstractEntity entity: layer.getWorld().getEntityFactory().getEntities())
+		{
+			if (!entity.isAlive() || entity.getEntityType() != EntityType.CHARACTER)
+				continue;
+			
+			Character character = (Character) entity;
+
+			int maxDistance = 10;
+			float distance = distanceToTile(character.getCurrentTile());
+			
+			if (distance < maxDistance)
+			{
+				dynamicLight += (1 - distance / maxDistance)*character.getLightIntensity();
+				System.out.println("light: " + dynamicLight);
+			}
+		}
 	}
 	
 	

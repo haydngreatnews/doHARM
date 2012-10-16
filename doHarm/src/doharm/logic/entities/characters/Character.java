@@ -129,14 +129,25 @@ public abstract class Character extends AbstractEntity
 		
 		health += characterClass.getAttributes().getHealthRegeneration();
 		health = Math.min(health, getMaxHealth());
-		rage -= characterClass.getAttributes().getMaxRage() *0.01f;
-		if (rage < 0) rage = 0;
+		decreaseRage();
 		
 		state.process(this);
 		
 		frame += getVelocity().getLength() * 0.1f;
 		
 		super.process();
+	}
+	
+	private void decreaseRage() {
+		rage -= characterClass.getAttributes().getMaxRage() *0.001f;
+		if (rage < 0) rage = 0;
+	}
+
+
+	public void increaseRage() 
+	{
+		rage += characterClass.getAttributes().getMaxRage() *0.002f;
+		if (rage > getMaxRage()) rage = getMaxRage();
 	}
 	
 	public float getFrame()
@@ -326,6 +337,7 @@ public abstract class Character extends AbstractEntity
 			{
 				ally.setState(new IdleState());
 				ally.addExperience(exp);
+				ally.halveRage();
 			}
 			
 		}
@@ -337,6 +349,12 @@ public abstract class Character extends AbstractEntity
 		die();
 	}
 	
+	private void halveRage() 
+	{
+		rage *= 0.5f;
+	}
+
+
 	public void setSpawnTime(long time)
 	{
 		spawnTime = time;
@@ -407,6 +425,22 @@ public abstract class Character extends AbstractEntity
 	{
 		characterClass.addExperience(characterClass.getNextLevelExperience()-characterClass.getExperience());
 	}
+
+
+	public float getLightIntensity() 
+	{
+		float lightIntensity = 1.0f;
+		
+		if (inventory.hasLight())
+		{
+			lightIntensity *= 2;
+		}
+		
+		return lightIntensity;
+	}
+
+
+	
 	
 	
 	

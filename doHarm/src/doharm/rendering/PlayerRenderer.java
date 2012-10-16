@@ -198,7 +198,7 @@ public class PlayerRenderer {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			System.exit(1);
+			//System.exit(1);
 		} 
 		
 		

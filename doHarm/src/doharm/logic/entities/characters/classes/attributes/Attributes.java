@@ -14,7 +14,6 @@ public class Attributes
 	private int dexterity = 0;
 	private int vitality = 0;
 	
-	//
 	private float maxRage = 100;
 	private float maxHealth = 100;
 	private float maxMana = 0;
@@ -28,7 +27,7 @@ public class Attributes
 		
 	}
 
-	//radar attributes
+
 	public void levelup(LevelupAttributes attributes, Character character) 
 	{
 		healthRegeneration += attributes.getHealthRegenerationIncrease();
@@ -87,11 +86,11 @@ public class Attributes
 	}
 
 	public float getMaxHealth() {
-		return maxHealth;
+		return maxHealth + vitality*10;
 	}
 
 	public float getMaxMana() {
-		return maxMana;
+		return maxMana+intelligence*10;
 	}
 	
 	public float getMaxRage() {
