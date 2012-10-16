@@ -1,29 +1,38 @@
 package doharm.logic.entities.characters.monsters;
-import java.util.HashMap;
-import java.util.Map;
-
 import doharm.logic.entities.characters.Character;
 import doharm.logic.entities.characters.CharacterType;
-import doharm.logic.entities.characters.players.ai.AIAttackState;
-import doharm.logic.entities.characters.players.ai.AIIdleState;
-import doharm.logic.entities.characters.players.ai.AIMoveState;
-import doharm.logic.entities.characters.players.ai.AIPickupState;
-import doharm.logic.entities.characters.players.ai.AIState;
-import doharm.logic.entities.characters.states.CharacterStateType;
 
-public abstract class Monster extends Character
+public class Monster extends Character
 {
+	private static final double MAX_SPAWN_TIME = 60;
+
 	public Monster()
 	{
 		super(CharacterType.MONSTER);
+		spawnEventually();
 	}
-	
+
+
+	private void spawnEventually() 
+	{
+		setSpawnTime(System.currentTimeMillis() + (int)(Math.random()*MAX_SPAWN_TIME) * 1000);
+	}
+
+
 	@Override
 	public void process()
 	{
 		if (!isAlive())
 			return;
 		super.process();
-
 	}
+	
+	@Override 
+	public void die()
+	{
+		super.die();
+		getCharacterClass().addExperience(getCharacterClass().getNextLevelExperience()-getCharacterClass().getExperience());
+		spawnEventually();
+	}
+	
 }

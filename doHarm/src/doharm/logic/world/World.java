@@ -18,6 +18,7 @@ import doharm.logic.entities.IDManager;
 import doharm.logic.entities.characters.Character;
 import doharm.logic.entities.characters.alliances.AllianceManager;
 import doharm.logic.entities.characters.classes.CharacterClassType;
+import doharm.logic.entities.characters.monsters.MonsterFactory;
 import doharm.logic.entities.characters.players.HumanPlayer;
 import doharm.logic.entities.characters.players.Player;
 import doharm.logic.entities.characters.players.PlayerFactory;
@@ -27,6 +28,7 @@ import doharm.logic.entities.items.ItemFactory;
 import doharm.logic.entities.items.ItemQuality;
 import doharm.logic.entities.items.ItemType;
 import doharm.logic.entities.items.misc.MiscItemType;
+import doharm.logic.entities.items.misc.dragonballs.DragonBall;
 import doharm.logic.entities.items.misc.dragonballs.DragonRadar;
 import doharm.logic.time.Time;
 import doharm.logic.weather.Weather;
@@ -40,10 +42,13 @@ import doharm.storage.WorldLoader;
 
 public class World 
 {
+	private static final int NUM_MONSTERS = 20;
+
 	private Layer[] layers;  
 	
 	private EntityFactory entityFactory;
 	private PlayerFactory playerFactory;
+	private MonsterFactory monsterFactory;
 	private ItemFactory itemFactory;
 	
 	private HumanPlayer humanPlayer;
@@ -68,6 +73,8 @@ public class World
 
 	private String worldName;
 	private AllianceManager allianceManager;
+
+	
 	
 	
 	
@@ -87,7 +94,9 @@ public class World
 		
 		entityFactory = new EntityFactory(this,idManager);
 		playerFactory = new PlayerFactory(this,entityFactory);
+		monsterFactory = new MonsterFactory(this, entityFactory);
 		itemFactory = new ItemFactory(this, entityFactory, dragonRadar);
+		
 		
 		
 		
@@ -158,21 +167,38 @@ public class World
 				if (c < 2) c = 2;
 				tile = layers[0].getTiles()[r][c];
 			} while(!tile.isWalkable());
-			
-			
-			
-			//players.add(ai);
-			//
-			
 		}
 		
 		addDragonballs();
+		addMonsters();
+		
 		
 		
 		addMessage(new Message(-1, false, new MessagePart("World created.")));
 		
 	}
 	
+	private void addMonsters() 
+	{
+		for (int i = 0; i < NUM_MONSTERS; i++)
+		{
+			monsterFactory.createMonster(CharacterClassType.getRandomMonsterClass(), getRandomEmptyTile(), idManager.takeID(),false);
+		}
+	}
+	
+	/**
+	 * Only called by server!
+	 */
+	private void addDragonballs() 
+	{
+		for (int i = 0; i < DragonBall.NUM_DRAGONBALLS; i++)
+		{
+			itemFactory.setDragonBallStar(i+1);
+			Tile tile = getRandomEmptyTile();
+			itemFactory.createItem(ItemType.MISC, MiscItemType.DRAGONBALL.ordinal(), ItemQuality.LEGENDARY, idManager.takeID(), tile, false);
+		}
+	}
+
 	public AllianceManager getAllianceManager()
 	{
 		return allianceManager;
@@ -194,18 +220,7 @@ public class World
 		return idManager;
 	}
 
-	/**
-	 * Only called by server!
-	 */
-	private void addDragonballs() 
-	{
-		for (int i = 0; i < 7; i++)
-		{
-			itemFactory.setDragonBallStar(i+1);
-			Tile tile = getRandomEmptyTile();
-			itemFactory.createItem(ItemType.MISC, MiscItemType.DRAGONBALL.ordinal(), ItemQuality.LEGENDARY, idManager.takeID(), tile, false);
-		}
-	}
+	
 
 	public void addMessage(Message message)
 	{
