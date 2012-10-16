@@ -111,6 +111,9 @@ public class EditorWindow extends JFrame {
 		EditorKeyListener edk;
 		canvas.addKeyListener(edk = new EditorKeyListener(canvas));
 		addKeyListener(edk);
+		editor.addKeyListener(edk);
+		upButton.addKeyListener(edk);
+		commit.addKeyListener(edk);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		canvas.requestFocusInWindow();
 		new repaintThread().start();

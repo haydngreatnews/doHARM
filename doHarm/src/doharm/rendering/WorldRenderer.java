@@ -27,6 +27,7 @@ import doharm.logic.world.Layer;
 import doharm.logic.world.World;
 import doharm.logic.world.tiles.Direction;
 import doharm.logic.world.tiles.Tile;
+import doharm.logic.world.tiles.TileType;
 import doharm.storage.TilesetLoader;
 import doharm.storage.WorldLoader;
 
@@ -318,8 +319,9 @@ public class WorldRenderer
 					pickGraphics.drawImage(tile.getPickImage(), x,y,null);
 				}
 
-				if(tile.getImageID() != 2 ){
-
+				//if(tile.getImageID() != 2 ){
+				if (tile.getType() == TileType.WALL)
+				{
 					int imgID = tile.getWallImageID(Direction.UP);
 
 
@@ -367,7 +369,7 @@ public class WorldRenderer
 
 		int width = canvasSize.width;
 
-		int ans = (int)((((width/2)/fTileW)+2)*1);
+		int ans = (int)((((width/2)/fTileW)+2)*1.7f);
 
 		ans = (int) Math.hypot(ans, ans);
 

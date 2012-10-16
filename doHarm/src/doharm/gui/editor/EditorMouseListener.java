@@ -14,13 +14,12 @@ public class EditorMouseListener implements MouseListener, MouseMotionListener {
 
     @Override
     public void mouseClicked(MouseEvent e) {
-	// TODO Auto-generated method stub
-
+    	window.getCanvas().setTileUnder(e.getX(), e.getY(), window.getCurrentTileType());
     }
 
     @Override
     public void mousePressed(MouseEvent e) {
-	// TODO Auto-generated method stub
+    	window.getCanvas().setTileUnder(e.getX(), e.getY(), window.getCurrentTileType());	
 
     }
 
