@@ -24,6 +24,7 @@ public class ClientGame extends AbstractGame
 		super(NetworkMode.CLIENT);
 		getClock().setWindow(window);
 		this.client = client;
+		this.window = window;
 	}
 	
 	@Override
@@ -33,9 +34,14 @@ public class ClientGame extends AbstractGame
 		World newWorld = client.updateWorld(getWorld(), this);
 		if (newWorld != null)
 		{
-			setWorld(newWorld);
 			if (getWorld() == null)
+			{
+				setWorld(newWorld);
+				setCamera(newWorld.getCamera());
+				System.out.println("GAME GO");
 				window.setGame(this);
+			}
+			setWorld(newWorld);
 		}
 		
 		if (getWorld() != null)

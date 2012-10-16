@@ -6,6 +6,7 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Code that is common to both Snapshot and Action packets.
@@ -59,7 +60,13 @@ public abstract class Update
 		}
 	}
 	
-	public HashMap<Integer,ArrayList<String>> getCommands() { return (HashMap<Integer,ArrayList<String>>) Collections.unmodifiableMap(commands); }
+	public Map<Integer, ArrayList<String>> getCommands()
+	{
+		if (commands != null)
+			return Collections.unmodifiableMap(commands);
+		else
+			return null;
+	}
 	
 	
 	/** Extracts the timestamp from the byte array form of the Update

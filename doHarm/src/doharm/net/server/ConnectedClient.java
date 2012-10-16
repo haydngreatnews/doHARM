@@ -22,7 +22,7 @@ public class ConnectedClient
 	private InetSocketAddress address;
 	public Action latestActionPacket;
 	private int counter;	// counter used by various.
-	private static int RESEND_DELAY;
+	private static int RESEND_DELAY = 40;
 	private Player playerEntity;
 	private String name;
 	private int lastFullPlayerState;	// Server time at which we created the latest FullPlayerState, so keep sending PlayerStateFull until it's been ack'd.
@@ -38,12 +38,13 @@ public class ConnectedClient
 	// Holds on to all unack'd CommandLists we've sent the client.
 	private HashMap<Integer,ArrayList<String>> commandsBuffer = new HashMap<Integer,ArrayList<String>>();
 	
-	public ConnectedClient(InetSocketAddress address, Player player)
+	public ConnectedClient(InetSocketAddress address, Player player, int time)
 	{
 		this.playerEntity = player;
 		this.name = player.getName();
 		this.address = address;
-		state = ClientState.READY;
+		setState(ClientState.READY);
+		latestTime = time;
 	}
 	
 	public InetSocketAddress getAddress() {	return address; }
@@ -58,7 +59,7 @@ public class ConnectedClient
 		switch (state)
 		{
 		case READY:
-			counter = 0;
+			counter = 20;
 		}
 	}
 	
@@ -66,7 +67,7 @@ public class ConnectedClient
 	 * Update what the latest action packet from the client is.
 	 * @param data
 	 */
-	public void updateClientActionPacket(byte[] data)
+	public void updateClientActionPacket(byte[] data, int time)
 	{
 		if (state == ClientState.READY)		// TODO can probably optimise this by having a special kind of action packet sent on first try.
 			setState(ClientState.INGAME);
@@ -75,10 +76,11 @@ public class ConnectedClient
 		int seqnum = Action.getTimestamp(data);
 		
 		// If this packet isn't more recent than the latest action we've received, discard.
-		if ( seqnum <= latestTime )
+		if ( latestActionPacket != null && seqnum <= latestActionPacket.seqNum )
 			return;
 		
-		latestTime = seqnum;
+		latestTime = time;
+		
 		latestActionPacket = new Action(data);
 	}
 	

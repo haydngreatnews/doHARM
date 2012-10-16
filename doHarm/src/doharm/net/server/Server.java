@@ -33,10 +33,10 @@ public class Server {
 	private ArrayList<ConnectedClient> clients = new ArrayList<ConnectedClient>();
 	private UDPReceiver receiver;
 	private DatagramSocket udpSock;
-	private int serverTime;
+	private int serverTime = 0;
 	private int frameTime;	// Time between frames.
 	private static int CLIENT_CHECK_INTERVAL = 60, TIMEOUT_DELAY = 200;
-	private int checkClientsCounter;
+	private int checkClientsCounter = 0;
 	
 	private World world;
 	
@@ -69,7 +69,7 @@ public class Server {
 				for (ConnectedClient c : clients)
 					if ( c.getAddress().equals(packet.getSocketAddress()) )
 					{
-						c.updateClientActionPacket(data);
+						c.updateClientActionPacket(data, serverTime);
 						break;
 					}
 				break;
@@ -146,7 +146,7 @@ public class Server {
 		
 		Player player = world.getPlayerFactory().createPlayer(world.getRandomEmptyTile(), settings.name, 
 				settings.classType, world.getIDManager().takeID(), PlayerType.NETWORK, settings.colour, true);
-		ConnectedClient client = new ConnectedClient(address, player);
+		ConnectedClient client = new ConnectedClient(address, player, serverTime);
 		clients.add(client);
 		return client;
 	}
@@ -155,7 +155,7 @@ public class Server {
 	 * Builds new snapshots from the game state then sends them out.
 	 */
 	public void dispatchSnapshots()
-	{	
+	{
 		HashMap<Integer,EntityUpdate> entityUpdates = new HashMap<Integer,EntityUpdate>();
 		HashMap<Integer,EntityCreate> entityCreates = new HashMap<Integer,EntityCreate>();
 		ArrayList<Integer> entityDeletes = new ArrayList<Integer>();
@@ -240,17 +240,18 @@ public class Server {
 	{
 		client.flushSnaps();
 		
-		Snapshot gamestate = new Gamestate(serverTime, -1, world, client);
+		Gamestate gamestate = new Gamestate(serverTime, -1, world, client);
 		
 		for (AbstractEntity e : world.getEntityFactory().getEntities() )
 		{
-			if (e instanceof HumanPlayer)
+			if (e instanceof Player)
 			{
-				gamestate.addECreate(new CharacterCreate((HumanPlayer)e));	// TODO
-				gamestate.addEUpdate(new CharacterUpdate((HumanPlayer)e));	// TODO
+				gamestate.addECreate(new CharacterCreate((Player)e));	// TODO
+				gamestate.addEUpdate(new CharacterUpdate((Player)e));	// TODO
 			}
 		}
-		transmit(gamestate.convertToBytes(), client.getAddress() );
+		byte[] send = gamestate.convertToBytes();
+		transmit(send, client.getAddress() );
 	}
 	
 	public void checkClients()
@@ -259,16 +260,22 @@ public class Server {
 		if (checkClientsCounter > CLIENT_CHECK_INTERVAL)
 		{
 			checkClientsCounter = 0;
-			ArrayList<ConnectedClient> toRemove = new ArrayList<ConnectedClient>(2);
+			ArrayList<ConnectedClient> toRemove = new ArrayList<ConnectedClient>(clients.size());
 			for ( ConnectedClient c : clients )
 			{
-				if (serverTime - c.getLatestTime() > TIMEOUT_DELAY);
-				toRemove.add(c);
+				if (serverTime - c.getLatestTime() > TIMEOUT_DELAY)
+					toRemove.add(c);
 			}
 			for ( ConnectedClient c : toRemove )
 			{
+				System.out.println("Dropping " + c.getName() + " from server.");
 				clients.remove(c);
 			}
 		}
+	}
+
+	public void tick()
+	{
+		++serverTime;		
 	}
 }

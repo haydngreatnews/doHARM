@@ -39,7 +39,7 @@ public class Gamestate extends Snapshot {
 		day = date - year*10000 - month*100;
 	}
 	
-	public byte[] converToBytes()
+	public byte[] convertToBytes()
 	{
 		byte[] snapshot = super.convertToBytes();
 		snapshot[0] = (byte) ServerPacket.GAMESTATE.ordinal();	// replace the Snapshot type with Gamestate type.
@@ -47,6 +47,7 @@ public class Gamestate extends Snapshot {
 		try
 		{
 			buff.write(snapshot);	// Copy the snapshot over into our new gamestate array.
+			buff.write(Bytes.setString(worldName));
 			buff.write(Bytes.setInt(playerEntityID));
 			buff.write(Bytes.setInt(day + month*100 + year*10000));	// Put date into one integer.
 		} catch (IOException e) { e.printStackTrace(); }
