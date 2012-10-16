@@ -3,7 +3,10 @@ package doharm.net.packets;
 import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
 
-/** Class containing static methods to assist in the reading of bytes. */
+/**
+ * Class containing static methods to assist in the reading of bytes.
+ * @author Adam McLaren (300248714)
+ */
 abstract public class Bytes {
 
 	/** Translates a series of bytes that represent a String (that was 

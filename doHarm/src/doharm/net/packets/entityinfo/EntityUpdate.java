@@ -4,7 +4,10 @@ import java.nio.ByteBuffer;
 
 import doharm.logic.entities.AbstractEntity;
 
-/** Holds updates to an entity */
+/**
+ * Holds information for the update of an entity to send to Clients.
+ * @author Adam McLaren (300248714)
+ */
 public abstract class EntityUpdate extends EntityInfo
 {
 	public final int layer; //velocity, 

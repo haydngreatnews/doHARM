@@ -15,13 +15,14 @@ import doharm.net.packets.PlayerStateFull;
 import doharm.net.packets.Snapshot;
 
 /**
- * The servers view of a Client
+ * The Servers view of a Client.
+ * @author Adam McLaren (300248714)
  */
 public class ConnectedClient
 {
 	private InetSocketAddress address;
-	public Action latestActionPacket;
-	private int counter;	// counter used by various.
+	private Action latestActionPacket;
+	private int gamestateCounter;
 	private static int RESEND_DELAY = 40;
 	private Player playerEntity;
 	private String name;
@@ -47,25 +48,39 @@ public class ConnectedClient
 		latestTime = time;
 	}
 	
+	/** 
+	 * @return Address the Client is connected from.
+	 */
 	public InetSocketAddress getAddress() {	return address; }
 	
+	/**
+	 * @return Current state the Client is in.
+	 */
 	public ClientState getState() { return state; }
 	
+	/**
+	 * @return Last time we received a packet from this Client.
+	 */
 	public int getLatestTime() { return latestTime; }
 
+	/**
+	 * Changes the state of the Client.
+	 * @param newState State to set the Client to.
+	 */
 	public void setState(ClientState newState)
 	{
 		state = newState;
 		switch (state)
 		{
 		case READY:
-			counter = 20;
+			gamestateCounter = 20;
 		}
 	}
 	
 	/**
 	 * Update what the latest action packet from the client is.
-	 * @param data
+	 * @param data Packet in raw byte array form.
+	 * @param time Server time we received this packet at.
 	 */
 	public void updateClientActionPacket(byte[] data, int time)
 	{
@@ -84,13 +99,16 @@ public class ConnectedClient
 		latestActionPacket = new Action(data);
 	}
 	
-	/** Add a new snapshot to the snap buffer. */
+	/**
+	 * Add a new snapshot to the snap buffer.
+	 * @param snap Snapshot to add.
+	 */
 	public void addSnapshot(Snapshot snap) { snapsBuffer.add(snap); }
 	
 	/**
 	 * Builds the Snapshot to actually transmit to the client.
 	 * Combines all unack'd snapshots into one.
-	 * @return
+	 * @return The Snapshot to transmit.
 	 */
 	public Snapshot buildTransmissionSnapshot()
 	{
@@ -107,13 +125,8 @@ public class ConnectedClient
 			commandsBuffer.remove(i);
 		
 		/* Build the snapshot to send.
-		
 		So we use the latest snapshot as a base, and from there we go through the rest in order from newest to oldest,
-		and if entities from the snap we are looking at aren't in our transmission snap, add them.
-		
-		TODO not the most efficient way at the moment; eventually should keep the latest transmission packet 
-		and just make changes to it based on what has been removed and what has been added, not going thru all of them.
-		*/
+		and if entities from the snap we are looking at aren't in our transmission snap, add them.	*/
 		Iterator<Snapshot> iter = snapsBuffer.descendingIterator();
 		
 		Snapshot transSnap = new Snapshot(iter.next());	// will never be null, a snapshot was just added earlier in the thread of execution
@@ -138,22 +151,44 @@ public class ConnectedClient
 	 */
 	public void flushSnaps() { snapsBuffer.clear(); }
 
+	/**
+	 * Check if it is time to resend the Gamestate.
+	 * @return If we should resend the gamestate.
+	 */
 	public boolean resendGamestate()
 	{
-		if (--counter == 0)
+		if (--gamestateCounter == 0)
 		{
-			counter = RESEND_DELAY;
+			gamestateCounter = RESEND_DELAY;
 			return true;
 		}
 		return false;
 	}
 
+	/**
+	 * @return Player entity this Client controls. 
+	 */
 	public Player getPlayerEntity() { return playerEntity; }
 
+	/**
+	 * @return Name of this Client.
+	 */
 	public String getName() { return name; }
 
+	/**
+	 * Remove this Clients player from the world.
+	 * @param world World to remove the player from.
+	 */
 	public void kill(World world)
 	{
 		world.getPlayerFactory().removePlayer(getPlayerEntity());
+	}
+	
+	/**
+	 * @return The latest Action packet receieved.
+	 */
+	public Action getLatestActionPacket()
+	{
+		return latestActionPacket;
 	}
 }

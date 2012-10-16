@@ -31,6 +31,7 @@ public class ServerGame extends AbstractGame
 	{
 		server.processIncomingPackets();
 		server.tick();
+		server.moveClients();
 		// TODO get client actions; update pos based on client fields, and then perform commands.
 		
 		super.run();

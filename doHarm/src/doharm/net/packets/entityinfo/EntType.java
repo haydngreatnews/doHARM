@@ -1,5 +1,9 @@
 package doharm.net.packets.entityinfo;
 
+/**
+ * Enum for translating Entity Types to and from a Byte for transmitting in packets.
+ * @author Adam McLaren (300248714)
+ */
 public enum EntType
 {
 	PLAYER_RANGER,

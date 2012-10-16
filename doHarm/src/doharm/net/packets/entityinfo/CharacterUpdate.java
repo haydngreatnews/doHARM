@@ -5,6 +5,9 @@ import java.nio.ByteBuffer;
 import doharm.logic.entities.characters.players.Player;
 import doharm.net.packets.Bytes;
 
+/**
+ * @author Adam McLaren (300248714)
+ */
 public class CharacterUpdate extends EntityUpdate
 {
 	public final float health;

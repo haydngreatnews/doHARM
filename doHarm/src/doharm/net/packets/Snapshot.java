@@ -14,22 +14,34 @@ import doharm.net.packets.entityinfo.EntityCreate;
 import doharm.net.packets.entityinfo.EntityUpdate;
 
 /**
- * Struct representing a Server Snapshot, which is then converted into a packet to send over the wire.
+ * Represents a Server Snapshot, which is then able to be converted to or from a packet for send/receiving over the net.
  * @author Adam McLaren (300248714)
  */
 public class Snapshot extends Update {
 
+	/** Server time at which this snapshot was sent. */
 	public final int serverTime;
+	/** Last sequence number from a Client Action packet the server has received. */
 	public final int seqAckd;
+	/** Weather conditions. */
 	public final float weather;
+	/** Time of day. */
 	public final float timeOfDay;
+	
+	/**	The length of this snapshot in bytes. Used by Gamestate to know where to continue reading from. */
+	protected int snapshotLength = 0;
+	
 	private PlayerState pState = null;
 	private final HashMap<Integer,EntityUpdate> entityUpdates = new HashMap<Integer,EntityUpdate>();
 	private final HashMap<Integer,EntityCreate> entityCreates = new HashMap<Integer,EntityCreate>();
 	private final ArrayList<Integer> entityDeletes = new ArrayList<Integer>();
 	
-	protected int snapshotLength = 0;
-	
+	/**
+	 * Construct the bare-bones Snapshot from the Server.
+	 * @param serverTime Server time of when the snap was created.
+	 * @param seqAckd Last Client Action packet acknowledged. 
+	 * @param world World to get world properties from.
+	 */
 	public Snapshot(int serverTime, int seqAckd, World world)
 	{
 		this.serverTime = serverTime;
@@ -40,8 +52,8 @@ public class Snapshot extends Update {
 	
 	/**
 	 * Constructs a Snapshot object out of a Snapshot packet byte array.
-	 * @param packet
-	 * @return
+	 * @param packet Raw byte array form of the Snapshot to convert from.
+	 * @return Snapshot generated from the packet.
 	 */
 	public Snapshot(byte[] packet)
 	{	
@@ -86,7 +98,10 @@ public class Snapshot extends Update {
 		snapshotLength = buff.position();
 	}
 	
-	/** Creates a Snapshot that is a copy of the given snapshot (minus Commands) */
+	/**
+	 * Creates a Snapshot that is a copy of the given snapshot (minus Commands). 
+	 * @param other Snapshot to use as the source.
+	 */
 	public Snapshot(Snapshot other)
 	{
 		serverTime = other.serverTime;
@@ -101,8 +116,7 @@ public class Snapshot extends Update {
 	
 	/**
 	 * Translates the Snapshot object into a byte-array for transmission.
-	 * @param snap Snapshot object to convert
-	 * @return 
+	 * @return Byte array form of the snapshot.
 	 */
 	public byte[] convertToBytes()
 	{	
@@ -154,20 +168,40 @@ public class Snapshot extends Update {
 		return buff.toByteArray();
 	}
 	
+	/**
+	 * Adds an Entity Create to the snapshot.
+	 * @param ent EntityCreate to add.
+	 */
 	public void addECreate(EntityCreate ent) { entityCreates.put(ent.id, ent); }
 	
+	/**
+	 * Adds an Entity Delete to the snapshot.
+	 * @param entID ID of entity to delete.
+	 */
 	public void addEDelete(int entID) { entityDeletes.add(entID); }
 	
+	/**
+	 * Adds an Entity Update to the snapshot.
+	 * @param ent EntityUpdate to add.
+	 */
 	public void addEUpdate(EntityUpdate ent) { entityUpdates.put(ent.id, ent); }
 	
+	/** @return View of the Entity Deletes this Snapshot contains. */
 	public List<Integer> getEDeletes() { return Collections.unmodifiableList(entityDeletes); }
 	
+	/** @return View of the Entity Creates this Snapshot contains. */
 	public Map<Integer, EntityCreate> getECreates() { return Collections.unmodifiableMap(entityCreates); }
 	
+	/** @return View of the Entity Updates this Snapshot contains. */
 	public Map<Integer, EntityUpdate> getEUpdates() { return Collections.unmodifiableMap(entityUpdates); }
 	
+	/** @return Player state this snap contains. */
 	public PlayerState getPlayerState() { return pState; }
 	
+	/**
+	 * Sets the player state this snapshot is to contain.
+	 * @param state PlayerState to place in snap.
+	 */
 	public void setPlayerState(PlayerState state)
 	{
 		if (pState == null)

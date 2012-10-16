@@ -10,11 +10,18 @@ import java.util.Map;
 
 /**
  * Code that is common to both Snapshot and Action packets.
+ * @author Adam McLaren (300248714)
  */
 public abstract class Update
 {
+	// List of commands this update contains.
 	private HashMap<Integer,ArrayList<String>> commands = null;
-	
+
+	/**
+	 * Read in the Commands contained in the byte array form of this update.
+	 * The ByteBuffer passed must have it's position at the start of the command section of the byte array.
+	 * @param buff ByteBuffer to read the bytes with.
+	 */
 	protected void readCommands(ByteBuffer buff)
 	{
 		byte commandBatches = buff.get();
@@ -32,7 +39,12 @@ public abstract class Update
 			}
 		}
 	}
-	
+
+	/**
+	 * Write the commands section of the Update out into Bytes.
+	 * @param buff OutputStream to write the bytes on.
+	 * @throws IOException
+	 */
 	protected void writeCommands(ByteArrayOutputStream buff) throws IOException
 	{
 		if (commands == null)
@@ -50,7 +62,11 @@ public abstract class Update
 			}
 		}
 	}
-	
+
+	/**
+	 * Add a completed list of Commands to this Update. Added when creating a transmission Snap/Gamestate.
+	 * @param cmds Map of commands to add.
+	 */
 	public void addCommands(HashMap<Integer,ArrayList<String>> cmds)
 	{
 		if (commands == null)
@@ -59,7 +75,10 @@ public abstract class Update
 			commands.putAll(cmds);
 		}
 	}
-	
+
+	/**
+	 * @return View of Commands contained in this update. null if none exist.
+	 */
 	public Map<Integer, ArrayList<String>> getCommands()
 	{
 		if (commands != null)
@@ -67,10 +86,14 @@ public abstract class Update
 		else
 			return null;
 	}
-	
-	
-	/** Extracts the timestamp from the byte array form of the Update
-	 * (serverTime in case of Snapshot, seqNum in case of Action) */
+
+
+	/**
+	 * Extracts the timestamp from the byte array form of an Update
+	 * (serverTime in case of Snapshot, seqNum in case of Action)
+	 * @param data Byte-array form of the packet.
+	 * @return
+	 */
 	public static int getTimestamp(byte[] data)
 	{
 		ByteBuffer buff = ByteBuffer.wrap(data);

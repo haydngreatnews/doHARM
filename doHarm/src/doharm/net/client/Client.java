@@ -37,6 +37,10 @@ import doharm.net.packets.entityinfo.ItemCreate;
 import doharm.net.packets.entityinfo.ProjectileCreate;
 import doharm.net.packets.entityinfo.ProjectileUpdate;
 
+/**
+ * Class for handling networking from the Client end.
+ * @author Adam McLaren (300248714)
+ */
 public class Client {
 
 	private UDPReceiver receiver;
@@ -57,6 +61,9 @@ public class Client {
 	/** Holds on to all unack'd CommandLists we've sent the server. */
 	private HashMap<Integer,ArrayList<String>> commandsBuffer = new HashMap<Integer,ArrayList<String>>();
 
+	/**
+	 * Create a new Client.
+	 */
 	public Client()
 	{	
 		// Setup the UDP socket.
@@ -72,7 +79,7 @@ public class Client {
 	/** 
 	 * Attempt to connect to a Server.
 	 * @param address Server address to connect to.
-	 * @return If the connection was successful.
+	 * @return null on success or String reason for failure.
 	 */
 	public String connect(InetSocketAddress address, String name, Color colour, CharacterClassType classType)
 	{
@@ -119,6 +126,9 @@ public class Client {
 		return "Connection attempt timed out.";
 	}
 
+	/**
+	 * Read through all the received UDP packets, and update the Client accordingly ready for updating the world.
+	 */
 	public void processIncomingPackets()
 	{
 		while (!receiver.isEmpty())
@@ -149,10 +159,10 @@ public class Client {
 
 	/**
 	 * Update what the latest snapshot packet from the server is.
-	 * @param data
+	 * @param data Snapshot in raw byte array form.
 	 * @param isGameState is this packet a Gamestate packet.
 	 */
-	public void updateSnapshotPacket(byte[] data, boolean isGameState)
+	private void updateSnapshotPacket(byte[] data, boolean isGameState)
 	{
 		// Extract the timestamp from the packet.
 		int timestamp = Snapshot.getTimestamp(data);
@@ -169,6 +179,7 @@ public class Client {
 
 	/**
 	 * Builds a new Action and sends it out to the server we're connected to.
+	 * @param world World being used by Client.
 	 */
 	public void dispatchAction(World world)
 	{
@@ -198,9 +209,9 @@ public class Client {
 	 * Sends a UDP Packet out to the desired address.
 	 * @param data Packet contents.
 	 * @param address IP and Port to send to.
-	 * @return
+	 * @return If the transmit succeeded.
 	 */
-	public boolean transmit(byte[] data, InetSocketAddress address)
+	private boolean transmit(byte[] data, InetSocketAddress address)
 	{
 		System.out.println("Transmitting packet to " + address.toString());
 		try {
@@ -218,7 +229,7 @@ public class Client {
 	 * @param data Packet contents.
 	 * @return
 	 */
-	public boolean transmit(byte[] data)
+	private boolean transmit(byte[] data)
 	{
 		return transmit(data, serverAddress);
 	}
@@ -271,7 +282,7 @@ public class Client {
 			}
 			world.createHumanPlayer(world.getRandomEmptyTile(), pClass, pc.name, pc.colour, playerEntID);
 			CharacterUpdate pu = (CharacterUpdate) snapNext.getEUpdates().get(playerEntID);
-			//world.getHumanPlayer().update(pu);
+			world.getHumanPlayer().update(pu);
 		}
 		else
 		{
@@ -283,7 +294,7 @@ public class Client {
 
 		// UPDATE PLAYERSTATE
 		
-		// TODO
+		world.getHumanPlayer().updatePlayerState(snapNext.getPlayerState());
 		
 		// UPDATE ENTITY PROPERTIES
 		
@@ -306,7 +317,6 @@ public class Client {
 			if (e != null)
 				continue;
 
-			// TODO TODO TODO TODO
 			if (c instanceof CharacterCreate)
 			{
 				CharacterCreate cc = (CharacterCreate) c;
@@ -392,5 +402,4 @@ public class Client {
 		else
 			return null;
 	}
-
 }
