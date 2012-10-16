@@ -11,6 +11,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
@@ -37,7 +38,7 @@ public class EditorWindow extends JFrame {
 		setLayout(new BorderLayout());
 		canvas = new EditorCanvas();
 		add(canvas, BorderLayout.CENTER);
-		canvas.setWorld(EditorLogic.loadWorld("world1"));
+		canvas.setWorld(EditorLogic.loadWorld(JOptionPane.showInputDialog("Load world", "world1")));
 		JPanel editor = new JPanel(new MigLayout("wrap 2"));
 		editor.add(new JLabel("Layer:"));
 		JButton upButton, downButton;
