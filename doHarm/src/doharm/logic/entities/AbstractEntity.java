@@ -196,6 +196,10 @@ public abstract class AbstractEntity
 		
 	}
 	
+	public float distanceTo(AbstractEntity other)
+	{
+		return (float)Math.hypot(other.position.getX() - position.getX(), other.position.getY() - position.getY());
+	}
 	
 	
 	

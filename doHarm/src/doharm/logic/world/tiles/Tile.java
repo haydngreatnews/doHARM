@@ -21,7 +21,7 @@ import doharm.storage.WallTileData;
 
 public class Tile implements Comparable<Tile>, ItemContainer
 {
-	private ItemContainer items;
+	private ItemSet itemSet;
 	
 	private FloorTileData floorData;
 	private WallTileData[] walls;
@@ -124,7 +124,7 @@ public class Tile implements Comparable<Tile>, ItemContainer
 		
 		walls = new WallTileData[Direction.values().length];
 		entities = new HashSet<AbstractEntity>();
-		items = new ItemSet();
+		itemSet = new ItemSet();
 	}
 	
 	/**
@@ -355,7 +355,7 @@ public class Tile implements Comparable<Tile>, ItemContainer
 
 	@Override
 	public boolean pickup(Item item) {
-		boolean pickedup =  items.pickup(item);
+		boolean pickedup =  itemSet.pickup(item);
 		
 		if (pickedup)
 		{
@@ -369,7 +369,7 @@ public class Tile implements Comparable<Tile>, ItemContainer
 	@Override
 	public boolean drop(Item item, ItemContainer destination) 
 	{
-		boolean dropped = items.drop(item, destination);
+		boolean dropped = itemSet.drop(item, destination);
 		
 		if (dropped && !(destination instanceof Tile))
 			item.setOnGround(false);
@@ -380,16 +380,20 @@ public class Tile implements Comparable<Tile>, ItemContainer
 	@Override
 	public void deleteItem(Item item) 
 	{
-		items.deleteItem(item);
+		itemSet.deleteItem(item);
 	}
 
 	@Override
 	public void dropAll(Tile dropTile) {
-		items.dropAll(dropTile);
+		itemSet.dropAll(dropTile);
 	}
 
 	public TileType getType() {
 		return floorData.getType();
+	}
+
+	public Set<Item> getItems() {
+		return itemSet.getItems();
 	}
 	
 }
