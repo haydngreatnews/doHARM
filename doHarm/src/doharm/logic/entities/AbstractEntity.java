@@ -18,7 +18,7 @@ public abstract class AbstractEntity
 {
 	
 	private Vector position;
-	
+	private Vector oldPosition;
 	private Vector velocity;
 	private Dimension size;
 	/** Angle this entity is facing */
@@ -76,6 +76,7 @@ public abstract class AbstractEntity
 	{
 		position = new Vector();
 		velocity = new Vector();
+		oldPosition = new Vector();
 		angle = 0;
 	}
 
@@ -101,12 +102,20 @@ public abstract class AbstractEntity
 	
 	public void setPosition(float x, float y, Layer layer) 
 	{
+		
+		
 		position.set(x, y);
 		currentLayer = layer;
 		Tile tile = currentLayer.getTileAt(position.getX(), position.getY());
 		
 		if (currentTile == tile || tile == null)
 			return;
+		
+		if (!tile.isWalkable())
+		{
+			setPosition(oldPosition.getX(), oldPosition.getY(), layer);
+			return;
+		}
 		
 		if (currentTile != null)
 			currentTile.removeEntity(this);
@@ -185,20 +194,11 @@ public abstract class AbstractEntity
 
 		
 		setPosition(position.getX(), position.getY(), currentTile.getLayer());
+		oldPosition.set(position);
 		
-		
-		checkCollisions();
 		
 		
 		velocity.multiply(friction);
-	}
-	
-	
-
-	private void checkCollisions() 
-	{
-		//TODO
-		
 	}
 	
 	public float distanceTo(AbstractEntity other)
