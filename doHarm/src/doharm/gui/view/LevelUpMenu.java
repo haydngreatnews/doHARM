@@ -112,7 +112,7 @@ public class LevelUpMenu extends JFrame {
 					b.setEnabled(false);
 				}
 			}
-			for (int i = 0; i<values.length; ++i){
+			for (int i = 0; i<AttributeType.values().length; ++i){
 			    values[i].setText(""+(player.getCharacterClass().getAttributes().getAttr(AttributeType.values()[i])+changes[i]));
 			}
 		}
