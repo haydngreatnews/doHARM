@@ -8,11 +8,26 @@ import doharm.logic.time.Time;
 import doharm.logic.world.World;
 import doharm.net.server.ConnectedClient;
 
+/**
+ * Representation of a Full Gamestate, which is a Snapshot with additional world information that only needs to be sent once.
+ * @author Adam McLaren (300248714)
+ */
 public class Gamestate extends Snapshot {
 
+	/** Name of the world the game is running. */
 	public final String worldName;
-	public final int playerEntityID, year, month, day;
+	/** Entity Network ID that corresponds to the Player this Client will be controlling. */
+	public final int playerEntityID;
+	/** Current Date in the game world. */
+	public final int year, month, day;
 	
+	/**
+	 * Construct the bare-bones Gamestate from the Server.
+	 * @param serverTime Server time of when the snap was created.
+	 * @param seqAckd Last Client Action packet acknowledged. 
+	 * @param world World to get world properties from.
+	 * @param client Client this Gamestate is for.
+	 */
 	public Gamestate(int serverTime, int seqAckd, World world, ConnectedClient client)
 	{
 		super(serverTime, seqAckd, world);
@@ -24,6 +39,11 @@ public class Gamestate extends Snapshot {
 		this.day = t.getYear();
 	}
 	
+	/**
+	 * Constructs a Gamestate object out of a Gamestate packet byte array.
+	 * @param packet Raw byte array form of the Gamestate to convert from.
+	 * @return Gamestate generated from the packet.
+	 */
 	public Gamestate(byte[] packet)
 	{
 		super(packet);
@@ -39,6 +59,10 @@ public class Gamestate extends Snapshot {
 		day = date - year*10000 - month*100;
 	}
 	
+	/**
+	 * Translates the Gamestate object into a byte-array for transmission.
+	 * @return Byte array form of the Gamestate.
+	 */
 	public byte[] convertToBytes()
 	{
 		byte[] snapshot = super.convertToBytes();

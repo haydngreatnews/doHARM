@@ -7,12 +7,25 @@ import java.nio.ByteBuffer;
 
 import doharm.logic.entities.characters.classes.CharacterClassType;
 
+/**
+ * Represents a Join packet for sending to a server to join a game.
+ * @author Adam McLaren (300248714)
+ */
 public class Join
 {
+	/** Desired Player Name */
 	public final String name;
+	/** Desired Player Colour */
 	public final Color colour;
+	/** Desired Player Class */
 	public final CharacterClassType classType; 
 	
+	/**
+	 * Creates a Join packet object from the given parameters.
+	 * @param name Desired Name
+	 * @param colour Desired Colour
+	 * @param classType Desired Class
+	 */
 	public Join(String name, Color colour, CharacterClassType classType)
 	{
 		this.name = name;
@@ -20,6 +33,10 @@ public class Join
 		this.classType = classType;
 	}
 	
+	/**
+	 * Constructs the object form of the Join packet out of the byte-array.
+	 * @param data Byte-array Join packet.
+	 */
 	public Join(byte[] data)
 	{
 		ByteBuffer buff = ByteBuffer.wrap(data);
@@ -29,6 +46,10 @@ public class Join
 		this.classType = CharacterClassType.values()[buff.get()&0xff]; 
 	}
 	
+	/**
+	 * Translates the Join object out into a byte-array for transmission.
+	 * @return Byte-array Join packet.
+	 */
 	public byte[] toBytes()
 	{
 		ByteArrayOutputStream buff = new ByteArrayOutputStream();

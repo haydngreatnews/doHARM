@@ -4,6 +4,9 @@ import java.nio.ByteBuffer;
 
 import doharm.net.packets.Bytes;
 
+/**
+ * @author Adam McLaren (300248714)
+ */
 public class ProjectileUpdate extends EntityUpdate {
 
 	protected ProjectileUpdate(int id, ByteBuffer buff)

@@ -6,16 +6,30 @@ import java.nio.ByteBuffer;
 
 import doharm.logic.entities.characters.players.HumanPlayer;
 
-/** Struct representing a Clients Actions, which is then converted into a packet to send over the wire. */
+/**
+ * Represents a Client Action Update, which is then able to be converted to or from a packet for sending/receiving over the net.
+ * @author Adam McLaren (300248714)
+ */
 public class Action extends Update {
 
+	/** Sequence number of the Action. */
 	public final int seqNum;
+	/** Latest Servertime from a Server Snapshot packet the client has received. */
 	public final int serverTimeAckd;
 	
-	// HumanPlayer movement.
-	public final float posX, posY, angle;
+	/** Player Coordinates Position */
+	public final float posX, posY;
+	/** Player Angle */
+	public final float angle;
+	/** Player Layer Position */
 	public final int layer;
 	
+	/**
+	 * Construct the Action packet from the Client.
+	 * @param seq Sequence number for this packet.
+	 * @param time Server time the Client is up to.
+	 * @param player Player the Client controls.
+	 */
 	public Action(int seq, int time, HumanPlayer player)
 	{
 		seqNum = seq;
@@ -27,6 +41,11 @@ public class Action extends Update {
 		angle = player.getAngle();
 	}
 	
+	/**
+	 * Constructs an Action object out of an Action packet byte array.
+	 * @param packet Raw byte array form of the Action to convert from.
+	 * @return Action generated from the packet.
+	 */
 	public Action(byte[] packet)
 	{		
 		ByteBuffer buff = ByteBuffer.wrap(packet);
@@ -45,7 +64,7 @@ public class Action extends Update {
 	
 	/**
 	 * Translates the Action object into a byte-array for transmission.
-	 * @return 
+	 * @return Byte-array form of the Action packet.
 	 */
 	public byte[] convertToBytes()
 	{

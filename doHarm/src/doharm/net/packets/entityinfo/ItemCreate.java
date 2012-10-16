@@ -5,6 +5,9 @@ import java.nio.ByteBuffer;
 import doharm.logic.entities.items.Item;
 import doharm.net.packets.Bytes;
 
+/**
+ * @author Adam McLaren (300248714)
+ */
 public class ItemCreate extends EntityCreate {
 
 	public float posX, posY;

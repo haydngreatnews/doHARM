@@ -6,7 +6,10 @@ import doharm.logic.entities.AbstractEntity;
 import doharm.logic.entities.characters.players.Player;
 import doharm.logic.entities.items.Item;
 
-/** Holds creation of an entity */
+/**
+ * Holds information for the creation of an entity to send to Clients.
+ * @author Adam McLaren (300248714)
+ */
 public abstract class EntityCreate extends EntityInfo
 {
 	public final byte type;

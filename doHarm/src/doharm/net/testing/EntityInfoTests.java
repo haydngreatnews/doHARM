@@ -23,7 +23,7 @@ public class EntityInfoTests {
 	@Test
 	public void CharacterCreateTest()
 	{
-		World wrld = new World("world1", NetworkMode.OFFLINE);
+		World wrld = new World(null, "world1", NetworkMode.OFFLINE);
 		Player player = wrld.getPlayerFactory().createPlayer(wrld.getRandomEmptyTile(), "Blah", CharacterClassType.WARRIOR, 2, PlayerType.HUMAN, new Color(255,0,0), false);
 		CharacterCreate cc = new CharacterCreate(player);
 		assertEquals(cc.type, (byte)EntType.PLAYER_WARRIOR.ordinal());
@@ -45,7 +45,7 @@ public class EntityInfoTests {
 	@Test
 	public void CharacterUpdateTest()
 	{
-		World wrld = new World("world1", NetworkMode.OFFLINE);
+		World wrld = new World(null, "world1", NetworkMode.OFFLINE);
 		Player player = wrld.getPlayerFactory().createPlayer(wrld.getRandomEmptyTile(), "Blah", CharacterClassType.WARRIOR, 2, PlayerType.HUMAN, new Color(255,0,0), false);
 		CharacterUpdate cu = new CharacterUpdate(player);
 		assertTrue(cu.angle == player.getAngle());
@@ -68,36 +68,6 @@ public class EntityInfoTests {
 		assertTrue(cu.lvl == cu2.lvl);
 		assertTrue(cu.posX == cu2.posX);
 		assertTrue(cu.posY == cu2.posY);
-	}
-	
-	@Test
-	public void FurnitureCreateTest()
-	{
-		
-	}
-	
-	@Test
-	public void FurnitureUpdateTest()
-	{
-		
-	}
-	
-	@Test
-	public void ItemCreateTest()
-	{
-		
-	}
-	
-	@Test
-	public void ProjectileCreateTest()
-	{
-		
-	}
-	
-	@Test
-	public void ProjectileUpdateTest()
-	{
-		
 	}
 
 }

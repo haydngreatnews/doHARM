@@ -9,10 +9,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import doharm.logic.entities.AbstractEntity;
-import doharm.logic.entities.characters.players.HumanPlayer;
 import doharm.logic.entities.characters.players.Player;
 import doharm.logic.entities.characters.players.PlayerType;
-import doharm.logic.entities.items.Item;
 import doharm.logic.world.World;
 import doharm.net.ClientState;
 import doharm.net.UDPReceiver;
@@ -25,21 +23,28 @@ import doharm.net.packets.entityinfo.CharacterCreate;
 import doharm.net.packets.entityinfo.CharacterUpdate;
 import doharm.net.packets.entityinfo.EntityCreate;
 import doharm.net.packets.entityinfo.EntityUpdate;
-import doharm.net.packets.entityinfo.ItemCreate;
 
+/**
+ * Class for handling networking from the Server end.
+ * @author Adam McLaren (300248714)
+ */
 public class Server {
 
-	private final int maxPlayers = 64;
+	private final int maxPlayers = 16;
 	private ArrayList<ConnectedClient> clients = new ArrayList<ConnectedClient>();
 	private UDPReceiver receiver;
 	private DatagramSocket udpSock;
 	private int serverTime = 0;
-	private int frameTime;	// Time between frames.
 	private static int CLIENT_CHECK_INTERVAL = 60, TIMEOUT_DELAY = 200;
 	private int checkClientsCounter = 0;
 	
 	private World world;
 	
+	/**
+	 * Create a new Server.
+	 * @param port Port number to run the server on.
+	 * @param world World to use for the Servers game.
+	 */
 	public Server(int port, World world)
 	{
 		this.world = world;
@@ -54,6 +59,9 @@ public class Server {
 		} catch (SocketException e) { e.printStackTrace(); }
 	}
 	
+	/**
+	 * Processes all packets received. Handles player join requests and updating what the latest actions from the Clients are.
+	 */
 	public void processIncomingPackets()
 	{		
 		while (!receiver.isEmpty())
@@ -113,7 +121,7 @@ public class Server {
 	 * Sends a UDP Packet out.
 	 * @param data Packet contents.
 	 * @param address IP and Port to send to.
-	 * @return
+	 * @return If the transmit succeeded.
 	 */
 	public boolean transmit(byte[] data, InetSocketAddress address)
 	{
@@ -127,6 +135,12 @@ public class Server {
 		return false;
 	}
 	
+	/**
+	 * Create a new client and the player he will control. Note this method adds the created client to the client list as well as returns the object.
+	 * @param address Address the client is connecting from.
+	 * @param settings User settings for applying to the player entity.
+	 * @return The resulting Client object.
+	 */
 	private ConnectedClient createClient(InetSocketAddress address, Join settings)
 	{
 		ConnectedClient oldClient = null;
@@ -167,7 +181,7 @@ public class Server {
 		{
 			if (e instanceof Player)
 			{
-				entityCreates.put(e.getID(), new CharacterCreate((Player)e));	// TODO
+				entityCreates.put(e.getID(), new CharacterCreate((Player)e));
 			}
 //			else if (e instanceof Item)
 //			{
@@ -181,7 +195,7 @@ public class Server {
 		{
 			if (e instanceof Player)
 			{
-				entityUpdates.put(e.getID(), new CharacterUpdate((Player)e));	// TODO
+				entityUpdates.put(e.getID(), new CharacterUpdate((Player)e));
 			}
 		}
 		
@@ -195,7 +209,7 @@ public class Server {
 		{
 			if (c.getState() == ClientState.INGAME)
 			{
-				buildSnapshot(c, new Snapshot(serverTime, c.latestActionPacket.seqNum, world), entityUpdates, entityCreates, entityDeletes);
+				buildSnapshot(c, new Snapshot(serverTime, c.getLatestActionPacket().seqNum, world), entityUpdates, entityCreates, entityDeletes);
 				
 				// build transmission snap and send
 				transmit( c.buildTransmissionSnapshot().convertToBytes() , c.getAddress() );
@@ -212,11 +226,11 @@ public class Server {
 	
 	/**
 	 * Adds entity deletes, creates and updates to a Snapshot, and then adds it to the clients snap buffer.
-	 * @param client
-	 * @param snap Freshly constructed snapshot (does not include entity info)
-	 * @param entityUpdates
-	 * @param entityCreates
-	 * @param entityDeletes
+	 * @param client Client to build the snapshot for.
+	 * @param snap Freshly constructed snapshot (does not include entity info).
+	 * @param entityUpdates List of entity updates.
+	 * @param entityCreates List of entity creates.
+	 * @param entityDeletes List of entity deletes.
 	 */
 	private void buildSnapshot(ConnectedClient client, Snapshot snap, HashMap<Integer,EntityUpdate> entityUpdates, HashMap<Integer,EntityCreate> entityCreates, ArrayList<Integer> entityDeletes)
 	{		
@@ -246,14 +260,17 @@ public class Server {
 		{
 			if (e instanceof Player)
 			{
-				gamestate.addECreate(new CharacterCreate((Player)e));	// TODO
-				gamestate.addEUpdate(new CharacterUpdate((Player)e));	// TODO
+				gamestate.addECreate(new CharacterCreate((Player)e));
+				gamestate.addEUpdate(new CharacterUpdate((Player)e));
 			}
 		}
 		byte[] send = gamestate.convertToBytes();
 		transmit(send, client.getAddress() );
 	}
 	
+	/**
+	 * Periodically checks the last time we received a packet from any clients, and if it has been too long, drop them from the server.
+	 */
 	public void checkClients()
 	{
 		++checkClientsCounter;
@@ -274,8 +291,23 @@ public class Server {
 		}
 	}
 
+	/**
+	 * Tick the server time.
+	 */
 	public void tick()
 	{
 		++serverTime;		
+	}
+
+	/**
+	 * Perform client desired moves from the received Action packets.
+	 */
+	public void moveClients()
+	{
+		for (ConnectedClient c : clients)
+		{
+			if (c.getLatestActionPacket() != null)
+				c.getPlayerEntity().updateFromAction(c.getLatestActionPacket());
+		}
 	}
 }

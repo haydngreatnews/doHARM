@@ -113,6 +113,7 @@ public abstract class AbstractEntity
 		
 		if (!tile.isWalkable())
 		{
+			System.out.println("Invalid.");
 			setPosition(oldPosition.getX(), oldPosition.getY(), layer);
 			return;
 		}

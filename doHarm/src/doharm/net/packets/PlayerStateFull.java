@@ -6,12 +6,18 @@ import java.nio.ByteBuffer;
 
 import doharm.logic.entities.characters.players.Player;
 
-/** Full PlayerState. Contains the Network ID of the Player and all attributes that only change on level up. */
+/**
+ * Full PlayerState. Contains updated attributes that only change on level up.
+ * @author Adam McLaren (300248714)
+ */
 public class PlayerStateFull extends PlayerState {
 
-	/** Entity ID number for the current Player this client controls. */
 	public final float maxHealth, maxMana, maxRage;
 	
+	/**
+	 * Create a PlayerState from the given Player Entity.
+	 * @param playerEntity Player to compile State from.
+	 */
 	public PlayerStateFull(Player playerEntity)
 	{
 		super(playerEntity);
@@ -20,6 +26,10 @@ public class PlayerStateFull extends PlayerState {
 		this.maxRage = playerEntity.getMaxRage();
 	}
 	
+	/**
+	 * Read in a Full PlayerState from Bytes. This should only be called by the PlayerStates getPlayerState method!
+	 * @param buff Buffer to read the state from.
+	 */
 	protected PlayerStateFull(ByteBuffer buff)
 	{
 		super(buff);
@@ -28,6 +38,10 @@ public class PlayerStateFull extends PlayerState {
 		maxRage = buff.getFloat();
 	}
 
+	/**
+	 * Translates the PlayerState object into a byte-array for transmission.
+	 * @return Byte-array form of the Full PlayerState.
+	 */
 	public byte[] convertToBytes()
 	{
 		byte[] pState = super.convertToBytes();
