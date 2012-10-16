@@ -9,13 +9,16 @@ import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import doharm.logic.AbstractGame;
 import doharm.logic.entities.AbstractEntity;
 import doharm.logic.entities.EntityFactory;
 import doharm.logic.entities.characters.classes.CharacterClassType;
 import doharm.logic.entities.characters.players.Player;
 import doharm.logic.entities.characters.players.PlayerType;
 import doharm.logic.entities.projectiles.Projectile;
+import doharm.logic.time.Time;
 import doharm.logic.world.World;
+import doharm.net.NetworkMode;
 import doharm.net.UDPReceiver;
 import doharm.net.packets.Action;
 import doharm.net.packets.Gamestate;
@@ -242,17 +245,31 @@ public class Client {
 	/** 
 	 * Updates the client view of the world.
 	 * @param world World to update.
+	 * @return New world if we loaded a new one up. Null otherwise.
 	 */
-	public void updateWorld(World world)
+	public World updateWorld(World world, AbstractGame game)
 	{	
 		// We don't have a snapshot to update our world with.
 		if (snapNext == null)
-			return;
+			return null;
 		
+		boolean newWorld = false;
+		
+		// UPDATE WORLD PROPERTIES
 		if (snapNext instanceof Gamestate)
 		{
 			Gamestate gamestate = (Gamestate) snapNext;
-			// TODO update year month day.
+			
+			if (world == null || !gamestate.worldName.equals(world.toString()))
+			{
+				world = new World(game, gamestate.worldName, NetworkMode.CLIENT);
+				newWorld = true;
+			}
+			
+			Time time = world.getTime();
+			time.setDay(gamestate.day);
+			time.setMonth(gamestate.month);
+			time.setYear(gamestate.year);
 			
 			playerEntID = gamestate.playerEntityID;
 			CharacterCreate pc = (CharacterCreate) snapNext.getECreates().get(playerEntID);
@@ -267,6 +284,7 @@ public class Client {
 				break;
 			case PLAYER_WIZARD:
 				pClass = CharacterClassType.WIZARD;
+				break;
 			default:
 				throw new RuntimeException("Invalid character class type for creating local player.");
 			}
@@ -282,6 +300,12 @@ public class Client {
 		world.getTime().setTimeOfDay(snapNext.timeOfDay);
 		world.getWeather().setConditions(snapNext.weather);
 
+		// UPDATE PLAYERSTATE
+		
+		// TODO
+		
+		// UPDATE ENTITY PROPERTIES
+		
 		EntityFactory ents = world.getEntityFactory();
 
 		for (int i : snapNext.getEDeletes())
@@ -365,6 +389,11 @@ public class Client {
 
 		snapCurrent = snapNext;
 		snapNext = null;
+		
+		if (newWorld)
+			return world;
+		else
+			return null;
 	}
 
 }

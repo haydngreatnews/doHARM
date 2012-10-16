@@ -26,6 +26,8 @@ public class Snapshot extends Update {
 	private final HashMap<Integer,EntityCreate> entityCreates = new HashMap<Integer,EntityCreate>();
 	private final ArrayList<Integer> entityDeletes = new ArrayList<Integer>();
 	
+	protected int snapshotLength = 0;
+	
 	public Snapshot(int serverTime, int seqAckd, World world)
 	{
 		this.serverTime = serverTime;
@@ -78,6 +80,8 @@ public class Snapshot extends Update {
 		}
 		
 		readCommands(buff);
+		
+		snapshotLength = buff.position();
 	}
 	
 	/** Creates a Snapshot that is a copy of the given snapshot (minus Commands) */

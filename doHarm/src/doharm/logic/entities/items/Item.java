@@ -54,7 +54,6 @@ public abstract class Item extends AbstractEntity
 	public void spawn(Tile spawnTile)
 	{
 		super.spawn(spawnTile);
-		onGround = true;
 	}
 	
 	@Override 

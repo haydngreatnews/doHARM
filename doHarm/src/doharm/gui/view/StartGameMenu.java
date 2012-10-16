@@ -181,8 +181,7 @@ public class StartGameMenu extends JFrame {
 			// return;
 			// }
 
-			AbstractGame game = new ClientGame(parent, selClass, name, colour,
-					client);
+			AbstractGame game = new ClientGame(parent, client);
 			parent.setGame(game);
 			this.dispose();
 		} else {
