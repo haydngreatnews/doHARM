@@ -38,7 +38,10 @@ public class Vector
 	public void normalize()
 	{
 		updateLength();
-		set(x/length,y/length);
+		if (length > 0)
+			set(x/length,y/length);
+		else
+			set(0,0);
 	}
 
 	private void updateLength() 

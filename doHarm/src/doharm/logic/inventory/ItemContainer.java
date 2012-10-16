@@ -1,5 +1,7 @@
 package doharm.logic.inventory;
 
+import java.util.Set;
+
 import doharm.logic.entities.items.Item;
 import doharm.logic.world.tiles.Tile;
 
@@ -36,4 +38,6 @@ public interface ItemContainer
 	 * @param item the item to delete
 	 */
 	public void deleteItem(Item item);
+
+	
 }
