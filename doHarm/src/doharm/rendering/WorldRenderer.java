@@ -462,8 +462,8 @@ public class WorldRenderer
 		startRow = Math.max(middleY-ans, -1);
 		startCol = Math.max(middleX-ans, -1);
 
-		toRow = Math.min(tiles.length-1, middleY + ans);
-		toCol = Math.min(tiles[0].length-1, middleX + ans);
+		toRow = Math.min(tiles.length, middleY + ans);
+		toCol = Math.min(tiles[0].length, middleX + ans);
 
 
 	}
