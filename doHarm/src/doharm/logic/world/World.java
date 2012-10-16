@@ -64,17 +64,21 @@ public class World
 	private DragonRadar dragonRadar;
 
 	private AbstractGame game;
+
+	private String worldName;
 	
 	
 	public World(AbstractGame game, String worldName, NetworkMode networkMode)
 	{
 		this.game = game;
 		this.networkMode = networkMode;
+		this.worldName = worldName;
 		messages = new ArrayList<Message>();
 		idManager = new IDManager();
 		dragonRadar = new DragonRadar();
 		time = new Time();
 		weather = new Weather();
+		
 		
 		
 		entityFactory = new EntityFactory(this,idManager);
@@ -161,6 +165,12 @@ public class World
 		
 		addMessage(new Message(-1, false, new MessagePart("World created.")));
 		
+	}
+	
+	@Override
+	public String toString()
+	{
+		return worldName;
 	}
 	
 	public DragonRadar getDragonRadar()
