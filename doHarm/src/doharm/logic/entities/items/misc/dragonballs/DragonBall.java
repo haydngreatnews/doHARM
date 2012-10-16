@@ -9,7 +9,7 @@ public class DragonBall extends MiscItem
 	private int star;
 	public DragonBall(int star) 
 	{
-		super(MiscItemType.DRAGONBALL);
+		super(MiscItemType.DRAGONBALL,"db.jpg");
 		this.star = star;
 	}
 	

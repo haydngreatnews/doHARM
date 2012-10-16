@@ -7,7 +7,7 @@ public class Light extends MiscItem{
 
 	protected Light(MiscItemType miscItemType) 
 	{
-		super(miscItemType);
+		super(miscItemType,"torch.gif");
 		
 	}
 

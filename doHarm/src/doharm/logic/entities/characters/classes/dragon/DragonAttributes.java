@@ -1,11 +1,11 @@
 package doharm.logic.entities.characters.classes.dragon;
 
-import doharm.logic.entities.characters.classes.attributes.Attributes;
+import doharm.logic.entities.characters.classes.attributes.MonsterAttributes;
 
-public class DragonAttributes extends Attributes 
+public class DragonAttributes extends MonsterAttributes 
 {
 	public DragonAttributes()
 	{
-		setMaxHealth(100);
+		setMaxHealth(80);
 	}
 }

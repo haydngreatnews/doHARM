@@ -7,9 +7,9 @@ public abstract class MiscItem extends Item
 {
 	private MiscItemType miscItemType;
 
-	protected MiscItem(MiscItemType miscItemType) 
+	protected MiscItem(MiscItemType miscItemType, String imageName) 
 	{
-		super(ItemType.MISC);
+		super(ItemType.MISC,imageName);
 		this.miscItemType = miscItemType;
 	}
 

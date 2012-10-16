@@ -1,5 +1,8 @@
 package doharm.logic.entities.objects.furniture;
 
-public class Chest {
+import doharm.logic.entities.objects.GameObject;
+
+public class Chest extends GameObject
+{
 
 }

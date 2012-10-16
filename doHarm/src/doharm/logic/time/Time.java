@@ -23,7 +23,7 @@ public class Time
 	private DayType dayType;
 	private float light;
 	private static final float TIME_INTERVAL = 1000f / Clock.CLOCK_INTERVAL;
-	private static final float DAY_LENGTH = 60*1000*6; //6 mins
+	private static final float DAY_LENGTH = 60*1000*3;//3 mins
 	
 	
 	public Time()

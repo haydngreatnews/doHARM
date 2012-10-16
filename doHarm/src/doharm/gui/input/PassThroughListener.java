@@ -50,9 +50,13 @@ public class PassThroughListener implements MouseListener, MouseMotionListener {
 	}
 	
 	public void passOn(MouseEvent e){
-		Point realPoint = canvas.getMousePosition();
-		MouseEvent me = new MouseEvent((Component)(e.getSource()), e.getID(), e.getWhen(), e.getModifiers(), (int)(realPoint.getX()), (int)(realPoint.getY()), e.getClickCount(), false);
-		canvas.dispatchEvent(me);
+		try
+		{
+			Point realPoint = canvas.getMousePosition();
+			MouseEvent me = new MouseEvent((Component)(e.getSource()), e.getID(), e.getWhen(), e.getModifiers(), (int)(realPoint.getX()), (int)(realPoint.getY()), e.getClickCount(), false);
+			canvas.dispatchEvent(me);
+		}
+		catch(Exception e2){};
 	}
 
 }

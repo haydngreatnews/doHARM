@@ -21,28 +21,28 @@ public class EditorKeyListener implements KeyListener {
 	public void keyPressed(KeyEvent e) {
 		System.out.println("key typed =" + e.getKeyChar());
 		switch (e.getKeyCode()) {
-		case KeyEvent.VK_S:case KeyEvent.VK_DOWN:
+		case KeyEvent.VK_W:case KeyEvent.VK_UP:
 			if (shiftDown) {
 				canvas.changeOffset(0, -SHIFT_MULT);
 			} else {
 				canvas.changeOffset(0, -1);
 			}
 			break;
-		case KeyEvent.VK_W:case KeyEvent.VK_UP:
+		case KeyEvent.VK_S:case KeyEvent.VK_DOWN:
 			if (shiftDown) {
 				canvas.changeOffset(0, SHIFT_MULT);
 			} else {
 				canvas.changeOffset(0, 1);
 			}
 			break;
-		case KeyEvent.VK_A: case KeyEvent.VK_LEFT:
+		case KeyEvent.VK_D: case KeyEvent.VK_RIGHT:
 			if (shiftDown) {
 				canvas.changeOffset(SHIFT_MULT, 0);
 			} else {
 				canvas.changeOffset(1, 0);
 			}
 			break;
-		case KeyEvent.VK_D:case KeyEvent.VK_RIGHT:
+		case KeyEvent.VK_A:case KeyEvent.VK_LEFT:
 			if (shiftDown) {
 				canvas.changeOffset(-SHIFT_MULT, 0);
 			} else {

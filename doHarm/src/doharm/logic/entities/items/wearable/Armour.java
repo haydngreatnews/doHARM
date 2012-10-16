@@ -16,7 +16,7 @@ public abstract class Armour extends WearableItem
 
 	public Armour() 
 	{
-		super(SlotType.TORSO);
+		super(SlotType.TORSO,"armour.png");
 	}
 
 }

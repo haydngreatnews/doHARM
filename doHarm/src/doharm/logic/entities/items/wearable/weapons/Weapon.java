@@ -13,7 +13,7 @@ public abstract class Weapon extends WearableItem
 	
 	public Weapon() 
 	{
-		super(SlotType.WEAPON);
+		super(SlotType.WEAPON, "weapon.png");
 		
 	}
 

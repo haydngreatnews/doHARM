@@ -9,7 +9,7 @@ package doharm.logic.weather;
 public class Weather 
 {
 	private static final float CHANGEABILITY = 0.001f;
-	private static final float LIGHT_MULTIPLIER = 0.5f;
+	public static final float LIGHT_MULTIPLIER = 0.25f;
 	private static final float TREND_OPPOSITION = 0.05f;
 	private float conditions; // between 0 & 1, 0 = fine, 1 = stormy as bro
 	private float trend;

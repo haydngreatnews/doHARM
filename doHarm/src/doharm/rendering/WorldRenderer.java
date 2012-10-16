@@ -252,12 +252,18 @@ public class WorldRenderer
 							playerRenderer.redrawPlayer(cx,cy,(Character)entity,graphics, fTileW, fTileH);
 						}
 					}
+					else if (entity.getEntityType() == EntityType.OBJECT)
+					{
+						if(layerCount == entity.getCurrentLayer().getLayerNumber()){
+							playerRenderer.redrawPlayer(cx,cy,(Character)entity,graphics, fTileW, fTileH);
+						}
+					}
 				}
 
 				//TODO
 				//Draw items on this layer
 				for (Item item: world.getItemFactory().getEntities()){
-					if (!item.isOnGround())
+					if (!item.isOnGround() || !item.isAlive())
 						continue;
 
 					if(layerCount == item.getCurrentLayer().getLayerNumber()){

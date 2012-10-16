@@ -1,12 +1,17 @@
 package doharm.logic.entities;
 
 import java.awt.Dimension;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Stack;
+
+import javax.imageio.ImageIO;
 
 import doharm.logic.physics.Vector;
 import doharm.logic.world.Layer;
@@ -36,8 +41,15 @@ public abstract class AbstractEntity
 	private boolean fromNetwork;
 	private boolean alive;
 	//private Vector renderPos;
+	private static BufferedImage unknownImage;
+	private BufferedImage image;
 	
 	
+	static
+	{
+		unknownImage = new BufferedImage(16,16,BufferedImage.TYPE_INT_ARGB);
+		unknownImage.createGraphics().drawString("?", 0, 0);
+	}
 	
 	
 	public AbstractEntity(EntityType entityType)
@@ -47,6 +59,7 @@ public abstract class AbstractEntity
 		reset();
 	}
 	
+	@Deprecated
 	public int getImageID()
 	{
 		return -1;
@@ -95,6 +108,26 @@ public abstract class AbstractEntity
 	}
 	
 	
+	public BufferedImage getImage()
+	{
+		if (image != null)
+			return image;
+		return unknownImage;
+	}
+	
+	public void loadImage(String imageName)
+	{
+		try 
+		{
+			System.out.println("Reading " + imageName);
+			image = ImageIO.read(new File(imageName));
+		} 
+		catch (IOException e) 
+		{
+			e.printStackTrace();
+		}
+	}
+	
 	/*public Vector getRenderPos()
 	{
 		return renderPos;
@@ -123,6 +156,8 @@ public abstract class AbstractEntity
 		this.currentTile = tile;
 		currentLayer = currentTile.getLayer();
 		currentTile.addEntity(this);
+		
+		oldPosition.set(position);
 		
 		/*float row = y / tile.getHeight();
 		float col = x / tile.getWidth();
@@ -194,7 +229,7 @@ public abstract class AbstractEntity
 
 		
 		setPosition(position.getX(), position.getY(), currentTile.getLayer());
-		oldPosition.set(position);
+		
 		
 		
 		

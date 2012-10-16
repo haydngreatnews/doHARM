@@ -5,9 +5,9 @@ import doharm.logic.entities.items.usable.UsableItemType;
 
 public abstract class Potion extends UsableItem
 {
-	protected Potion(UsableItemType usableItemType) 
+	protected Potion(UsableItemType usableItemType, String imageName) 
 	{
-		super(usableItemType);
+		super(usableItemType,imageName);
 	}
 	
 	

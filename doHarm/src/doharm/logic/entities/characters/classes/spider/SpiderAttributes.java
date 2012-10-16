@@ -1,11 +1,11 @@
 package doharm.logic.entities.characters.classes.spider;
 
-import doharm.logic.entities.characters.classes.attributes.Attributes;
+import doharm.logic.entities.characters.classes.attributes.MonsterAttributes;
 
-public class SpiderAttributes extends Attributes 
+public class SpiderAttributes extends MonsterAttributes 
 {
 	public SpiderAttributes()
 	{
-		setMaxHealth(100);
+
 	}
 }
