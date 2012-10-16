@@ -8,6 +8,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Set;
 
 import javax.imageio.ImageIO;
 
@@ -17,6 +18,7 @@ import doharm.logic.entities.characters.players.HumanPlayer;
 import doharm.logic.entities.characters.players.Player;
 import doharm.logic.entities.characters.players.PlayerType;
 import doharm.logic.entities.items.Item;
+import doharm.logic.entities.items.misc.dragonballs.*;
 
 import doharm.logic.maths.MathUtils;
 
@@ -58,7 +60,9 @@ public class WorldRenderer
 
 	private PlayerRenderer playerRenderer;
 	private ItemRenderer itemRenderer;
-
+	
+	private BufferedImage radarImg;
+	private BufferedImage radarIcon;
 
 
 	private  int fTileW;
@@ -83,6 +87,7 @@ public class WorldRenderer
 		playerRenderer = new PlayerRenderer(game);
 		itemRenderer = new ItemRenderer(game);
 		canvasSize = new Dimension();
+		createRadarBack();
 		//transform = new AffineTransform();
 
 		newLoadTileSets();
@@ -93,6 +98,7 @@ public class WorldRenderer
 
 
 	}
+
 
 
 
@@ -115,8 +121,10 @@ public class WorldRenderer
 
 	public void redraw(Dimension canvasSize) 
 	{
-		if (!this.canvasSize.equals(canvasSize))
+		if (!this.canvasSize.equals(canvasSize)){
 			createImage(canvasSize); //resize the canvas
+			//createRadarBack();
+		}
 
 		Camera camera = game.getCamera();
 		Time time = game.getWorld().getTime();
@@ -151,7 +159,7 @@ public class WorldRenderer
 
 
 		renderWorldIso((int)-camera.getRenderPosition().getX(), (int)-camera.getRenderPosition().getY());
-
+		drawRadar();
 		//TODO
 		//playerRenderer.redraw(graphics, fTileW, fTileH);
 
@@ -208,10 +216,6 @@ public class WorldRenderer
 
 				Tile[][] tiles = layers[layerCount].getTiles();
 
-
-
-
-
 				//TODO this must be changed when camera views are implemented.
 				//if(tile above the player with respect to the isometric view, 
 				//ie. the tile(s) obscuring view of the player, is not an invisible tile, make this entire layer transparent.
@@ -266,6 +270,61 @@ public class WorldRenderer
 		}
 
 	}
+	
+	
+
+	private void createRadarBack() {
+		
+		int width = 400;
+		int height = width/2;
+		
+		radarImg = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+		
+		Graphics2D g = (Graphics2D)radarImg.getGraphics();
+		g.setColor(new Color(0, 0.5f, 0.6f, 0.3f));
+		//g.fillOval(0, 0, radarImg.getWidth(), radarImg.getHeight());
+		
+		for(int i = 0; i < 10; i++){
+			g.drawOval(i, i, radarImg.getWidth()-i*2, radarImg.getHeight()-i*2);
+		}		
+		
+		int iconSize = 10;
+		radarIcon = new BufferedImage(iconSize, iconSize, BufferedImage.TYPE_INT_ARGB);
+		g = (Graphics2D)radarIcon.getGraphics();
+		g.setColor(new Color(1, 0.7f, 0, 0.3f));
+		g.fillOval(0, 0, iconSize, iconSize);
+		
+	}
+	
+	Vector vb = new Vector(0, 0);
+	Vector vp = new Vector(0, 0);
+	private void drawRadar(){
+		
+		int x = (int)canvasSize.getWidth()/2  - (int)radarImg.getWidth()/2;
+		int y = (int)canvasSize.getHeight()/2  - (int)radarImg.getHeight()/2;
+		graphics.drawImage(radarImg, x, y, null);
+		
+		Set<DragonBall> balls = game.getWorld().getDragonRadar().getBalls();
+		Tile ptile = game.getWorld().getHumanPlayer().getCurrentTile();
+		for(DragonBall b : balls){
+			Tile ballTile = b.getCurrentTile();
+			int rowPlayer = ptile.getRow();
+			int colPlayer = ptile.getCol();
+			
+			int rowBall = ballTile.getRow();
+			int colBall = ballTile.getCol();
+			
+			RenderUtil.convertCoordsToIso(rowBall, colBall, game.getWorld().getHumanPlayer().getCurrentLayer().getLayerNumber(), game.getCamera(), vb);
+			vb = RenderUtil.convertCoordsToIso(rowPlayer, colPlayer, game.getWorld().getHumanPlayer().getCurrentLayer().getLayerNumber(), game.getCamera(), vp);
+			
+			
+			
+			
+		}
+		
+		
+	}
+	
 
 	//for checking which tiles actually need to be rendered.
 	private int startRow = 0;
@@ -345,12 +404,6 @@ public class WorldRenderer
 			case WEST : colC = startCol; break;
 			}
 			
-//			switch(game.getCamera().getDirection()){
-//			case NORTH :colC = -1; break;
-//			case EAST :colC = tiles[0].length; break;
-//			case SOUTH : colC = tiles[0].length; break;
-//			case WEST : colC = -1; break;
-//			}
 
 		}
 
@@ -374,11 +427,8 @@ public class WorldRenderer
 		startRow = Math.max(middleY-ans, -1);
 		startCol = Math.max(middleX-ans, -1);
 		
-		toRow = Math.min(tiles.length, middleY + ans);
-		toCol = Math.min(tiles[0].length, middleX + ans);;
-
-
-
+		toRow = Math.min(tiles.length-1, middleY + ans);
+		toCol = Math.min(tiles[0].length-1, middleX + ans);
 
 
 	}
