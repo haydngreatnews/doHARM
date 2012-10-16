@@ -21,7 +21,7 @@ import doharm.storage.WorldLoader;
 public class EditorCanvas extends JPanel {
 	private ArrayList<EditorLayerData> layers = new ArrayList<EditorLayerData>();
 	private int xDim, yDim;
-	private int offsetX = 0, offsetY=0;
+	private int offsetX = 0, offsetY = 0;
 	private int currentLayer = 0;
 	private EditorTileSetLoader tiles;
 
@@ -37,7 +37,7 @@ public class EditorCanvas extends JPanel {
 	@Override
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		//BufferedImage below = null;
+		// BufferedImage below = null;
 		// // This is commmented out to remove the lower layer drawing effect
 		// if (currentLayer > 0 && layers.get(currentLayer - 1) != null) {
 		// below = new BufferedImage(getWidth(), getHeight(),
@@ -68,18 +68,20 @@ public class EditorCanvas extends JPanel {
 		}
 		for (int x = 0; x < xDim; ++x) {
 			for (int y = 0; y < yDim; ++y) {
-				g.drawImage(tiles.getTileImage(layer.getTileID(y+offsetY, x+offsetX)),
-						TILE_SIZE * x, TILE_SIZE * y, TILE_SIZE, TILE_SIZE,
-						null);
+				g.drawImage(tiles.getTileImage(layer.getTileID(y, x)),
+						TILE_SIZE * (x + offsetX), TILE_SIZE * (y + offsetY),
+						TILE_SIZE, TILE_SIZE, null);
 			}
 		}
 		if (drawGrid) {
 			g.setStroke(new BasicStroke(3));
 			g.setColor(new Color(0xFFFFFFFF, true));
-			g.drawLine(TILE_SIZE * xDim, 0, TILE_SIZE * xDim, TILE_SIZE * yDim);
-			g.drawLine(0, TILE_SIZE * yDim, TILE_SIZE * xDim, TILE_SIZE * yDim);
-			g.drawLine(0, 0, 0, TILE_SIZE * yDim);
-			g.drawLine(0, 0, TILE_SIZE * xDim, 0);
+			g.drawLine(TILE_SIZE * (xDim + offsetX), 0, TILE_SIZE
+					* (xDim + offsetX), TILE_SIZE * (yDim + offsetY));
+			g.drawLine(0, TILE_SIZE * (yDim + offsetY), TILE_SIZE
+					* (xDim + offsetX), TILE_SIZE * (yDim + offsetY));
+			g.drawLine(TILE_SIZE*offsetX, 0, TILE_SIZE*offsetX, TILE_SIZE * (yDim + offsetY));
+			g.drawLine(0, TILE_SIZE*offsetY, TILE_SIZE * (xDim + offsetX), TILE_SIZE*offsetY);
 		}
 
 	}
@@ -109,10 +111,12 @@ public class EditorCanvas extends JPanel {
 	}
 
 	public boolean setTileUnder(int x, int y, int tileType) {
-		if (x > xDim * TILE_SIZE || y > yDim * TILE_SIZE)
+		if (x > (xDim - offsetX) * TILE_SIZE
+				|| y > (yDim - offsetY) * TILE_SIZE || y < offsetY * TILE_SIZE
+				|| x < offsetX * TILE_SIZE)
 			return false;
-		layers.get(currentLayer).setTileID(y / TILE_SIZE, x / TILE_SIZE,
-				tileType);
+		layers.get(currentLayer).setTileID(y / TILE_SIZE - offsetY,
+				x / TILE_SIZE - offsetX, tileType);
 		return true;
 	}
 
@@ -151,8 +155,8 @@ public class EditorCanvas extends JPanel {
 	public int getYDim() {
 		return yDim;
 	}
-	
-	public void changeOffset(int deltaX, int deltaY){
+
+	public void changeOffset(int deltaX, int deltaY) {
 		offsetX += deltaX;
 		offsetY += deltaY;
 	}
@@ -163,25 +167,27 @@ public class EditorCanvas extends JPanel {
 		jfc.setDialogType(JFileChooser.SAVE_DIALOG);
 		jfc.setCurrentDirectory(new File("res/worlds"));
 		int result = jfc.showSaveDialog(this);
-		if ( result == JFileChooser.APPROVE_OPTION ){
-            File path=jfc.getSelectedFile();
-            String folderPath = path.getAbsolutePath();
-            System.out.println(folderPath);
-            File world = new File(folderPath+"/world.txt");
-            try {
-				new File(folderPath+"/layers").mkdirs();
+		if (result == JFileChooser.APPROVE_OPTION) {
+			File path = jfc.getSelectedFile();
+			String folderPath = path.getAbsolutePath();
+			System.out.println(folderPath);
+			File world = new File(folderPath + "/world.txt");
+			try {
+				new File(folderPath + "/layers").mkdirs();
 				world.createNewFile();
 				PrintStream worldps = new PrintStream(world);
 				worldps.println(xDim);
 				worldps.println(yDim);
 				worldps.println("tileset_new_format.txt");
-				for (int layer = 0; layer<layers.size(); ++layer){
-					worldps.println("layer"+layer+".txt");
-					File currentLayer = new File(folderPath+"/layers/"+"layer"+layer+".txt");
+				for (int layer = 0; layer < layers.size(); ++layer) {
+					worldps.println("layer" + layer + ".txt");
+					File currentLayer = new File(folderPath + "/layers/"
+							+ "layer" + layer + ".txt");
 					currentLayer.createNewFile();
-					new PrintStream(currentLayer).println(layers.get(layer).toString());
+					new PrintStream(currentLayer).println(layers.get(layer)
+							.toString());
 				}
-				
+
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
