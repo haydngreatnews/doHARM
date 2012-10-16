@@ -9,9 +9,9 @@ import doharm.logic.world.tiles.TileType;
 public class FloorTileData extends TileData{
 	
 	private String name;
-	private boolean walkable;//in-file, is 0 for walkable, 1 for not walkable
 	private TileType type; 
 	private List<Integer> imageIDs;
+	private int animationSpeed;
 	
 	
 	public FloorTileData(String line) 
@@ -20,11 +20,17 @@ public class FloorTileData extends TileData{
 		
 		Scanner scan = new Scanner(line);
 		name = scan.next();
-		walkable = (scan.nextInt() == 0) ? true : false;
-		type = TileType.values()[scan.nextInt()];
-		while (scan.hasNext())
+		if (scan.hasNextInt())
+			type = TileType.values()[scan.nextInt()];
+		else
+			type = TileType.values()[scan.next().charAt(0)-'a'];
+		while (scan.hasNextInt())
 		{
-			imageIDs.add(scan.nextInt());
+			int next = scan.nextInt();
+			if (!scan.hasNextInt() && !imageIDs.isEmpty())
+				animationSpeed = next;
+			else
+				imageIDs.add(next);
 		}
 	}
 
@@ -56,14 +62,9 @@ public class FloorTileData extends TileData{
 	{
 		return imageIDs.get(imageNumber);
 	}
-
-
-	public int getNumFramesPerImage() {
-		return 160; //TODO!
-	}
 	
-	public boolean isWalkable(){
-		return walkable;
+	public int getAnimSpeed(){
+		return animationSpeed;
 	}
 	
 	

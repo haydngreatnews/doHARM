@@ -54,6 +54,8 @@ public class Tile implements Comparable<Tile>, ItemContainer
 	private boolean nextToWall;
 	private Set<AbstractEntity> entities;
 	private Tile roof;
+
+	private boolean walkable;
 	
 	
 	public Tile(Layer layer, int row, int col, int width, int height, FloorTileData data, int colour) 
@@ -69,9 +71,43 @@ public class Tile implements Comparable<Tile>, ItemContainer
 		world = layer.getWorld();
 		
 		dynamicLight = 0;
-		staticLight = 0.3f;
+		staticLight = 1.0f;
+		walkable = true;
+		visible = true;
 		
-		visible = floorData.getType() != TileType.NOTHING;
+		switch(floorData.getType())
+		{
+		case GRASS:
+
+			break;
+		case WATER:
+			walkable = false;
+			break;
+		case WALL:
+			walkable = false;
+			break;
+		case CONCRETE:
+			walkable = true;
+			break;
+		case DARK:
+			staticLight = -1;
+			break;
+		case DUNGEON:
+			break;
+		case NOTHING:
+			visible = false;
+			walkable = false;
+			break;
+		case RAMP:
+			
+			break;
+		case ROOF:
+			
+			break;
+		case WOOD:
+			
+			break;
+		}
 		
 		int red = 0xFF & ( colour >> 16);
 		int green = 0xFF & (colour >> 8 );
@@ -83,7 +119,7 @@ public class Tile implements Comparable<Tile>, ItemContainer
 		if (isWalkable())
 			this.pickImage = RenderUtil.generateIsoImage(color, width,height);
 		
-		switchImageTimer = floorData.getNumFramesPerImage();
+		switchImageTimer = floorData.getAnimSpeed();
 		neighbours = new ArrayList<Tile>();
 		
 		walls = new WallTileData[Direction.values().length];
@@ -96,7 +132,7 @@ public class Tile implements Comparable<Tile>, ItemContainer
 	 */
 	public float getLight()
 	{
-		float light = 0.2f * world.getTime().getLight();//Math.max(staticLight + dynamicLight,1);
+		float light = 0.9f * world.getTime().getLight();//Math.max(staticLight + dynamicLight,1);
 
 		
 		light = Math.min(Math.max(light, 0),1);
@@ -115,13 +151,16 @@ public class Tile implements Comparable<Tile>, ItemContainer
 
 	public int getImageID() 
 	{
-		if (switchImageTimer == 0)
+		if (floorData.getAnimSpeed() > 0)
 		{
-			switchImageTimer = floorData.getNumFramesPerImage();
-			imageNumber = (imageNumber + 1) % floorData.getNumImages();
+			if (switchImageTimer == 0)
+			{
+				switchImageTimer = floorData.getAnimSpeed();
+				imageNumber = (imageNumber + 1) % floorData.getNumImages();
+			}
+			else
+				switchImageTimer--;
 		}
-		else
-			switchImageTimer--;
 		
 		
 		return floorData.getImageID(imageNumber); //TODO
@@ -176,7 +215,7 @@ public class Tile implements Comparable<Tile>, ItemContainer
 	
 	public boolean isWalkable()
 	{
-		return floorData.getType() == TileType.GRASS;
+		return walkable;
 	}
 	
 	

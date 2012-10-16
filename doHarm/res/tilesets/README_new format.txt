@@ -5,7 +5,7 @@ For floor tiles
 tilesetname.png
 tile width
 tile height
-tile_name (int type of tile 0=wall, 1=grass, 2=nothing, 3=water etc)  (integers indicating which images belong to this tile in the tileset.png) (tile animation speed, optional)
+tile_name (int type of tile 0=wall, 1=grass, 2=nothing, 3=water etc)  (integers indicating which images belong to this tile in the tileset.png) (tile animation speed, only needed if num tiles > 1)
 
 NOTE: exclude brackets from the above line when writting the tileset.txt, they are just to keep things tidy. .
 
