@@ -1,11 +1,11 @@
 package doharm.logic.entities.characters.classes.troll;
 
-import doharm.logic.entities.characters.classes.attributes.Attributes;
+import doharm.logic.entities.characters.classes.attributes.MonsterAttributes;
 
-public class TrollAttributes extends Attributes 
+public class TrollAttributes extends MonsterAttributes 
 {
 	public TrollAttributes()
 	{
-		setMaxHealth(100);
+
 	}
 }

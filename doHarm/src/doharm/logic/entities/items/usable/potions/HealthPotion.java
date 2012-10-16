@@ -8,7 +8,7 @@ public class HealthPotion extends UsableItem
 {
 	public HealthPotion() 
 	{
-		super(UsableItemType.HEALTH_POTION);
+		super(UsableItemType.HEALTH_POTION, "hp.png");
 	}
 
 	@Override

@@ -18,6 +18,7 @@ import doharm.logic.entities.IDManager;
 import doharm.logic.entities.characters.Character;
 import doharm.logic.entities.characters.alliances.AllianceManager;
 import doharm.logic.entities.characters.classes.CharacterClassType;
+import doharm.logic.entities.characters.monsters.MonsterFactory;
 import doharm.logic.entities.characters.players.HumanPlayer;
 import doharm.logic.entities.characters.players.Player;
 import doharm.logic.entities.characters.players.PlayerFactory;
@@ -27,11 +28,16 @@ import doharm.logic.entities.items.ItemFactory;
 import doharm.logic.entities.items.ItemQuality;
 import doharm.logic.entities.items.ItemType;
 import doharm.logic.entities.items.misc.MiscItemType;
+import doharm.logic.entities.items.misc.dragonballs.DragonBall;
 import doharm.logic.entities.items.misc.dragonballs.DragonRadar;
+import doharm.logic.entities.objects.GameObjectFactory;
+import doharm.logic.entities.objects.ObjectType;
+import doharm.logic.entities.objects.furniture.Chest;
 import doharm.logic.time.Time;
 import doharm.logic.weather.Weather;
 import doharm.logic.world.tiles.Direction;
 import doharm.logic.world.tiles.Tile;
+import doharm.logic.world.tiles.TileType;
 import doharm.net.NetworkMode;
 import doharm.storage.TilesetLoader;
 import doharm.storage.WallTileData;
@@ -40,10 +46,17 @@ import doharm.storage.WorldLoader;
 
 public class World 
 {
+	private static final int NUM_MONSTERS = 20;
+	private static final int NUM_TREES = 50;
+	private static final int NUM_CHESTS = 5;
+	private static final double NUM_CHEST_ITEMS = 6;
+
 	private Layer[] layers;  
 	
 	private EntityFactory entityFactory;
 	private PlayerFactory playerFactory;
+	private MonsterFactory monsterFactory;
+	private GameObjectFactory objectFactory;
 	private ItemFactory itemFactory;
 	
 	private HumanPlayer humanPlayer;
@@ -68,6 +81,8 @@ public class World
 
 	private String worldName;
 	private AllianceManager allianceManager;
+
+	
 	
 	
 	
@@ -87,7 +102,10 @@ public class World
 		
 		entityFactory = new EntityFactory(this,idManager);
 		playerFactory = new PlayerFactory(this,entityFactory);
+		monsterFactory = new MonsterFactory(this, entityFactory);
 		itemFactory = new ItemFactory(this, entityFactory, dragonRadar);
+		objectFactory = new GameObjectFactory(this, entityFactory);
+		
 		
 		
 		
@@ -148,33 +166,88 @@ public class World
 			//TODO add some random items!!!!!!!!
 
 
-			for (int i = 0; i < 3; i++)
-			{
-				Tile tile = null;
-				do
-				{
-					int r = (int)(Math.random()*numRows-2);
-					int c = (int)(Math.random()*numCols-2);
-					if (r < 2) r = 2;
-					if (c < 2) c = 2;
-					tile = layers[0].getTiles()[r][c];
-				} while(!tile.isWalkable());
-
-
-
-				//players.add(ai);
-				//
-
-			}
-
-			addDragonballs();
-
-		}
+			
 		
-		addMessage(new Message(-1, false, new MessagePart("World created.")));
+			addDragonballs();
+			addMonsters();
+			addTrees();
+			addChests();
+			addRandomItems();
+			//addDoors();
+	
+			
+			addMessage(new Message(-1, false, new MessagePart("World created.")));
+		}
 		
 	}
 	
+	
+	
+	private void addRandomItems() 
+	{
+		//for (int i = 0; i < NUM_RANDOM_ITEMS; i++)
+		{
+			
+			
+		}
+	}
+
+	private void addChests() 
+	{
+		for (int i = 0; i < NUM_CHESTS; i++)
+		{
+			while (true)
+			{
+				Tile tile = getRandomEmptyGrassTile();
+				if (tile.getType() == TileType.DARK || tile.getType() == TileType.WOOD || tile.getType() == TileType.CONCRETE)
+				{
+					Chest chest = (Chest)objectFactory.createObject(ObjectType.CHEST, tile, idManager.takeID(), false);
+				
+					//int items = (int)(Math.random()*NUM_CHEST_ITEMS);
+					//for (int j = 0; j < items; j++ )
+						//itemFactory.createRandomItem(ItemQuality.RARE, idManager.takeID(), chest);
+				}
+				
+				break;
+			}
+		}
+	}
+
+
+	private void addTrees() 
+	{
+		for (int i = 0; i < NUM_TREES; i++)
+		{
+			Tile tile = getRandomEmptyGrassTile();
+			
+			objectFactory.createObject(ObjectType.TREE, tile, idManager.takeID(), false);
+		}
+	}
+	
+	
+
+
+	private void addMonsters() 
+	{
+		for (int i = 0; i < NUM_MONSTERS; i++)
+		{
+			monsterFactory.createMonster(CharacterClassType.getRandomMonsterClass(), idManager.takeID(),false);
+		}
+	}
+	
+	/**
+	 * Only called by server!
+	 */
+	private void addDragonballs() 
+	{
+		for (int i = 0; i < DragonBall.NUM_DRAGONBALLS; i++)
+		{
+			itemFactory.setDragonBallStar(i+1);
+			Tile tile = getRandomEmptyTile();
+			itemFactory.createItem(ItemType.MISC, MiscItemType.DRAGONBALL.ordinal(), ItemQuality.LEGENDARY, idManager.takeID(), tile, false);
+		}
+	}
+
 	public AllianceManager getAllianceManager()
 	{
 		return allianceManager;
@@ -196,18 +269,7 @@ public class World
 		return idManager;
 	}
 
-	/**
-	 * Only called by server!
-	 */
-	private void addDragonballs() 
-	{
-		for (int i = 0; i < 7; i++)
-		{
-			itemFactory.setDragonBallStar(i+1);
-			Tile tile = getRandomEmptyTile();
-			itemFactory.createItem(ItemType.MISC, MiscItemType.DRAGONBALL.ordinal(), ItemQuality.LEGENDARY, idManager.takeID(), tile, false);
-		}
-	}
+	
 
 	public void addMessage(Message message)
 	{
@@ -289,7 +351,7 @@ public class World
 	}
 	
 	
-
+	
 	
 
 	private void removeDeadItems() 
@@ -476,6 +538,16 @@ public class World
 			
 			Tile tile = layers[layer].getTiles()[row][col];
 			if (tile.isWalkable() && (tile.getRoof() == null || !tile.getRoof().isVisible()) && tile.isEmpty())
+				return tile;
+		}
+	}
+	
+	private Tile getRandomEmptyGrassTile() 
+	{
+		while(true)
+		{
+			Tile tile = getRandomEmptyTile();
+			if (tile.getType() == TileType.GRASS)
 				return tile;
 		}
 	}

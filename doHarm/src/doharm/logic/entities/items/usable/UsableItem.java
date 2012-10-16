@@ -12,9 +12,9 @@ public abstract class UsableItem extends Item
 	
 	protected abstract boolean use(Character character);
 
-	protected UsableItem(UsableItemType usableItemType) 
+	protected UsableItem(UsableItemType usableItemType, String imageName) 
 	{
-		super(ItemType.USABLE);
+		super(ItemType.USABLE,imageName);
 		this.usableItemType = usableItemType;
 	}
 	

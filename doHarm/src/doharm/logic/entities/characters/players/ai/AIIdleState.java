@@ -16,6 +16,11 @@ public class AIIdleState extends AIState
 	@Override
 	public void internalProcess(AIPlayer player) 
 	{
+		if (player.getAlliance() == null)
+		{
+			
+		}
+		
 		//choose random actions to do.
 		if (Math.random() > 0.998f)
 		{

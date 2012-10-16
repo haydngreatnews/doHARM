@@ -10,7 +10,12 @@ import doharm.logic.entities.EntityType;
 import doharm.logic.entities.characters.alliances.Alliance;
 import doharm.logic.entities.characters.classes.CharacterClass;
 import doharm.logic.entities.characters.classes.CharacterClassType;
+import doharm.logic.entities.characters.classes.dragon.Dragon;
+import doharm.logic.entities.characters.classes.ranger.Ranger;
+import doharm.logic.entities.characters.classes.spider.Spider;
+import doharm.logic.entities.characters.classes.troll.Troll;
 import doharm.logic.entities.characters.classes.warrior.Warrior;
+import doharm.logic.entities.characters.classes.wizard.Wizard;
 import doharm.logic.entities.characters.states.CharacterState;
 import doharm.logic.entities.characters.states.CharacterStateType;
 import doharm.logic.entities.characters.states.IdleState;
@@ -45,6 +50,7 @@ public abstract class Character extends AbstractEntity
 	private Character attackedBy;
 	private CharacterType characterType;
 	private Color colour = Color.white;
+	private float frame;
 	
 	protected Character(CharacterType characterType) 
 	{
@@ -52,6 +58,7 @@ public abstract class Character extends AbstractEntity
 		this.characterType = characterType;
 		inventory = new Inventory();
 		taunts = new Taunts(this);
+		frame = 0;
 	}
 	
 	
@@ -63,12 +70,31 @@ public abstract class Character extends AbstractEntity
 	{
 		switch(classType)
 		{
+		//Player classes
 		case WARRIOR:
 			characterClass = new Warrior(this);
 			break;
+		case RANGER:
+			characterClass = new Ranger(this);
+			break;
+		case WIZARD:
+			characterClass = new Wizard(this);
+			break;
+		//Monster classes
+		case DRAGON:
+			characterClass = new Dragon(this);
+			break;
+		case TROLL:
+			characterClass = new Troll(this);
+			break;
+		case SPIDER:
+			characterClass = new Spider(this);
+			break;
+			
 		default:
 			throw new UnsupportedOperationException("Character class type not implemented: " + classType);
 		}
+		setSize(characterClass.getSize());
 	}
 	
 	
@@ -110,7 +136,14 @@ public abstract class Character extends AbstractEntity
 		
 		state.process(this);
 		
+		frame += getVelocity().getLength() * 0.1f;
+		
 		super.process();
+	}
+	
+	public float getFrame()
+	{
+		return frame;
 	}
 	
 	public void useItem(UsableItem item) 
@@ -304,6 +337,11 @@ public abstract class Character extends AbstractEntity
 		getWorld().addMessage(new Message(-1, true, new MessagePart(attacker.getName() + " killed " + getName()+".")));
 		
 		die();
+	}
+	
+	public void setSpawnTime(long time)
+	{
+		spawnTime = time;
 	}
 
 

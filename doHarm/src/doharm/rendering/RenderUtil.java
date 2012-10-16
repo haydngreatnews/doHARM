@@ -156,6 +156,8 @@ public class RenderUtil {
 		camera = c;
 	}
 
+	
+	
 	public static boolean isObscured(Player player, World world){
 		Layer[] layers = world.getLayers();
 		int x = player.getCurrentTile().getRow();
@@ -172,34 +174,64 @@ public class RenderUtil {
 
 			Layer next = layers[layerNum];
 			Tile[][] tiles = next.getTiles();
+			
+			layerNum++;
+			
+//			switch(world.getCamera().getDirection()){
+//			case NORTH :  row++; col++;break;
+//			case EAST : row--;col++;break;
+//			case SOUTH : row--; col--; break;
+//			case WEST : row++;col--;break;
+//			}
+
+			if(row < 0){
+				row = 0;
+				//System.out.println("row set to 0");
+			}
+			if(col < 0){
+				col = 0;
+				//System.out.println("col set to 0");
+			}
+			if(row >= tiles.length){
+				row = tiles.length - 1;
+				//System.out.println("row set to tiles length");
+			}
+			if(col >= tiles.length){
+				col = tiles[0].length - 1;
+				//System.out.println("col set to tiles length");
+			}
+
+			if(tiles[col][row].getImageID() != 2 ){
+				return true;
+			}
 			switch(world.getCamera().getDirection()){
 			case NORTH :  row++; col++;break;
 			case EAST : row--;col++;break;
 			case SOUTH : row--; col--; break;
 			case WEST : row++;col--;break;
 			}
-
+			
+			
 			if(row < 0){
 				row = 0;
-				System.out.println("row set to 0");
+				//System.out.println("row set to 0");
 			}
 			if(col < 0){
 				col = 0;
-				System.out.println("col set to 0");
+				//System.out.println("col set to 0");
 			}
 			if(row >= tiles.length){
 				row = tiles.length - 1;
-				System.out.println("row set to tiles length");
+				//System.out.println("row set to tiles length");
 			}
 			if(col >= tiles.length){
 				col = tiles[0].length - 1;
-				System.out.println("col set to tiles length");
+				//System.out.println("col set to tiles length");
 			}
 
-			if(tiles[col][row].getImageID() != 2){
+			if(tiles[col][row].getImageID() != 2 ){
 				return true;
 			}
-			layerNum++;
 		}
 		return false;
 	}

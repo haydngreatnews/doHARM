@@ -1,6 +1,10 @@
 package doharm.logic.entities.items;
 
 import java.awt.Dimension;
+import java.awt.image.BufferedImage;
+import java.io.File;
+
+import javax.imageio.ImageIO;
 
 import doharm.logic.entities.AbstractEntity;
 import doharm.logic.entities.EntityType;
@@ -26,10 +30,7 @@ public abstract class Item extends AbstractEntity
 	private Attributes minimumAttributes;
 	
 	private ItemQuality quality;
-	private Dimension stashSize; 
-	private ItemImage inventoryImage;
-	private ItemImage droppedImage;
-	private ItemImage holdingImage;
+	private Dimension stashSize; //in grid units.
 	
 	
 	private ItemType itemType;
@@ -37,18 +38,27 @@ public abstract class Item extends AbstractEntity
 	private boolean onGround;
 	private boolean unique;
 	
+	
+	
+	protected Item(ItemType type, String imageName)
+	{
+		super(EntityType.ITEM);
+		this.itemType = type;
+		setSize(new Dimension(8,8));
+		onGround = false;
+		stashSize = new Dimension(1, 1);
+		loadImage(imageName);
+	}
+	
 	public boolean canUse(Character character)
 	{
 		return true;
 	}
 	
-	protected Item(ItemType type)
+	@Override
+	public void loadImage(String imageName)
 	{
-		super(EntityType.ITEM);
-		this.itemType = type;
-		setSize(new Dimension(6,6));
-		onGround = false;
-		stashSize = new Dimension(1, 1);
+		super.loadImage("res/items/"+imageName);
 	}
 	
 	@Override
@@ -148,30 +158,6 @@ public abstract class Item extends AbstractEntity
 
 	public void setStashSize(Dimension stashSize) {
 		this.stashSize = stashSize;
-	}
-
-	public ItemImage getInventoryImage() {
-		return inventoryImage;
-	}
-
-	public void setInventoryImage(ItemImage inventoryImage) {
-		this.inventoryImage = inventoryImage;
-	}
-
-	public ItemImage getDroppedImage() {
-		return droppedImage;
-	}
-
-	public void setDroppedImage(ItemImage droppedImage) {
-		this.droppedImage = droppedImage;
-	}
-
-	public ItemImage getHoldingImage() {
-		return holdingImage;
-	}
-
-	public void setHoldingImage(ItemImage holdingImage) {
-		this.holdingImage = holdingImage;
 	}
 
 	public void setItemType(ItemType itemType) {

@@ -12,4 +12,13 @@ public enum CharacterClassType
 	{
 		return RANGER;
 	}
+
+	public static CharacterClassType getRandomMonsterClass() 
+	{
+		int firstMonsterOrdinal = getLastPlayerClass().ordinal()+1;
+		int numMonsterClasses = CharacterClassType.values().length-firstMonsterOrdinal;
+		
+		
+		return CharacterClassType.values()[firstMonsterOrdinal + (int)(Math.random()*numMonsterClasses)];
+	}
 }

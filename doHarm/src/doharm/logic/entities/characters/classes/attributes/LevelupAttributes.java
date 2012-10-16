@@ -11,13 +11,13 @@ package doharm.logic.entities.characters.classes.attributes;
 
 public class LevelupAttributes 
 {
-	private float maxHealthIncrease = 1;
+	private float maxHealthIncrease = 10;
 	private float maxHealthMultiplier = 1.1f;
 
 	private float maxManaIncrease = 0;
 	private float maxManaMultiplier = 1.3f;
 	
-	private float maxRageIncrease = 1;
+	private float maxRageIncrease = 10;
 	private float maxRageMultiplier = 1.1f;
 	
 	private float healthRegenerationIncrease = 0.1f;

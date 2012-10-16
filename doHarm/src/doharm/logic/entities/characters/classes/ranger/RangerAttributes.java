@@ -6,6 +6,6 @@ public class RangerAttributes extends Attributes
 {
 	public RangerAttributes()
 	{
-		setMaxHealth(100);
+
 	}
 }

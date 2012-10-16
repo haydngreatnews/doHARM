@@ -6,6 +6,6 @@ public class WizardAttributes extends Attributes
 {
 	public WizardAttributes()
 	{
-		setMaxHealth(100);
+		
 	}
 }

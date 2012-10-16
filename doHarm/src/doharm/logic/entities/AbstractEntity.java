@@ -1,18 +1,19 @@
 package doharm.logic.entities;
 
 import java.awt.Dimension;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.PriorityQueue;
-import java.util.Queue;
-import java.util.Stack;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.imageio.ImageIO;
 
 import doharm.logic.physics.Vector;
 import doharm.logic.world.Layer;
 import doharm.logic.world.World;
 import doharm.logic.world.tiles.Tile;
-import doharm.rendering.RenderUtil;
 
 public abstract class AbstractEntity
 {
@@ -36,8 +37,16 @@ public abstract class AbstractEntity
 	private boolean fromNetwork;
 	private boolean alive;
 	//private Vector renderPos;
+	private static BufferedImage unknownImage;
+	private BufferedImage image;
+	private static Map<String, BufferedImage> imageCache;
 	
 	
+	static
+	{
+		createUnknownImage();
+		imageCache = new HashMap<String, BufferedImage>();
+	}
 	
 	
 	public AbstractEntity(EntityType entityType)
@@ -47,6 +56,18 @@ public abstract class AbstractEntity
 		reset();
 	}
 	
+	
+	private static void createUnknownImage() 
+	{
+		int size = 64;
+		unknownImage = new BufferedImage(size,size,BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g = unknownImage.createGraphics();
+		g.fillRect(0, 0, size, size);
+		g.drawString("?", size/2, size/2);
+		
+	}
+
+	@Deprecated
 	public int getImageID()
 	{
 		return -1;
@@ -95,6 +116,31 @@ public abstract class AbstractEntity
 	}
 	
 	
+	public BufferedImage getImage()
+	{
+		if (image != null)
+			return image;
+		return unknownImage;
+	}
+	
+	public void loadImage(String imageName)
+	{
+		try 
+		{
+			image = imageCache.get(imageName);
+			if (image != null)
+				return;
+			
+			System.out.println("Reading " + imageName);
+			image = ImageIO.read(new File(imageName));
+			imageCache.put(imageName, image);
+		} 
+		catch (IOException e) 
+		{
+			e.printStackTrace();
+		}
+	}
+	
 	/*public Vector getRenderPos()
 	{
 		return renderPos;
@@ -124,6 +170,8 @@ public abstract class AbstractEntity
 		this.currentTile = tile;
 		currentLayer = currentTile.getLayer();
 		currentTile.addEntity(this);
+		
+		oldPosition.set(position);
 		
 		/*float row = y / tile.getHeight();
 		float col = x / tile.getWidth();
@@ -195,11 +243,17 @@ public abstract class AbstractEntity
 
 		
 		setPosition(position.getX(), position.getY(), currentTile.getLayer());
-		oldPosition.set(position);
+		
 		
 		
 		
 		velocity.multiply(friction);
+		
+		if (velocity.getLength() > 0)
+			angle = (float) Math.atan2(velocity.getY(), velocity.getX());
+		else
+			angle = 0;
+		
 	}
 	
 	public float distanceTo(AbstractEntity other)

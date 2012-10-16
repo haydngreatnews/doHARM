@@ -1,5 +1,7 @@
 package doharm.logic.entities.characters.classes;
 
+import java.awt.Dimension;
+
 import doharm.logic.chat.Message;
 import doharm.logic.chat.MessagePart;
 import doharm.logic.chat.Taunts;
@@ -29,6 +31,7 @@ public class CharacterClass
 	private Character character;
 	private int attributePoints;
 	private CharacterClassType classType;
+	private Dimension size = new Dimension();
 	
 	
 	
@@ -46,6 +49,11 @@ public class CharacterClass
 		
 		attributePoints = ATTRIBUTEPOINTS_PER_LEVEL;
 		
+	}
+	
+	public void setSize(Dimension size)
+	{
+		this.size = size;
 	}
 	
 	public void process()
@@ -156,5 +164,10 @@ public class CharacterClass
 
 	public CharacterClassType getClassType() {
 		return classType;
+	}
+
+	public Dimension getSize() 
+	{
+		return size;
 	}
 }

@@ -8,6 +8,7 @@ import doharm.logic.entities.items.misc.dragonballs.DragonRadar;
 import doharm.logic.entities.items.usable.UsableItemType;
 import doharm.logic.entities.items.usable.potions.HealthPotion;
 import doharm.logic.entities.items.wearable.WearableItemType;
+import doharm.logic.entities.objects.furniture.Chest;
 import doharm.logic.inventory.ItemContainer;
 import doharm.logic.world.World;
 import doharm.logic.world.tiles.Tile;
@@ -131,6 +132,15 @@ public class ItemFactory extends AbstractEntityFactory<Item>
 	public void removeItem(Item item)
 	{
 		removeEntity(item);
+	}
+
+	public Item createRandomItem(ItemQuality minimum, int id, ItemContainer container) 
+	{
+		int randomOrdinal = (int)(Math.random()* (ItemQuality.values().length -1-minimum.ordinal()));
+		ItemQuality quality = ItemQuality.values()[minimum.ordinal()+randomOrdinal];
+		ItemType type = ItemType.values()[(int)(Math.random()*ItemType.values().length-1)];
+		int subtype = 0;
+		return createItem(type,subtype, quality,id,container,false);
 	}
 	
 	

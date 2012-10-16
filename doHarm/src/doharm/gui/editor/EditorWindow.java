@@ -117,6 +117,11 @@ public class EditorWindow extends JFrame {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		canvas.requestFocusInWindow();
 		new repaintThread().start();
+		
+		canvas.requestFocusInWindow();
+		canvas.requestFocus();
+		
+		requestFocus();
 	}
 
 	EditorCanvas getCanvas() {
