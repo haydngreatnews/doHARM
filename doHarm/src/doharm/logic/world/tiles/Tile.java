@@ -71,7 +71,7 @@ public class Tile implements Comparable<Tile>, ItemContainer
 		world = layer.getWorld();
 		
 		dynamicLight = 0;
-		staticLight = 1.0f;
+		staticLight = 0.0f;
 		walkable = true;
 		visible = true;
 		
@@ -90,7 +90,7 @@ public class Tile implements Comparable<Tile>, ItemContainer
 			walkable = true;
 			break;
 		case DARK:
-			staticLight = -1;
+			staticLight = -2;
 			break;
 		case DUNGEON:
 			break;
@@ -132,7 +132,7 @@ public class Tile implements Comparable<Tile>, ItemContainer
 	 */
 	public float getLight()
 	{
-		float light = 0.9f * world.getTime().getLight();//Math.max(staticLight + dynamicLight,1);
+		float light = 1.0f * world.getTime().getLight() + world.getWeather().getLight() + staticLight + dynamicLight;
 
 		
 		light = Math.min(Math.max(light, 0),1);
@@ -355,13 +355,26 @@ public class Tile implements Comparable<Tile>, ItemContainer
 
 	@Override
 	public boolean pickup(Item item) {
-		return items.pickup(item);
+		boolean pickedup =  items.pickup(item);
+		
+		if (pickedup)
+		{
+			item.spawn(this);
+			item.setOnGround(true);
+		}
+		
+		return pickedup;
 	}
 
 	@Override
 	public boolean drop(Item item, ItemContainer destination) 
 	{
-		return items.drop(item, destination);
+		boolean dropped = items.drop(item, destination);
+		
+		if (dropped && !(destination instanceof Tile))
+			item.setOnGround(false);
+		
+		return dropped;
 	}
 	
 	@Override

@@ -53,7 +53,7 @@ public class WorldRenderer
 	private BufferedImage[] wallImagesTrans;
 
 
-	private AffineTransform transform;
+	//private AffineTransform transform;
 	private AbstractGame game;
 
 	private PlayerRenderer playerRenderer;
@@ -83,7 +83,7 @@ public class WorldRenderer
 		playerRenderer = new PlayerRenderer(game);
 		itemRenderer = new ItemRenderer(game);
 		canvasSize = new Dimension();
-		transform = new AffineTransform();
+		//transform = new AffineTransform();
 
 		newLoadTileSets();
 		RenderUtil.setImgDimensions(fTileW, fTileH);
@@ -126,10 +126,10 @@ public class WorldRenderer
 		//give the camera the canvas size so we can calculate the centre of the screen
 		camera.setCanvasDimensions(canvasSize);
 
-		transform.setToIdentity();
+		/*transform.setToIdentity();
 
 		graphics.setTransform(transform);
-		pickGraphics.setTransform(transform);
+		pickGraphics.setTransform(transform);*/
 
 		//clear the screen
 		graphics.setColor(Color.black);
@@ -140,15 +140,17 @@ public class WorldRenderer
 		pickGraphics.setColor(Color.black);
 		pickGraphics.fillRect(0, 0, canvasSize.width, canvasSize.height);
 
-		//transform.translate(v.getX(),v.getY());
-		transform.translate(-camera.getRenderPosition().getX(), -camera.getRenderPosition().getY());
-		//transform.scale(0.1f,0.1f);
+
+		/*transform.translate(-camera.getRenderPosition().getX(), -camera.getRenderPosition().getY());
+
 		graphics.setTransform(transform);
-		pickGraphics.setTransform(transform);
+		pickGraphics.setTransform(transform);*/
+		
+		
 		//draw the current game, based on the camera, etc.
 
 
-		renderWorldIso();
+		renderWorldIso((int)-camera.getRenderPosition().getX(), (int)-camera.getRenderPosition().getY());
 
 		//TODO
 		//playerRenderer.redraw(graphics, fTileW, fTileH);
@@ -167,8 +169,8 @@ public class WorldRenderer
 		//////////////////////////////////////////////////////////////////////////////////////////
 
 
-		transform.setToIdentity();
-		graphics.setTransform(transform);
+		//transform.setToIdentity();
+		//graphics.setTransform(transform);
 
 		graphics.setColor(Color.white);
 		graphics.drawString("Direction: " + camera.getDirection().toString(), 10, 10);
@@ -195,7 +197,7 @@ public class WorldRenderer
 	}
 
 
-	private void renderWorldIso(){
+	private void renderWorldIso(int cx, int cy){
 		World world = game.getWorld();
 		boolean isTransparent = false;
 		boolean drawLayer = true;
@@ -218,11 +220,11 @@ public class WorldRenderer
 
 
 				if(isTransparent){
-					drawTiles(tiles, layerCount, floorImagesTrans, wallImagesTrans);
+					drawTiles(cx,cy,tiles, layerCount, floorImagesTrans, wallImagesTrans);
 					drawLayer = false;
 				}
 				else{
-					drawTiles(tiles, layerCount, floorImages, wallImages);
+					drawTiles(cx,cy,tiles, layerCount, floorImages, wallImages);
 				}
 
 
@@ -233,7 +235,7 @@ public class WorldRenderer
 
 				for (Player player: world.getPlayerFactory().getEntities()){
 					if(layerCount == player.getCurrentLayer().getLayerNumber()){
-						playerRenderer.redrawPlayer(player,graphics, fTileW, fTileH);
+						playerRenderer.redrawPlayer(cx,cy,player,graphics, fTileW, fTileH);
 					}
 				}
 
@@ -244,7 +246,7 @@ public class WorldRenderer
 						continue;
 
 					if(layerCount == item.getCurrentLayer().getLayerNumber()){
-						itemRenderer.redrawPlayer(item,graphics, fTileW, fTileH);
+						itemRenderer.redrawPlayer(cx,cy,item,graphics, fTileW, fTileH);
 					}
 				}
 
@@ -260,7 +262,7 @@ public class WorldRenderer
 
 		for (Player player: world.getPlayerFactory().getEntities())
 		{
-			playerRenderer.drawInfo(player,graphics, fTileW, fTileH);
+			playerRenderer.drawInfo(cx,cy,player,graphics, fTileW, fTileH);
 		}
 
 	}
@@ -270,9 +272,9 @@ public class WorldRenderer
 	private int startCol = 0;
 	private int toRow = 0;
 	private int toCol = 0;
+	private Vector vector = new Vector(0, 0);
 
-
-	private void drawTiles(Tile[][] tiles, int layerCount, BufferedImage[] FI, BufferedImage[] WI){
+	private void drawTiles(int cx, int cy, Tile[][] tiles, int layerCount, BufferedImage[] FI, BufferedImage[] WI){
 		graphics.setColor(new Color(1,0,1,0.4f));
 
 
@@ -293,7 +295,7 @@ public class WorldRenderer
 		case WEST : rowC = toRow; colC = startCol; break;
 		}
 		
-		Vector vector = new Vector(0, 0);
+		
 		while(checkRowCon(tiles)){
 
 			while(checkColCon(tiles)){
@@ -303,8 +305,8 @@ public class WorldRenderer
 
 
 				RenderUtil.convertCoordsToIso(colC, rowC, layerCount, game.getCamera(), vector);
-				int x = vector.getXAsInt() - fTileW/2; //fTileW/2 added PLEASE leave in here   .... ok  ._.
-				int y = vector.getYAsInt() - fTileH/2; //fTileH/2 added PLEASE leave in here
+				int x = cx+vector.getXAsInt() - fTileW/2; //fTileW/2 added PLEASE leave in here   .... ok  ._.
+				int y = cy+vector.getYAsInt() - fTileH/2; //fTileH/2 added PLEASE leave in here
 				graphics.drawImage(image,x,y, null);
 
 				if(tile.isVisible()){ 

@@ -138,6 +138,8 @@ public class Inventory implements ItemContainer
 			if (item != null)
 				drop(item, dropTile);
 		}
+		stash.dropAll(dropTile);
+		belt.dropAll(dropTile);
 		
 		
 	}
