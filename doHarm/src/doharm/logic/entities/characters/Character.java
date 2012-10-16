@@ -94,6 +94,7 @@ public abstract class Character extends AbstractEntity
 		default:
 			throw new UnsupportedOperationException("Character class type not implemented: " + classType);
 		}
+		setSize(characterClass.getSize());
 	}
 	
 	

@@ -247,6 +247,12 @@ public abstract class AbstractEntity
 		
 		
 		velocity.multiply(friction);
+		
+		if (velocity.getLength() > 0)
+			angle = (float) Math.atan2(velocity.getY(), velocity.getX());
+		else
+			angle = 0;
+		
 	}
 	
 	public float distanceTo(AbstractEntity other)

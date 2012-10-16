@@ -255,7 +255,7 @@ public class WorldRenderer
 					else if (entity.getEntityType() == EntityType.OBJECT)
 					{
 						if(layerCount == entity.getCurrentLayer().getLayerNumber()){
-							playerRenderer.redrawPlayer(cx,cy,(Character)entity,graphics, fTileW, fTileH);
+							//playerRenderer.redrawPlayer(cx,cy,(Character)entity,graphics, fTileW, fTileH);
 						}
 					}
 				}

@@ -1,6 +1,7 @@
 package doharm.logic.entities.characters.monsters;
 import doharm.logic.entities.characters.Character;
 import doharm.logic.entities.characters.CharacterType;
+import doharm.logic.entities.characters.classes.CharacterClass;
 
 public class Monster extends Character
 {
