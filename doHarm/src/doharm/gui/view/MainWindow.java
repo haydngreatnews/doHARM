@@ -38,9 +38,17 @@ import doharm.logic.chat.Message;
 import doharm.logic.chat.MessagePart;
 import doharm.logic.entities.characters.players.HumanPlayer;
 import doharm.logic.entities.characters.states.CharacterStateType;
+import doharm.logic.inventory.Inventory;
 import doharm.logic.testing.TestGame;
 import doharm.rendering.WorldRenderer;
 
+/**
+ * The Main window of our game, it supports toggling of menus, window sizes and
+ * inventories, and handles most of the human computer interaction
+ * 
+ * @author Haydn Newport
+ * 
+ */
 public class MainWindow {
     private static final long serialVersionUID = 1L;
     private static final String TITLE = "OUR GAME";
@@ -51,6 +59,7 @@ public class MainWindow {
     private JFrame frame;
     private AbstractGame game;
     private MenuScreen menu;
+    private InventoryPanel inventory;
     private JPanel canvas;
     private HumanPlayer player;
     private JButton levelUpButton;
@@ -100,6 +109,13 @@ public class MainWindow {
 
     }
 
+    /**
+     * Set game, used to start playing once a game has been created and joined
+     * by the player
+     * 
+     * @param game
+     *            The game to draw and start playing
+     */
     public void setGame(AbstractGame game) {
 	WorldRenderer renderer = new WorldRenderer(game);
 	frame.remove(canvas);
@@ -137,29 +153,33 @@ public class MainWindow {
 	addListeners(); // NEEDED!
     }
 
+    // Helper method for tidiness - this button is nasty
     private void setupLevelButton(JButton button) {
 	String path = "res/ui/levelUpButton";
 	try {
-	    Image up = ImageIO.read(new File(path+".png"));
-	    Image down = ImageIO.read(new File(path+"-down.png"));
-	    Image disabled = ImageIO.read(new File(path+"-disabled.png"));
+	    Image up = ImageIO.read(new File(path + ".png"));
+	    Image down = ImageIO.read(new File(path + "-down.png"));
+	    Image disabled = ImageIO.read(new File(path + "-disabled.png"));
 	    button.setIcon(new ImageIcon(up));
 	    button.setPressedIcon(new ImageIcon(down));
 	    button.setDisabledIcon(new ImageIcon(disabled));
 	    button.setBorderPainted(false);
 	    button.setFocusable(false);
 	    button.setContentAreaFilled(false);
-	    button.addActionListener(new ActionListener() {        
-	        @Override
-	        public void actionPerformed(ActionEvent e) {
-	            new LevelUpMenu(player).setVisible(true);
-	        }
+	    button.addActionListener(new ActionListener() {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+		    new LevelUpMenu(player).setVisible(true);
+		}
 	    });
 	} catch (IOException e) {
 	    e.printStackTrace();
 	}
     }
 
+    /**
+     * Switch this window between windowed and fullscreen
+     */
     public void toggleSize() {
 	if (frame != null)
 	    frame.dispose();
@@ -181,6 +201,9 @@ public class MainWindow {
 	frame.setVisible(true);
     }
 
+    /**
+     * Toggle whether the menu is showing on this window or not
+     */
     public void toggleMenu() {
 	System.out.println("Toggle Menu");
 	if (menu == null) {
@@ -204,7 +227,35 @@ public class MainWindow {
 	}
 	canvas.revalidate();
     }
+    
+    /**
+     * Toggle whether the menu is showing on this window or not
+     */
+    public void toggleInventory() {
+	System.out.println("Toggle Menu");
+	if (inventory == null) {
+	    // Make only one menu, so we don't end up with lots
+	    inventory = new InventoryPanel(player);
+	    inventory.setAlignmentX(0.5f);
+	    inventory.setAlignmentY(0.5f);
+	}
+	if (inventory.isShowing()) {
+	    canvas.remove(inventory);
+	    canvas.requestFocusInWindow();
+	    canvas.addKeyListener(keyboardManager);
+	    canvas.addMouseListener(mouseManager);
+	} else {
+	    canvas.add(inventory);
+	    canvas.setComponentZOrder(inventory, 0);
+	    canvas.setComponentZOrder(southPanel, 1);
+	    inventory.requestFocusInWindow();
+	    inventory.addKeyListener(keyboardManager);
+	    canvas.removeMouseListener(mouseManager);
+	}
+	canvas.revalidate();
+    }
 
+    // Helper to add the various listeners around the place after a toggleSize
     private void addListeners() {
 	canvas.addMouseListener(mouseManager);
 	canvas.addMouseMotionListener(mouseManager);
@@ -217,16 +268,21 @@ public class MainWindow {
 	frame.addKeyListener(keyboardManager);
     }
 
-    public JFrame getFrame() {
-	return frame;
-    }
-
     public void repaint() {
 	frame.repaint();
     }
 
     private DateFormat dateFormat = new SimpleDateFormat("[HH:MM");
 
+    /**
+     * Add a message to the message panel of the window, allows coloring of
+     * messages, and generally swanks them up a bit. NOTE:Only a set number of
+     * messages may exist in the pane at one time (by design) due to the
+     * EjectorQueue it uses
+     * 
+     * @param message
+     *            The Message to be added to the panel
+     */
     public void addMessage(Message message) {
 	// TODO FIX TEMP CRAPPY CODE
 	StringBuilder msg = new StringBuilder();
@@ -243,7 +299,7 @@ public class MainWindow {
 	} else {
 	    sender = game.getWorld().getPlayerFactory().getEntity(message.getSenderID()).getName();
 	}
-	String text = dateFormat.format(new Date()) +" "+ sender + "]:" + msg.toString() + "<br />";
+	String text = dateFormat.format(new Date()) + " " + sender + "]:" + msg.toString() + "<br />";
 	messages.offer(text);
 	StringBuilder sb = new StringBuilder();
 	sb.append("<div style=\"font-family:sans-serif; color:#FFFFFF\">");
@@ -257,19 +313,20 @@ public class MainWindow {
 	    textPane.setText(""); // FIX THE MESSAGES^
 	}
     }
-    
-    private class GuiTasksThread extends Thread{
-	public void run(){
-	    while(true){
+
+    private class GuiTasksThread extends Thread {
+	public void run() {
+	    while (true) {
 		try {
 		    Thread.sleep(200);
-		} catch (InterruptedException e) {}
+		} catch (InterruptedException e) {
+		}
 		if (game != null) {
 		    Collection<Message> messages = game.getWorld().getAndClearMessages();
 		    for (Message message : messages)
 			addMessage(message);
 		}
-		if (player.isAlive() && player.getCharacterClass().getAttributePoints() != 0){
+		if (player.isAlive() && player.getCharacterClass().getAttributePoints() != 0) {
 		    levelUpButton.setEnabled(true);
 		} else {
 		    levelUpButton.setEnabled(false);
