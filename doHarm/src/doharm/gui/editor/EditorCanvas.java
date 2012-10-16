@@ -21,6 +21,7 @@ import doharm.storage.WorldLoader;
 public class EditorCanvas extends JPanel {
 	private ArrayList<EditorLayerData> layers = new ArrayList<EditorLayerData>();
 	private int xDim, yDim;
+	private int offsetX = 0, offsetY=0;
 	private int currentLayer = 0;
 	private EditorTileSetLoader tiles;
 
@@ -67,7 +68,7 @@ public class EditorCanvas extends JPanel {
 		}
 		for (int x = 0; x < xDim; ++x) {
 			for (int y = 0; y < yDim; ++y) {
-				g.drawImage(tiles.getTileImage(layer.getTileID(y, x)),
+				g.drawImage(tiles.getTileImage(layer.getTileID(y+offsetY, x+offsetX)),
 						TILE_SIZE * x, TILE_SIZE * y, TILE_SIZE, TILE_SIZE,
 						null);
 			}
@@ -149,6 +150,11 @@ public class EditorCanvas extends JPanel {
 
 	public int getYDim() {
 		return yDim;
+	}
+	
+	public void changeOffset(int deltaX, int deltaY){
+		offsetX += deltaX;
+		offsetY += deltaY;
 	}
 
 	public void writeout() {
