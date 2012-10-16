@@ -39,7 +39,7 @@ public class KeyboardManager implements KeyListener
 		{
 			if (e.getKeyCode() == i)
 			{
-				if (!jDown)
+				if (!jDown && !altDown)
 				{
 					if (game.getWorld().getHumanPlayer() != null)
 					{

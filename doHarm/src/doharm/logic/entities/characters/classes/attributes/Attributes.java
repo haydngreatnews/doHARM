@@ -94,7 +94,7 @@ public class Attributes
 	}
 	
 	public float getMaxRage() {
-		return maxRage;
+		return maxRage + intelligence * 10;
 	}
 
 	public float getHealthRegeneration() {

@@ -81,6 +81,7 @@ public class World
 
 	private String worldName;
 	private AllianceManager allianceManager;
+	private List<Character> characters;
 
 	
 	
@@ -97,7 +98,7 @@ public class World
 		time = new Time();
 		weather = new Weather();
 		allianceManager = new AllianceManager(this);
-		
+		characters = new ArrayList<Character>();
 		
 		
 		entityFactory = new EntityFactory(this,idManager);
@@ -330,6 +331,7 @@ public class World
 	{
 		if (networkMode != NetworkMode.CLIENT)
 		{
+			updateCharacters();
 			time.process();
 			weather.process();
 			allianceManager.process();
@@ -348,6 +350,17 @@ public class World
 	
 	
 	
+
+	private void updateCharacters() {
+		characters.clear();
+		for (AbstractEntity e: entityFactory.getEntities())
+		{
+			if (e.isAlive() && e.getEntityType() == EntityType.CHARACTER)
+				characters.add((Character)e);
+		}
+	}
+
+
 
 	private void updateLights() 
 	{
@@ -597,5 +610,15 @@ public class World
 
 	public AbstractGame getGame() {
 		return game;
+	}
+
+
+
+	public Character getRandomCharacter() 
+	{
+		if (characters.isEmpty())
+			return null;
+		
+		return characters.get((int)(Math.random()*(characters.size()-1)));
 	}
 }

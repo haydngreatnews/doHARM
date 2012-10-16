@@ -20,7 +20,8 @@ public class HealthPotion extends UsableItem
 		switch(getQuality())
 		{
 			default:
-				character.increaseHealth(50);
+				character.increaseHealth(character.getMaxHealth());
+				break;
 		}
 		return true;
 	}

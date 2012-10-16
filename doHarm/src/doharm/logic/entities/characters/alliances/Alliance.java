@@ -67,7 +67,7 @@ public class Alliance
 		
 		
 		
-		if (combinedRage > 0.7f)
+		if (combinedRage > 0.95f)
 		{
 			explode();
 		}

@@ -1,9 +1,11 @@
 package doharm.logic.entities.characters.players.ai;
 
 import doharm.logic.entities.characters.players.AIPlayer;
+
 import doharm.logic.entities.characters.players.Player;
 import doharm.logic.entities.characters.states.AttackState;
 import doharm.logic.entities.characters.states.MoveState;
+import doharm.logic.entities.characters.Character;
 
 /**
  * Choose random actions when this AI is doing nothing.
@@ -22,16 +24,16 @@ public class AIIdleState extends AIState
 		}
 		
 		//choose random actions to do.
-		if (Math.random() > 0.998f)
+		if (Math.random() > 0.9f)
 		{
-			if (Math.random() > 0.5)
+			if (Math.random() > 0.1f)
 				player.setState(new MoveState(player.getWorld().getRandomEmptyTile(),true));
 			else
 			{
-				Player victim = null;
+				Character victim = null;
 				do
 				{
-					victim = player.getWorld().getRandomPlayer();
+					victim = player.getWorld().getRandomCharacter();
 				} while(victim == player);
 				
 				player.setState(new AttackState(victim));

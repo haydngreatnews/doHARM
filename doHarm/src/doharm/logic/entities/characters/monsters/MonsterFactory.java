@@ -23,7 +23,7 @@ public class MonsterFactory extends AbstractEntityFactory<Monster>
 		monster.setWorld(getWorld());
 		monster.setCharacterClass(classType);
 		monster.setColour(Color.white);
-		
+		monster.spawnEventually();
 		
 		
 		//add this player to the global list of entities.

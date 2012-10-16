@@ -187,6 +187,9 @@ public abstract class Character extends AbstractEntity
 		//Vector position = getPosition();
 		resetAttackedBy();
 		health = getMaxHealth();
+		mana = getMaxMana();
+		rage = 0;
+		
 	}
 	
 	
