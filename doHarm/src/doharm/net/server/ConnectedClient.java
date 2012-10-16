@@ -152,6 +152,6 @@ public class ConnectedClient
 
 	public void kill(World world)
 	{
-		world.getEntityFactory().removeEntity(world.getEntityFactory().getEntity(playerEntity.getID()));
+		world.getPlayerFactory().removePlayer(getPlayerEntity());
 	}
 }

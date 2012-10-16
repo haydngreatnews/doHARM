@@ -124,7 +124,6 @@ public class Server {
 		{
 			if (c.getAddress().equals(address))
 			{
-				world.getPlayerFactory().removeEntity(c.getPlayerEntity());
 				oldClient = c;
 				break;
 			}
@@ -231,7 +230,7 @@ public class Server {
 	{
 		client.flushSnaps();
 		
-		Snapshot gamestate = new Gamestate(serverTime, -1, world);
+		Snapshot gamestate = new Gamestate(serverTime, -1, world, client);
 		
 		for (AbstractEntity e : world.getEntityFactory().getEntities() )
 		{
