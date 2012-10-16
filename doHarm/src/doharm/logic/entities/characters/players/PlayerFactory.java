@@ -48,6 +48,7 @@ public class PlayerFactory extends AbstractEntityFactory<Player>
 			break;
 		case NETWORK:
 			player = new NetworkPlayer();
+			break;
 		default:
 			throw new UnsupportedOperationException("Unknown player type: " + playerType.toString());
 		}

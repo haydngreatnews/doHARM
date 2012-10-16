@@ -89,7 +89,7 @@ public class MainWindow {
 		});
 
 		// TODO REMOVE
-		setGame(new TestGame(this));
+
 	}
 
 	public void setGame(AbstractGame game) {
@@ -240,6 +240,10 @@ public class MainWindow {
 				}
 			}
 		}
+	}
+
+	public boolean hasGame() {
+		return (game != null);
 	}
 
 }

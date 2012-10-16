@@ -61,11 +61,10 @@ public class Client {
 		// Setup the UDP socket.
 		try {
 			udpSock = new DatagramSocket(null);
-			InetSocketAddress address = new InetSocketAddress(0);
+			InetSocketAddress address = new InetSocketAddress(5001);
 			udpSock.bind(address);
 			receiver = new UDPReceiver(udpSock);
 			receiver.start();
-		
 		} catch (SocketException e) { e.printStackTrace(); }
 	}
 
@@ -83,7 +82,7 @@ public class Client {
 		{
 			transmit(join);
 			counter = 0;
-			while (++counter < RETRY_DELAY);
+			while (++counter < RETRY_DELAY)
 			{
 				while (!receiver.isEmpty())
 				{
@@ -112,6 +111,7 @@ public class Client {
 							return null;	// Good to go.
 					}
 				}
+				try { Thread.sleep(100); } catch (InterruptedException e) { e.printStackTrace(); }
 			}
 		}
 		serverAddress = null;
@@ -119,10 +119,10 @@ public class Client {
 	}
 
 	public void processIncomingPackets()
-	{		
-		// TODO Might want to eventually add to the condition "|| !runningLate" for if we're taking too long. Probably won't care about this for quite a while.
+	{
 		while (!receiver.isEmpty())
 		{
+			System.out.println("Client dealing with packet.");
 			DatagramPacket packet = receiver.poll();
 
 			// If the packet isn't from the game server we are connected/talking to, discard.
@@ -135,10 +135,12 @@ public class Client {
 			switch (ServerPacket.values()[data[0]])
 			{
 			case SNAPSHOT:
+				System.out.println("Got a snapshot.");
 				updateSnapshotPacket(data, false);
 				break;
 
 			case GAMESTATE:
+				System.out.println("Got a gamestate.");
 				updateSnapshotPacket(data, true);
 				break;
 			}
@@ -200,6 +202,7 @@ public class Client {
 	 */
 	public boolean transmit(byte[] data, InetSocketAddress address)
 	{
+		System.out.println("Transmitting packet to " + address.toString());
 		try {
 			udpSock.send(new DatagramPacket(data, data.length, address.getAddress(), address.getPort()));
 			return true;
@@ -219,28 +222,6 @@ public class Client {
 	{
 		return transmit(data, serverAddress);
 	}
-
-	/* Fake main method, placeholder used so coding on the flow of operations can be done.
-	private void main()
-	{
-		while (true)
-		{
-			// process incoming packets
-			processIncomingPackets();
-
-			// update gamestate based on snapshots
-			updateWorld();
-
-			// perform client-side game logics
-
-			// render
-
-			// create then send command packet
-			dispatchCommand();
-
-			// wait for next tick
-		}
-	}*/
 
 	/** 
 	 * Updates the client view of the world.

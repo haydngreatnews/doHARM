@@ -12,23 +12,18 @@ import doharm.net.client.Client;
 public class ClientGame extends AbstractGame
 {
 	private Client client;
-	
+	private MainWindow window;	
 	
 	/**
 	 * Create game for CLIENT
 	 * @param window
-	 * @param ip
-	 * @param port
-	 * @param type
-	 * @param playerName
-	 * @param playerColour
+	 * @param client
 	 */
 	public ClientGame(MainWindow window, Client client)
 	{
 		super(NetworkMode.CLIENT);
 		getClock().setWindow(window);
 		this.client = client;
-		setWorld(null);
 	}
 	
 	@Override
@@ -37,7 +32,11 @@ public class ClientGame extends AbstractGame
 		client.processIncomingPackets();
 		World newWorld = client.updateWorld(getWorld(), this);
 		if (newWorld != null)
+		{
 			setWorld(newWorld);
+			if (getWorld() == null)
+				window.setGame(this);
+		}
 		
 		if (getWorld() != null)
 		{

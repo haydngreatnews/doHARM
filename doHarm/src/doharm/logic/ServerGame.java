@@ -22,7 +22,6 @@ public class ServerGame extends AbstractGame
 	public ServerGame(int port)
 	{
 		super(NetworkMode.SERVER);
-		
 		server = new Server(port, getWorld());
 	}
 	

@@ -46,6 +46,7 @@ public class Main
 
 	private static void runServer(int port) 
 	{
-		new ServerGame(port);
+		ServerGame game = new ServerGame(port);
+		game.start();
 	}
 }
