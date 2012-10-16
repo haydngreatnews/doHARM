@@ -13,19 +13,20 @@ import net.miginfocom.swing.MigLayout;
 import doharm.gui.decorations.ColorIcon;
 import doharm.logic.entities.characters.players.HumanPlayer;
 import doharm.logic.entities.items.Item;
+import doharm.logic.inventory.Belt;
 import doharm.logic.inventory.Inventory;
 import doharm.logic.inventory.ItemContainer;
 
-public class InventoryPanel extends JPanel {
+public class BeltPanel extends JPanel {
 
-    private Inventory inventory;
+    private Belt inventory;
     private Item[][] stash;
 
-    public InventoryPanel(HumanPlayer p) {
-	inventory = p.getInventory();
-	setLayout(new MigLayout("wrap " + inventory.STASH_COLS));
+    public BeltPanel(HumanPlayer p) {
+	inventory = p.getInventory().getBelt();
+	setLayout(new MigLayout("wrap " + inventory.getItems()[0].length));
 	ToolTipManager.sharedInstance().setInitialDelay(100);
-	stash = inventory.getStash().getItems();
+	stash = inventory.getItems();
 	for (Item[] r : stash) {
 	    for (Item i : r) {
 		if (i != null) {
@@ -34,8 +35,7 @@ public class InventoryPanel extends JPanel {
 		    JLabel icon;
 		    icon = new JLabel(new ImageIcon(i.getImage()));
 		    icon.setToolTipText(i.toString());
-		    add(icon, "spany " + i.getStashSize().height + ", spanx " + i.getStashSize().width);
-
+		    add(icon);
 		}
 	    }
 	}
