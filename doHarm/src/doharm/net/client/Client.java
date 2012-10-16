@@ -8,20 +8,33 @@ import java.net.InetSocketAddress;
 import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import doharm.logic.AbstractGame;
 import doharm.logic.entities.AbstractEntity;
 import doharm.logic.entities.EntityFactory;
 import doharm.logic.entities.characters.classes.CharacterClassType;
 import doharm.logic.entities.characters.players.Player;
+import doharm.logic.entities.characters.players.PlayerType;
+import doharm.logic.entities.projectiles.Projectile;
+import doharm.logic.time.Time;
 import doharm.logic.world.World;
+import doharm.net.NetworkMode;
 import doharm.net.UDPReceiver;
 import doharm.net.packets.Action;
+import doharm.net.packets.Gamestate;
 import doharm.net.packets.Join;
 import doharm.net.packets.ServerPacket;
 import doharm.net.packets.Snapshot;
 import doharm.net.packets.entityinfo.CharacterCreate;
 import doharm.net.packets.entityinfo.CharacterUpdate;
+import doharm.net.packets.entityinfo.EntType;
 import doharm.net.packets.entityinfo.EntityCreate;
 import doharm.net.packets.entityinfo.EntityUpdate;
+import doharm.net.packets.entityinfo.FurnitureCreate;
+import doharm.net.packets.entityinfo.FurnitureUpdate;
+import doharm.net.packets.entityinfo.ItemCreate;
+import doharm.net.packets.entityinfo.ProjectileCreate;
+import doharm.net.packets.entityinfo.ProjectileUpdate;
 
 public class Client {
 
@@ -61,7 +74,7 @@ public class Client {
 	 * @param address Server address to connect to.
 	 * @return If the connection was successful.
 	 */
-	public boolean connect(InetSocketAddress address, String name, Color colour, CharacterClassType classType)
+	public String connect(InetSocketAddress address, String name, Color colour, CharacterClassType classType)
 	{
 		serverAddress = address;
 		byte[] join = new Join(name,colour,classType).toBytes();
@@ -86,30 +99,23 @@ public class Client {
 					{
 						if (data[1] != 0)	// Response something other than OK.
 						{
+							serverAddress = null;
 							switch (data[1])	// rejected
 							{
 							case 1:
-								System.out.println("Server is full.");
-								break;
+								return "Server is full.";
 							case 2:
-								System.out.println("Name already in use.");
-								break;
+								return "Name already in use.";
 							}
-							serverAddress = null;
-							return false;
 						}
 						else
-						{
-							// Good to go.
-							return true;
-						}
+							return null;	// Good to go.
 					}
 				}
 			}
 		}
-		System.out.println("Connection attempt timed out.");
 		serverAddress = null;
-		return false;
+		return "Connection attempt timed out.";
 	}
 
 	public void processIncomingPackets()
@@ -153,7 +159,10 @@ public class Client {
 		if ( (snapNext != null && timestamp <= snapNext.serverTime) || (snapCurrent != null && timestamp <= snapCurrent.serverTime) )
 			return;
 
-		snapNext = new Snapshot(data);
+		if (isGameState)
+			snapNext = new Gamestate(data);
+		else
+			snapNext = new Snapshot(data);
 	}
 
 	/**
@@ -233,12 +242,70 @@ public class Client {
 		}
 	}*/
 
-	public void updateWorld(World world)
+	/** 
+	 * Updates the client view of the world.
+	 * @param world World to update.
+	 * @return New world if we loaded a new one up. Null otherwise.
+	 */
+	public World updateWorld(World world, AbstractGame game)
 	{	
 		// We don't have a snapshot to update our world with.
 		if (snapNext == null)
-			return;
+			return null;
+		
+		boolean newWorld = false;
+		
+		// UPDATE WORLD PROPERTIES
+		if (snapNext instanceof Gamestate)
+		{
+			Gamestate gamestate = (Gamestate) snapNext;
+			
+			if (world == null || !gamestate.worldName.equals(world.toString()))
+			{
+				world = new World(game, gamestate.worldName, NetworkMode.CLIENT);
+				newWorld = true;
+			}
+			
+			Time time = world.getTime();
+			time.setDay(gamestate.day);
+			time.setMonth(gamestate.month);
+			time.setYear(gamestate.year);
+			
+			playerEntID = gamestate.playerEntityID;
+			CharacterCreate pc = (CharacterCreate) snapNext.getECreates().get(playerEntID);
+			CharacterClassType pClass = null;
+			switch (EntType.to(pc.type))
+			{
+			case PLAYER_RANGER:
+				pClass = CharacterClassType.RANGER;
+				break;
+			case PLAYER_WARRIOR:
+				pClass = CharacterClassType.WARRIOR;
+				break;
+			case PLAYER_WIZARD:
+				pClass = CharacterClassType.WIZARD;
+				break;
+			default:
+				throw new RuntimeException("Invalid character class type for creating local player.");
+			}
+			world.createHumanPlayer(world.getRandomEmptyTile(), pClass, pc.name, pc.colour, playerEntID);
+			CharacterUpdate pu = (CharacterUpdate) snapNext.getEUpdates().get(playerEntID);
+			//world.getHumanPlayer().update(pu);
+		}
+		else
+		{
+			if (snapNext.timeOfDay < snapCurrent.timeOfDay)
+				world.getTime().nextDay();
+		}
+		world.getTime().setTimeOfDay(snapNext.timeOfDay);
+		world.getWeather().setConditions(snapNext.weather);
 
+		// UPDATE PLAYERSTATE
+		
+		// TODO
+		
+		// UPDATE ENTITY PROPERTIES
+		
 		EntityFactory ents = world.getEntityFactory();
 
 		for (int i : snapNext.getEDeletes())
@@ -250,7 +317,7 @@ public class Client {
 
 			ents.removeEntity(e);
 		}
-
+		
 		for (EntityCreate c : snapNext.getECreates().values())
 		{
 			// skip if we've already created this entity (since the server will keep sending us the create until our ack reaches them)
@@ -258,37 +325,53 @@ public class Client {
 			if (e != null)
 				continue;
 
+			// TODO TODO TODO TODO
 			if (c instanceof CharacterCreate)
 			{
 				CharacterCreate cc = (CharacterCreate) c;
 				//AbstractEntity newEnt = world.getPlayerFactory().createPlayer(world.getLayers()[0].getTiles()[5][5],cc.name,CharacterClassType.WARRIOR, 0,PlayerType.HUMAN, true);
 				//ents.addEntity(newEnt, c.id, true);
 			}
+			else if (c instanceof FurnitureCreate)
+			{
+				FurnitureCreate fc = (FurnitureCreate) c;
+			}
+			else if (c instanceof ItemCreate)
+			{
+				ItemCreate ic = (ItemCreate) c;
+			}
+			else if (c instanceof ProjectileCreate)
+			{
+				ProjectileCreate pc = (ProjectileCreate) c;
+			}
 		}
 
 		for (EntityUpdate u : snapNext.getEUpdates().values())
 		{
 			AbstractEntity e = ents.getEntity(u.id);
-			if (e == null)
+			if (e == null)	// skip if we don't have this entity or this entity is our player.
 				continue;
 
 			if (u instanceof CharacterUpdate)
 			{
-				CharacterUpdate cu = (CharacterUpdate) u;
 				Player p = (Player) e;
 
 				if (u.id == world.getHumanPlayer().getID())		// if this is our player, don't bother with it (for now. TODO)
-					break;					
+					continue;					
 
-				p.setPosition(cu.posX, cu.posY, world.getLayer(cu.layer));
-				p.setAngle(cu.angle);
-				p.setHealth(cu.health);				
+				//p.update((CharacterUpdate)u);
 			}
-		}
-
-		if (world.getHumanPlayer() == null)
-		{
-			//world.setHumanPlayer((HumanPlayer) world.getPlayerFactory().getEntity(GAMESTATE_ID));
+//			else if (u instanceof FurnitureUpdate)
+//			{
+//				Furniture f = (Furniture) e;
+//				f.update((FurnitureUpdate)u);
+//			}
+			else if (u instanceof ProjectileUpdate)
+			{
+				Projectile p = (Projectile) e;
+				//p.update((ProjectileUpdate)u);
+				
+			}
 		}
 
 		// Get commands to execute.
@@ -306,6 +389,11 @@ public class Client {
 
 		snapCurrent = snapNext;
 		snapNext = null;
+		
+		if (newWorld)
+			return world;
+		else
+			return null;
 	}
 
 }

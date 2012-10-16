@@ -464,13 +464,15 @@ public class WorldRenderer
 		wTileH = tsl.getWallTileHeight();
 
 
-		//TODO not right
-		floorImages = new BufferedImage[10];
-		wallImages = new BufferedImage[20];
+		
+		
 
 		try{
 			tileSet = ImageIO.read(new File("res/tilesets/"+tsl.getFloorTileSetImage()));
 
+			int numFloorImages = (tileSet.getHeight()/fTileH)*(tileSet.getWidth()/fTileW);
+			floorImages = new BufferedImage[numFloorImages];
+			
 
 
 			for(int r = 0; r < tileSet.getHeight()/fTileH; r++){
@@ -486,6 +488,9 @@ public class WorldRenderer
 			}
 
 
+			int numWallImages = (tileSet.getHeight()/fTileH)*(tileSet.getWidth()/fTileW);
+			wallImages = new BufferedImage[numWallImages];
+			
 			//load the wall tiles
 
 			tileSet = ImageIO.read(new File("res/tilesets/"+tsl.getWallTileSetImage()));

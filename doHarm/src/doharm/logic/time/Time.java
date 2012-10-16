@@ -47,17 +47,7 @@ public class Time
 		{
 			timeOfDay -= DAY_LENGTH;
 			
-			day++;
-			if (day > 30)
-			{
-				month++;
-				day = 1;
-				if (month > 12)
-				{
-					month = 1;
-					year++;
-				}
-			}
+			nextDay();
 		}
 		
 		light = (timeOfDay / DAY_LENGTH);
@@ -74,6 +64,21 @@ public class Time
 		
 	}
 	
+	public void nextDay() 
+	{
+		day++;
+		if (day > 30)
+		{
+			month++;
+			day = 1;
+			if (month > 12)
+			{
+				month = 1;
+				year++;
+			}
+		}
+	}
+
 	public float getLight()
 	{
 		return light;

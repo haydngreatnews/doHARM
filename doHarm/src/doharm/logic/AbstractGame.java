@@ -3,8 +3,6 @@ package doharm.logic;
 import doharm.logic.camera.Camera;
 import doharm.logic.entities.characters.Character;
 import doharm.logic.time.Clock;
-import doharm.logic.time.Time;
-import doharm.logic.weather.Weather;
 import doharm.logic.world.World;
 import doharm.net.NetworkMode;
 
@@ -22,7 +20,9 @@ public abstract class AbstractGame
 		this.networkMode = mode;
 		
 		
-		String worldName = "world2";
+
+		String worldName = "world4";
+
 		
 		
 		
@@ -52,6 +52,11 @@ public abstract class AbstractGame
 	public World getWorld()
 	{
 		return world;
+	}
+	
+	public void setWorld(World newWorld)
+	{
+		world = newWorld;
 	}
 
 	public NetworkMode getNetworkMode()

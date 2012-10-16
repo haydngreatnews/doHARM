@@ -6,15 +6,18 @@ import java.nio.ByteBuffer;
 
 import doharm.logic.time.Time;
 import doharm.logic.world.World;
+import doharm.net.server.ConnectedClient;
 
 public class Gamestate extends Snapshot {
 
-	public final int year, month, day;
+	public final String worldName;
+	public final int playerEntityID, year, month, day;
 	
-	public Gamestate(int serverTime, int seqAckd, World world)
+	public Gamestate(int serverTime, int seqAckd, World world, ConnectedClient client)
 	{
 		super(serverTime, seqAckd, world);
-		
+		worldName = world.toString();
+		playerEntityID = client.getPlayerEntity().getID();
 		Time t = world.getTime();
 		this.year = t.getYear();
 		this.month = t.getMonth();
@@ -26,8 +29,9 @@ public class Gamestate extends Snapshot {
 		super(packet);
 		
 		ByteBuffer buff = ByteBuffer.wrap(packet);
-		buff.position(packet.length - 4);	// place the position at where the snapshot finished reading.
-											// in this case length - 4 as there are 4 bytes of extra stuff in GameState.
+		buff.position(snapshotLength);	// place the position at where the snapshot finished reading.
+		worldName = Bytes.getString(buff);
+		playerEntityID = buff.getInt();
 		// Convert the one integer back into the year, month and day.
 		int date = buff.getInt();
 		year = date / 10000;
@@ -43,6 +47,7 @@ public class Gamestate extends Snapshot {
 		try
 		{
 			buff.write(snapshot);	// Copy the snapshot over into our new gamestate array.
+			buff.write(Bytes.setInt(playerEntityID));
 			buff.write(Bytes.setInt(day + month*100 + year*10000));	// Put date into one integer.
 		} catch (IOException e) { e.printStackTrace(); }
 		

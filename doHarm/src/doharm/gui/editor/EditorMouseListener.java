@@ -3,8 +3,9 @@ package doharm.gui.editor;
 import java.awt.Dimension;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 
-public class EditorMouseListener implements MouseListener {
+public class EditorMouseListener implements MouseListener, MouseMotionListener {
     EditorWindow window;
 
     public EditorMouseListener(EditorWindow editorWindow) {
@@ -25,7 +26,7 @@ public class EditorMouseListener implements MouseListener {
 
     @Override
     public void mouseReleased(MouseEvent e) {
-	window.getCanvas().setTileUnder(e.getX(), e.getY(), window.getCurrentTileType());
+	
 	
     }
 
@@ -40,5 +41,16 @@ public class EditorMouseListener implements MouseListener {
 	// TODO Auto-generated method stub
 
     }
+
+	@Override
+	public void mouseDragged(MouseEvent e) {
+		window.getCanvas().setTileUnder(e.getX(), e.getY(), window.getCurrentTileType());		
+	}
+
+	@Override
+	public void mouseMoved(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
 
 }

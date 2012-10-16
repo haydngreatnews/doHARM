@@ -36,12 +36,15 @@ public class Server {
 	private int serverTime;
 	private int frameTime;	// Time between frames.
 	private static int CLIENT_CHECK_INTERVAL = 60, TIMEOUT_DELAY = 200;
+	private int checkClientsCounter;
 	
 	private World world;
 	
-	public Server(int port, World world) throws IOException
+	public Server(int port, World world)
 	{
 		this.world = world;
+		
+		try {
 		
 		// Setup the UDP socket.
 		udpSock = new DatagramSocket(null);
@@ -52,6 +55,8 @@ public class Server {
 		
 		receiver = new UDPReceiver(udpSock);
 		receiver.start();
+		
+		} catch (SocketException e) { e.printStackTrace(); }
 	}
 	
 	public void processIncomingPackets()
@@ -124,7 +129,6 @@ public class Server {
 		{
 			if (c.getAddress().equals(address))
 			{
-				world.getPlayerFactory().removeEntity(c.getPlayerEntity());
 				oldClient = c;
 				break;
 			}
@@ -145,7 +149,7 @@ public class Server {
 	/**
 	 * Builds new snapshots from the game state then sends them out.
 	 */
-	private void dispatchSnapshots()
+	public void dispatchSnapshots()
 	{	
 		HashMap<Integer,EntityUpdate> entityUpdates = new HashMap<Integer,EntityUpdate>();
 		HashMap<Integer,EntityCreate> entityCreates = new HashMap<Integer,EntityCreate>();
@@ -231,7 +235,7 @@ public class Server {
 	{
 		client.flushSnaps();
 		
-		Snapshot gamestate = new Gamestate(serverTime, -1, world);
+		Snapshot gamestate = new Gamestate(serverTime, -1, world, client);
 		
 		for (AbstractEntity e : world.getEntityFactory().getEntities() )
 		{
@@ -244,46 +248,21 @@ public class Server {
 		transmit(gamestate.convertToBytes(), client.getAddress() );
 	}
 	
-	
-	// Fake main method, placeholder used so coding on the flow of operations can be done.
-	private void main()
+	public void checkClients()
 	{
-		long start, sleepTime;
-		int checkClientsCounter = 0;
-		while (true)
+		++checkClientsCounter;
+		if (checkClientsCounter > CLIENT_CHECK_INTERVAL)
 		{
-			start = System.currentTimeMillis();
-			++checkClientsCounter;
-			// process incoming packets
-			processIncomingPackets();
-			
-			// get client actions; update pos based on client fields, and then perform commands.
-			
-			// perform moves
-			
-			// periodically check if we should drop clients (because we haven't heard from them in a while).
-			if (checkClientsCounter > CLIENT_CHECK_INTERVAL)
+			checkClientsCounter = 0;
+			ArrayList<ConnectedClient> toRemove = new ArrayList<ConnectedClient>(2);
+			for ( ConnectedClient c : clients )
 			{
-				checkClientsCounter = 0;
-				ArrayList<ConnectedClient> toRemove = new ArrayList<ConnectedClient>(2);
-				for ( ConnectedClient c : clients )
-				{
-					if (serverTime - c.getLatestTime() > TIMEOUT_DELAY);
-						toRemove.add(c);
-				}
-				for ( ConnectedClient c : toRemove )
-				{
-					clients.remove(c);
-				}
+				if (serverTime - c.getLatestTime() > TIMEOUT_DELAY);
+				toRemove.add(c);
 			}
-			// create then send snapshots
-			dispatchSnapshots();
-			
-			// wait for next tick
-			sleepTime = frameTime - (System.currentTimeMillis()-start);
-			if (sleepTime > 0)
+			for ( ConnectedClient c : toRemove )
 			{
-				try {Thread.sleep(sleepTime);} catch (InterruptedException e) {e.printStackTrace();}
+				clients.remove(c);
 			}
 		}
 	}

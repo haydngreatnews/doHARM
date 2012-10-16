@@ -64,17 +64,21 @@ public class World
 	private DragonRadar dragonRadar;
 
 	private AbstractGame game;
+
+	private String worldName;
 	
 	
 	public World(AbstractGame game, String worldName, NetworkMode networkMode)
 	{
 		this.game = game;
 		this.networkMode = networkMode;
+		this.worldName = worldName;
 		messages = new ArrayList<Message>();
 		idManager = new IDManager();
 		dragonRadar = new DragonRadar();
 		time = new Time();
 		weather = new Weather();
+		
 		
 		
 		entityFactory = new EntityFactory(this,idManager);
@@ -111,7 +115,7 @@ public class World
 		
 		
 		//TEST STUFF TODO REMOVE
-		humanPlayer = (HumanPlayer)playerFactory.createPlayer(layers[0].getTiles()[5][5],"Test player",CharacterClassType.WARRIOR, idManager.takeID(),PlayerType.HUMAN,Color.white,false);
+		createHumanPlayer(layers[0].getTiles()[5][5],CharacterClassType.WARRIOR,"Test player",Color.white,idManager.takeID());
 		
 		
 		
@@ -161,6 +165,12 @@ public class World
 		
 		addMessage(new Message(-1, false, new MessagePart("World created.")));
 		
+	}
+	
+	@Override
+	public String toString()
+	{
+		return worldName;
 	}
 	
 	public DragonRadar getDragonRadar()
@@ -471,9 +481,9 @@ public class World
 		return iterator.next();
 	}
 
-	public void createHumanPlayer(Tile spawnPosition, CharacterClassType type, String playerName, Color colour) 
+	public void createHumanPlayer(Tile spawnPosition, CharacterClassType type, String playerName, Color colour, int id) 
 	{
-		humanPlayer = (HumanPlayer)playerFactory.createPlayer(spawnPosition,playerName,type, 0,PlayerType.HUMAN,colour,false);
+		humanPlayer = (HumanPlayer)playerFactory.createPlayer(spawnPosition,playerName,type, id,PlayerType.HUMAN,colour,false);
 	}
 
 	public AbstractGame getGame() {
