@@ -4,15 +4,22 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import doharm.logic.chat.Message;
+import doharm.logic.chat.MessagePart;
 import doharm.logic.entities.characters.Character;
+import doharm.logic.world.World;
 
 /**
  * When in an alliance, you share XP but also get bonuses.
  * Your rage slowly increases, when group rage > threshold, alliance breaks
- * A player can leave alliance at any time.
+ * A player can join / leave an alliance at any time, if their rage is low.
  * Rage can be decreased by leveling up or killing enemies.
  * Rage is increased when a player is damaged.
  * Can request alliances with other players rather than fighting them, if both rage values are low.
+ * 
+ * 
+ * TO JOIN AN ALLIANCE: Hold J and press 1-9.
+ * TO CHANGE / LEAVE an alliance: Hold J and press 1-9.
  * 
  * @author Roland
  */
@@ -22,6 +29,8 @@ public class Alliance
 	private Set<Character> characters; //set of characters in this alliance
 	private float combinedRage;
 	private float maxRage;
+	private AllianceName name;
+	private World world;
 	
 	
 	/**
@@ -30,17 +39,26 @@ public class Alliance
 	 * @param firstCharacter
 	 * @param secondCharacter
 	 */
-	public Alliance(Character firstCharacter, Character secondCharacter)
+	public Alliance(World world,AllianceName name)
 	{
-		//TODO create message "... joined an alliance!"
+		this.world = world;
+		this.name = name;
 		combinedRage = 0;
 		characters = new HashSet<Character>();
-		
+	}
+
+	public AllianceName getName()
+	{
+		return name;
 	}
 	
 	public void process()
 	{
+		if (characters.size() < 1)
+			return;
+		
 		//increase player rage
+		
 		
 		//increase total rage
 		combinedRage += 0.1f;
@@ -52,7 +70,7 @@ public class Alliance
 		
 		if (combinedRage > maxRage)
 		{
-			explode();
+			//explode();
 			
 		}
 		
@@ -61,13 +79,31 @@ public class Alliance
 
 	private void explode() 
 	{
-		// TODO Auto-generated method stub
+		world.addMessage(new Message(-1, true, new MessagePart(name.toString()+" alliance broke!")));
 		
+		while (!characters.isEmpty())
+		{
+			removeCharacter(characters.iterator().next());
+		}
 	}
 
 	public Set<Character> getCharacters() 
 	{
 		return Collections.unmodifiableSet(characters);
+	}
+
+	public void removeCharacter(Character c) 
+	{
+		c.setAlliance(null);
+		characters.remove(c);
+		world.addMessage(new Message(-1, true, new MessagePart(c.getName()+ " left the "+name.toString()+" alliance.")));
+	}
+	
+	public void addCharacter(Character c) 
+	{
+		c.setAlliance(this);
+		characters.add(c);
+		world.addMessage(new Message(-1, true, new MessagePart(c.getName()+ " joined the "+name.toString()+" alliance!")));
 	}
 	
 	

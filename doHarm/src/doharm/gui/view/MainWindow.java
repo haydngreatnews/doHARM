@@ -220,7 +220,14 @@ public class MainWindow {
 			sb.append(s);
 		}
 		sb.append("</div>");
-		textPane.setText(sb.toString());
+		try
+		{
+			textPane.setText(sb.toString());
+		}
+		catch (Exception e)
+		{
+			textPane.setText(""); //FIX THE MESSAGES^^
+		}
 	}
 
 	private class CursorThread extends Thread {

@@ -36,43 +36,52 @@ public class PlayerRenderer {
 		}
 	}*/
 	
-	public void drawInfo(int cx, int cy, Player player, Graphics2D graphics, int tileW, int tileH)
+	public void drawInfo(int cx, int cy, Character character, Graphics2D graphics, int tileW, int tileH)
 	{
-		if (!player.isAlive())
+		if (!character.isAlive())
 			return;
 		
-		Vector position = player.getPosition();
+		Vector position = character.getPosition();
 		float row = position.getY()/tileH;
 		float col = position.getX()/tileW;
 		
 		
-		RenderUtil.convertCoordsToIso(col, row, player.getCurrentLayer().getLayerNumber(), game.getCamera(), v);
+		RenderUtil.convertCoordsToIso(col, row, character.getCurrentLayer().getLayerNumber(), game.getCamera(), v);
 		
-		Dimension size = player.getSize();
+		Dimension size = character.getSize();
 		
 		int x = cx+(int)v.getX()-size.width/2;// -tileW/2;
 		int y = cy+(int)v.getY()-size.height/4;// -tileH/2;
 		
 		
-		graphics.setColor(new Color(1-player.getHealthRatio(),player.getHealthRatio(),0,1));
-		graphics.fillRect(x, y-10, (int)(size.width*player.getHealthRatio()), 3);
+		graphics.setColor(new Color(1-character.getHealthRatio(),character.getHealthRatio(),0,1));
+		graphics.fillRect(x, y-10, (int)(size.width*character.getHealthRatio()), 3);
 		
 		graphics.setColor(new Color(1f,0,1));
-		graphics.fillRect(x, y-5, (int)(size.width*player.getExperienceRatio()), 3);
+		graphics.fillRect(x, y-5, (int)(size.width*character.getExperienceRatio()), 3);
 		
 		
-		if (player.getPlayerType() == PlayerType.HUMAN)
-		{
-			HumanPlayer hp = (HumanPlayer)player;
-			graphics.setColor(Color.magenta.darker().darker());
-			graphics.drawString("Icon: " + hp.getMouseIcon().toString(), x, y-35);
-		}
+//		if (player.getPlayerType() == PlayerType.HUMAN)
+//		{
+//			HumanPlayer hp = (HumanPlayer)player;
+//			graphics.setColor(Color.magenta.darker().darker());
+//			graphics.drawString("Icon: " + hp.getMouseIcon().toString(), x, y-35);
+//		}
+//		
+//		graphics.setColor(Color.white);
+//		graphics.drawString("State: " + player.getStateType().toString(), x, y-15);
 		
 		graphics.setColor(Color.white);
-		graphics.drawString("State: " + player.getStateType().toString(), x, y-15);
+		graphics.drawString(character.getName(), x, y-55);
 		
 		graphics.setColor(Color.white);
-		graphics.drawString("Level: "+ player.getLevel(), x, y-55);
+		graphics.drawString("Level: "+ character.getLevel(), x, y-35);
+		
+		graphics.setColor(Color.white);
+		String alliance = "no";
+		if (character.getAlliance() != null)
+			alliance = character.getAlliance().getName().toString();
+		graphics.drawString(alliance + " alliance", x, y-15);
 		
 		
 	}

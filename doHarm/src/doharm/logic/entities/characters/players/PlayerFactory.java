@@ -10,6 +10,7 @@ import doharm.logic.entities.items.ItemType;
 import doharm.logic.entities.items.usable.UsableItemType;
 import doharm.logic.world.World;
 import doharm.logic.world.tiles.Tile;
+import doharm.net.NetworkMode;
 
 /**
  * Player constructors are protected so that they can only be created via this PlayerFactory class.
@@ -53,7 +54,6 @@ public class PlayerFactory extends AbstractEntityFactory<Player>
 			throw new UnsupportedOperationException("Unknown player type: " + playerType.toString());
 		}
 		
-		
 		//Set important variables for each type of player
 		player.setName(name);
 		player.setWorld(getWorld());
@@ -62,10 +62,12 @@ public class PlayerFactory extends AbstractEntityFactory<Player>
 		
 		
 		//Give each player 2 health potions... 
-		
-		for (int i = 0; i < 2; i++)
+		if (getWorld().getNetworkMode() != NetworkMode.CLIENT)
 		{
-			getWorld().getItemFactory().createItem(ItemType.USABLE, UsableItemType.HEALTH_POTION.ordinal(), ItemQuality.POOR, getWorld().getIDManager().takeID(), player.getInventory().getBelt(), false);
+			for (int i = 0; i < 2; i++)
+			{
+				getWorld().getItemFactory().createItem(ItemType.USABLE, UsableItemType.HEALTH_POTION.ordinal(), ItemQuality.POOR, getWorld().getIDManager().takeID(), player.getInventory().getBelt(), false);
+			}
 		}
 		
 		//actually spawn the player

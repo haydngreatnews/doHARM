@@ -16,6 +16,7 @@ import doharm.logic.entities.EntityFactory;
 import doharm.logic.entities.EntityType;
 import doharm.logic.entities.IDManager;
 import doharm.logic.entities.characters.Character;
+import doharm.logic.entities.characters.alliances.AllianceManager;
 import doharm.logic.entities.characters.classes.CharacterClassType;
 import doharm.logic.entities.characters.players.HumanPlayer;
 import doharm.logic.entities.characters.players.Player;
@@ -66,6 +67,8 @@ public class World
 	private AbstractGame game;
 
 	private String worldName;
+	private AllianceManager allianceManager;
+	
 	
 	
 	public World(AbstractGame game, String worldName, NetworkMode networkMode)
@@ -78,6 +81,7 @@ public class World
 		dragonRadar = new DragonRadar();
 		time = new Time();
 		weather = new Weather();
+		allianceManager = new AllianceManager(this);
 		
 		
 		
@@ -169,6 +173,11 @@ public class World
 		
 		addMessage(new Message(-1, false, new MessagePart("World created.")));
 		
+	}
+	
+	public AllianceManager getAllianceManager()
+	{
+		return allianceManager;
 	}
 	
 	@Override
@@ -267,6 +276,7 @@ public class World
 		{
 			time.process();
 			weather.process();
+			allianceManager.process();
 			removeDeadItems();
 			respawnEntities();
 			moveEntities();
@@ -314,9 +324,9 @@ public class World
 
 	private void moveEntities() 
 	{
-		for (Player p: playerFactory.getEntities())
+		for (AbstractEntity e: entityFactory.getEntities())
 		{
-			p.process();
+			e.process();
 		}
 	}
 	

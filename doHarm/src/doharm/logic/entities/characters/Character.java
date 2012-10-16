@@ -354,10 +354,7 @@ public abstract class Character extends AbstractEntity
 		return inventory.getStash().getNumDragonBalls();
 	}
 
-	protected void rightClick() 
-	{
-		
-	}
+	
 
 	public void increaseHealth(float increase) 
 	{

@@ -4,7 +4,7 @@ public enum CharacterClassType
 {
 	WIZARD, WARRIOR, RANGER, //Player classes
 	
-	TROLL, DRAGON; //, //Monster classes TODO
+	TROLL, DRAGON, SPIDER;  //Monster classes
 
 	
 	

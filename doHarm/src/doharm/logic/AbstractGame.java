@@ -26,7 +26,7 @@ public abstract class AbstractGame
 		
 		
 
-		String worldName = "world5";
+		String worldName = "world4";
 
 		
 		
