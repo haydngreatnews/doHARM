@@ -6,6 +6,8 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import doharm.logic.world.World;
 import doharm.net.packets.entityinfo.EntityCreate;
@@ -116,6 +118,11 @@ public class Snapshot extends Update {
 			buff.write(Bytes.setFloat(weather));
 			
 			buff.write(Bytes.setFloat(timeOfDay));
+			
+			if (pState == null)
+				buff.write((byte)0);
+			else
+				buff.write(pState.convertToBytes());
 
 			if (entityDeletes.size() > 255)
 				throw new RuntimeException("Entity deletes was over the 255 limit!");
@@ -153,11 +160,11 @@ public class Snapshot extends Update {
 	
 	public void addEUpdate(EntityUpdate ent) { entityUpdates.put(ent.id, ent); }
 	
-	public ArrayList<Integer> getEDeletes() { return (ArrayList<Integer>) Collections.unmodifiableList(entityDeletes); }
+	public List<Integer> getEDeletes() { return Collections.unmodifiableList(entityDeletes); }
 	
-	public HashMap<Integer,EntityCreate> getECreates() { return (HashMap<Integer,EntityCreate>) Collections.unmodifiableMap(entityCreates); }
+	public Map<Integer, EntityCreate> getECreates() { return Collections.unmodifiableMap(entityCreates); }
 	
-	public HashMap<Integer,EntityUpdate> getEUpdates() { return (HashMap<Integer,EntityUpdate>) Collections.unmodifiableMap(entityUpdates); }
+	public Map<Integer, EntityUpdate> getEUpdates() { return Collections.unmodifiableMap(entityUpdates); }
 	
 	public PlayerState getPlayerState() { return pState; }
 	

@@ -8,6 +8,7 @@ import java.net.InetSocketAddress;
 import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import doharm.logic.AbstractGame;
 import doharm.logic.entities.AbstractEntity;
@@ -61,7 +62,7 @@ public class Client {
 		// Setup the UDP socket.
 		try {
 			udpSock = new DatagramSocket(null);
-			InetSocketAddress address = new InetSocketAddress(5001);
+			InetSocketAddress address = new InetSocketAddress(0);
 			udpSock.bind(address);
 			receiver = new UDPReceiver(udpSock);
 			receiver.start();
@@ -130,9 +131,8 @@ public class Client {
 				continue;
 
 			byte[] data = packet.getData();
-
 			// Check what type of packet it is.
-			switch (ServerPacket.values()[data[0]])
+			switch (ServerPacket.values()[data[0]&0xff])
 			{
 			case SNAPSHOT:
 				System.out.println("Got a snapshot.");
@@ -356,16 +356,18 @@ public class Client {
 		}
 
 		// Get commands to execute.
-		HashMap<Integer,ArrayList<String>> givenCmds = snapNext.getCommands();
-		ArrayList<String> cmds = new ArrayList<String>();
-		if (snapCurrent == null)
-			for (ArrayList<String> list : givenCmds.values())
-				cmds.addAll(list);
-		else
-			for (int i : givenCmds.keySet())
-				if ( i > snapCurrent.serverTime )
-					cmds.addAll(givenCmds.get(i));
-		
+		Map<Integer, ArrayList<String>> givenCmds = snapNext.getCommands();
+		if (givenCmds != null)
+		{
+			ArrayList<String> cmds = new ArrayList<String>();
+			if (snapCurrent == null)
+				for (ArrayList<String> list : givenCmds.values())
+					cmds.addAll(list);
+			else
+				for (int i : givenCmds.keySet())
+					if ( i > snapCurrent.serverTime )
+						cmds.addAll(givenCmds.get(i));
+		}
 		// TODO execute cmd list.
 
 		snapCurrent = snapNext;

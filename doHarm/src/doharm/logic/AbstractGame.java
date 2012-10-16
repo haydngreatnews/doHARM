@@ -49,6 +49,10 @@ public abstract class AbstractGame
 		return camera;
 	}
 	
+	public void setCamera(Camera camera)
+	{
+		this.camera = camera;
+	}
 
 	public void run() 
 	{
