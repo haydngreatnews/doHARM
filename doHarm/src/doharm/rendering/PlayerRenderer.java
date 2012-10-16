@@ -48,8 +48,8 @@ public class PlayerRenderer {
 		
 		Dimension size = player.getSize();
 		
-		int x = cx+(int)v.getX()-size.width/2 -tileW/2;
-		int y = cy+(int)v.getY()-size.height/4 -tileH/2;
+		int x = cx+(int)v.getX()-size.width/2;// -tileW/2;
+		int y = cy+(int)v.getY()-size.height/4;// -tileH/2;
 		
 		
 		graphics.setColor(new Color(1-player.getHealthRatio(),player.getHealthRatio(),0,1));

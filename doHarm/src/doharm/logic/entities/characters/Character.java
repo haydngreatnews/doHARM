@@ -92,7 +92,8 @@ public abstract class Character extends AbstractEntity
 		
 		health += characterClass.getAttributes().getHealthRegeneration();
 		health = Math.min(health, getMaxHealth());
-		
+		rage -= characterClass.getAttributes().getMaxRage() *0.01f;
+		if (rage < 0) rage = 0;
 		
 		state.process(this);
 		

@@ -13,5 +13,6 @@ public class TestGame extends AbstractGame
 	{
 		super(NetworkMode.OFFLINE);
 		getClock().setWindow(window);
+		getClock().start();
 	}
 }

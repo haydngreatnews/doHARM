@@ -4,7 +4,7 @@ floorTileSet.png
 wall 0 0 
 grass 1 1
 nothing 2 2
-water 3 3 6 7 50
+water 3 3 6 7 10
 dark 4 1 
 wood 5 4
 concrete 6 5
