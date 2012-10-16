@@ -6,6 +6,6 @@ public class WarriorAttributes extends Attributes
 {
 	public WarriorAttributes()
 	{
-
+		setMovementSpeed(3);
 	}
 }

@@ -1,11 +1,10 @@
 package doharm.logic.entities.characters.classes.dragon;
 
+import java.awt.Dimension;
+
+import doharm.logic.entities.characters.Character;
 import doharm.logic.entities.characters.classes.CharacterClass;
 import doharm.logic.entities.characters.classes.CharacterClassType;
-import doharm.logic.entities.characters.classes.ranger.RangerAttributes;
-import doharm.logic.entities.characters.classes.ranger.RangerLevelupAttributes;
-import doharm.logic.entities.characters.monsters.Monster;
-import doharm.logic.entities.characters.Character;
 
 public class Dragon extends CharacterClass
 {
@@ -15,5 +14,6 @@ public class Dragon extends CharacterClass
 		
 		setAttributes(new DragonAttributes());
 		setLevelupAttributes(new DragonLevelupAttributes());
+		setSize(new Dimension(64,64));
 	}
 }

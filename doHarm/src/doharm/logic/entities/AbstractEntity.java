@@ -52,7 +52,7 @@ public abstract class AbstractEntity
 	public AbstractEntity(EntityType entityType)
 	{
 		this.entityType = entityType;
-		size = new Dimension(32,32); //hmm..	
+		size = new Dimension(32,32);
 		reset();
 	}
 	

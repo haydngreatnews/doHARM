@@ -37,8 +37,6 @@ public abstract class Character extends AbstractEntity
 	private Inventory inventory;
 	
 	private Taunts taunts;
-
-	private float movementSpeed = 3f;//1.7f;
 	
 	private float health;
 	private float mana;
@@ -281,7 +279,7 @@ public abstract class Character extends AbstractEntity
 
 	public float getMovementSpeed() 
 	{
-		return movementSpeed; //err. TODO
+		return getCharacterClass().getAttributes().getMovementSpeed();
 	}
 	
 	

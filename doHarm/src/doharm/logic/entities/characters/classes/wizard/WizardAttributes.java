@@ -6,6 +6,6 @@ public class WizardAttributes extends Attributes
 {
 	public WizardAttributes()
 	{
-		
+		setMovementSpeed(2);
 	}
 }

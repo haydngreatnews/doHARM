@@ -6,6 +6,6 @@ public class TrollAttributes extends MonsterAttributes
 {
 	public TrollAttributes()
 	{
-
+		setMovementSpeed(2);
 	}
 }

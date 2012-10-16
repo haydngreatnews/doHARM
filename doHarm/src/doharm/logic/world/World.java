@@ -137,14 +137,11 @@ public class World
 		
 		if (networkMode != NetworkMode.CLIENT)
 		{
-			//TEST STUFF TODO REMOVE
-			//getRandomEmptyTile()
-			//layers[0].getTiles()[90][90]
-			createHumanPlayer(getRandomEmptyTile(),CharacterClassType.WARRIOR,"Test player",Color.white,idManager.takeID());
+			createHumanPlayer(getRandomEmptyTile(),CharacterClassType.WARRIOR,"Player",Color.white,idManager.takeID());
 
 
 
-			//Add some noob AIs
+			//Add some AIs
 			for (int i = 0; i < 3; i++)
 			{
 				Tile tile = null;
@@ -163,10 +160,7 @@ public class World
 			}
 
 
-			//TODO add some random items!!!!!!!!
-
-
-			
+			//add some objects / items
 		
 			addDragonballs();
 			addMonsters();

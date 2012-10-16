@@ -31,7 +31,7 @@ public class CharacterClass
 	private Character character;
 	private int attributePoints;
 	private CharacterClassType classType;
-	private Dimension size = new Dimension();
+	private Dimension size = new Dimension(32,32);
 	
 	
 	

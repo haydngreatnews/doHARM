@@ -20,6 +20,7 @@ public class Ranger extends CharacterClass
 		setAttributes(new RangerAttributes());
 		setLevelupAttributes(new RangerLevelupAttributes());
 		
+		
 	}
 
 }

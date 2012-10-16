@@ -21,6 +21,8 @@ public class Attributes
 	private float healthRegeneration = 0.1f;
 	private float manaRegeneration = 0.1f;
 	
+	private float movementSpeed = 2;
+	
 	public Attributes()
 	{
 		
@@ -37,15 +39,15 @@ public class Attributes
 		
 		float healthBefore = maxHealth;
 		maxHealth += attributes.getMaxHealthIncrease();
-		maxHealth *= attributes.getMaxHealthIncrease();
+		maxHealth *= attributes.getMaxHealthMultiplier();
 		
 		float manaBefore = maxMana;
 		maxMana += attributes.getMaxManaIncrease();
-		maxMana *= attributes.getMaxManaIncrease();
+		maxMana *= attributes.getMaxManaMultiplier();
 		
 		float rageBefore = maxRage;
 		maxRage += attributes.getMaxRageIncrease();
-		maxRage *= attributes.getMaxRageIncrease();
+		maxRage *= attributes.getMaxRageMultiplier();
 		
 		float hc = MathUtils.toDP(maxHealth - healthBefore,1);
 		float mc = MathUtils.toDP(maxMana - manaBefore,1);
@@ -169,6 +171,15 @@ public class Attributes
 			return getVitality();
 		}
 		throw new UnsupportedOperationException("The enum type "+t.toString()+" is not yet supported");
+	}
+
+	public void setMovementSpeed(float movementSpeed)
+	{
+		this.movementSpeed = movementSpeed;
+	}
+	public float getMovementSpeed() 
+	{
+		return movementSpeed + dexterity*0.3f;
 	}
 
 	

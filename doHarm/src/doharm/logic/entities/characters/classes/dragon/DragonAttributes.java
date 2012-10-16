@@ -7,5 +7,6 @@ public class DragonAttributes extends MonsterAttributes
 	public DragonAttributes()
 	{
 		setMaxHealth(80);
+		setMovementSpeed(4);
 	}
 }

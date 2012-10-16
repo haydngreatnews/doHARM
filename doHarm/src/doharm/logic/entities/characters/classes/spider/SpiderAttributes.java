@@ -6,6 +6,6 @@ public class SpiderAttributes extends MonsterAttributes
 {
 	public SpiderAttributes()
 	{
-
+		setMovementSpeed(5);
 	}
 }
