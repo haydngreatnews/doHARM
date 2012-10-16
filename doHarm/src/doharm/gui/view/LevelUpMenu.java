@@ -34,7 +34,7 @@ public class LevelUpMenu extends JFrame {
 		setLayout(new MigLayout("fill, wrap 2"));
 		pointsToSpend = p.getCharacterClass().getAttributePoints();
 		add(new JLabel("Attributes:"));
-		add(new JLabel("Points left:"));
+		add(new JLabel("Points left:"), "split 2");
 		add(values[values.length - 1] = new JLabel("" + pointsToSpend));
 		ActionListener listen = new LevelUpListener();
 		for (AttributeType type : AttributeType.values()) {
@@ -61,10 +61,17 @@ public class LevelUpMenu extends JFrame {
 						--changes[i];
 					}
 				}
+				LevelUpMenu.this.dispose();
 			}
 		});
+		for (int i = 0; i < minusButtons.length; ++i) {
+			JButton b = minusButtons[i];
+			if (changes[i] < 1) {
+				b.setEnabled(false);
+			}
+		}
 		add(commit, "skip 1");
-		
+		pack();
 	}
 
 	private class LevelUpListener implements ActionListener {
@@ -105,7 +112,9 @@ public class LevelUpMenu extends JFrame {
 					b.setEnabled(false);
 				}
 			}
-
+			for (int i = 0; i<values.length; ++i){
+			    values[i].setText(""+(player.getCharacterClass().getAttributes().getAttr(AttributeType.values()[i])+changes[i]));
+			}
 		}
 
 	}
