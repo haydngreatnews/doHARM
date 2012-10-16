@@ -43,4 +43,11 @@ public class ClientGame extends AbstractGame
 		
 	}
 	
+	@Override
+	public void run()
+	{
+		super.run();
+		//TODO STUFF HERE
+	}
+	
 }
