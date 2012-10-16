@@ -243,6 +243,9 @@ public class WorldRenderer
 
 				for (AbstractEntity entity: world.getEntityFactory().getEntities())
 				{
+					if (!entity.isAlive())
+						continue;
+					
 					if (entity.getEntityType() == EntityType.CHARACTER)
 					{
 						if(layerCount == entity.getCurrentLayer().getLayerNumber()){

@@ -5,6 +5,7 @@ import java.awt.Color;
 
 import doharm.logic.entities.characters.Character;
 import doharm.logic.entities.characters.CharacterType;
+import doharm.net.packets.entityinfo.CharacterUpdate;
 
 /**
  * A player is a type of character that is able to win the game.
@@ -38,5 +39,12 @@ public abstract class Player extends Character
 		if (!isAlive())
 			return;
 		super.process();
+	}
+
+	public void update(CharacterUpdate u)
+	{
+		setAngle(u.angle);
+		setHealth(u.health);
+		setPosition(u.posX, u.posY, getWorld().getLayer(u.layer));
 	}	
 }

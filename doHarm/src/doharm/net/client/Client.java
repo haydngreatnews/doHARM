@@ -310,21 +310,35 @@ public class Client {
 			if (c instanceof CharacterCreate)
 			{
 				CharacterCreate cc = (CharacterCreate) c;
-				//AbstractEntity newEnt = world.getPlayerFactory().createPlayer(world.getLayers()[0].getTiles()[5][5],cc.name,CharacterClassType.WARRIOR, 0,PlayerType.HUMAN, true);
-				//ents.addEntity(newEnt, c.id, true);
+				CharacterClassType pClass = null;
+				switch (EntType.to(cc.type))
+				{
+				case PLAYER_RANGER:
+					pClass = CharacterClassType.RANGER;
+					break;
+				case PLAYER_WARRIOR:
+					pClass = CharacterClassType.WARRIOR;
+					break;
+				case PLAYER_WIZARD:
+					pClass = CharacterClassType.WIZARD;
+					break;
+				default:
+					throw new RuntimeException("Invalid character class type for creating local player.");
+				}
+				Player newPlayer = world.getPlayerFactory().createPlayer(world.getRandomEmptyTile(), cc.name, pClass, cc.id, PlayerType.NETWORK, cc.colour, true);
 			}
-			else if (c instanceof FurnitureCreate)
-			{
-				FurnitureCreate fc = (FurnitureCreate) c;
-			}
-			else if (c instanceof ItemCreate)
-			{
-				ItemCreate ic = (ItemCreate) c;
-			}
-			else if (c instanceof ProjectileCreate)
-			{
-				ProjectileCreate pc = (ProjectileCreate) c;
-			}
+//			else if (c instanceof FurnitureCreate)
+//			{
+//				FurnitureCreate fc = (FurnitureCreate) c;
+//			}
+//			else if (c instanceof ItemCreate)
+//			{
+//				ItemCreate ic = (ItemCreate) c;
+//			}
+//			else if (c instanceof ProjectileCreate)
+//			{
+//				ProjectileCreate pc = (ProjectileCreate) c;
+//			}
 		}
 
 		for (EntityUpdate u : snapNext.getEUpdates().values())
@@ -340,19 +354,19 @@ public class Client {
 				if (u.id == world.getHumanPlayer().getID())		// if this is our player, don't bother with it (for now. TODO)
 					continue;					
 
-				//p.update((CharacterUpdate)u);
+				p.update((CharacterUpdate)u);
 			}
 //			else if (u instanceof FurnitureUpdate)
 //			{
 //				Furniture f = (Furniture) e;
 //				f.update((FurnitureUpdate)u);
 //			}
-			else if (u instanceof ProjectileUpdate)
-			{
-				Projectile p = (Projectile) e;
-				//p.update((ProjectileUpdate)u);
-				
-			}
+//			else if (u instanceof ProjectileUpdate)
+//			{
+//				Projectile p = (Projectile) e;
+//				//p.update((ProjectileUpdate)u);
+//				
+//			}
 		}
 
 		// Get commands to execute.
