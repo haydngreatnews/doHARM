@@ -313,18 +313,18 @@ public class Client {
 				//AbstractEntity newEnt = world.getPlayerFactory().createPlayer(world.getLayers()[0].getTiles()[5][5],cc.name,CharacterClassType.WARRIOR, 0,PlayerType.HUMAN, true);
 				//ents.addEntity(newEnt, c.id, true);
 			}
-			else if (c instanceof FurnitureCreate)
-			{
-				FurnitureCreate fc = (FurnitureCreate) c;
-			}
-			else if (c instanceof ItemCreate)
-			{
-				ItemCreate ic = (ItemCreate) c;
-			}
-			else if (c instanceof ProjectileCreate)
-			{
-				ProjectileCreate pc = (ProjectileCreate) c;
-			}
+//			else if (c instanceof FurnitureCreate)
+//			{
+//				FurnitureCreate fc = (FurnitureCreate) c;
+//			}
+//			else if (c instanceof ItemCreate)
+//			{
+//				ItemCreate ic = (ItemCreate) c;
+//			}
+//			else if (c instanceof ProjectileCreate)
+//			{
+//				ProjectileCreate pc = (ProjectileCreate) c;
+//			}
 		}
 
 		for (EntityUpdate u : snapNext.getEUpdates().values())
@@ -347,12 +347,12 @@ public class Client {
 //				Furniture f = (Furniture) e;
 //				f.update((FurnitureUpdate)u);
 //			}
-			else if (u instanceof ProjectileUpdate)
-			{
-				Projectile p = (Projectile) e;
-				//p.update((ProjectileUpdate)u);
-				
-			}
+//			else if (u instanceof ProjectileUpdate)
+//			{
+//				Projectile p = (Projectile) e;
+//				//p.update((ProjectileUpdate)u);
+//				
+//			}
 		}
 
 		// Get commands to execute.

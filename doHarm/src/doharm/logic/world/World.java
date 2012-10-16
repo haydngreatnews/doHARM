@@ -166,6 +166,7 @@ public class World
 			addDragonballs();
 
 		}
+		
 		addMessage(new Message(-1, false, new MessagePart("World created.")));
 		
 	}
@@ -269,6 +270,10 @@ public class World
 			removeDeadItems();
 			respawnEntities();
 			moveEntities();
+		}
+		else
+		{
+			this.getHumanPlayer().process();
 		}
 		setCamera();
 	}
