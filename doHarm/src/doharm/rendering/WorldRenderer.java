@@ -597,7 +597,6 @@ public class WorldRenderer
 		World world = game.getWorld();
 		BufferedImage tileSet = null;
 		WorldLoader wl = world.getWorldLoader();
-		//TODO remove
 
 
 		TilesetLoader tsl = wl.getTilesetLoader();
@@ -608,9 +607,6 @@ public class WorldRenderer
 
 		wTileW = tsl.getWallTileWidth();
 		wTileH = tsl.getWallTileHeight();
-
-
-
 
 
 		try{

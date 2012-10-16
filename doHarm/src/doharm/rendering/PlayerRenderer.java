@@ -3,7 +3,13 @@ package doharm.rendering;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
+
+import javax.imageio.ImageIO;
 
 import doharm.logic.AbstractGame;
 import doharm.logic.entities.characters.Character;
@@ -21,12 +27,16 @@ public class PlayerRenderer {
 
 	private AbstractGame game;
 	private World world;
+	private ArrayList<BufferedImage> playerImgs;
 
-	public PlayerRenderer(AbstractGame game) 
-	{
+	public PlayerRenderer(AbstractGame game) {
 		this.game = game;
 		this.world = game.getWorld();
+		
+		loadPlayerImages("res\\tilesets\\player sprites.png");
 	}
+
+
 
 	/*public void redraw(Graphics2D graphics, int imgIsoW, int imgIsoH) 
 	{
@@ -178,6 +188,30 @@ public class PlayerRenderer {
 			int wTileH) {
 		// TODO Auto-generated method stub
 		drawPlayer(cx,cy,character,graphics, fTileW, wTileH);
+		
+	}
+	
+	private void loadPlayerImages(String string){
+		BufferedImage sheet = null;
+		try {
+			sheet = ImageIO.read(new File(string));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			System.exit(1);
+		} 
+		
+		
+		int size = 32;
+		 playerImgs = new ArrayList<BufferedImage>();
+		 for(int i = 0; i < 6; i++){
+			 for (int j = 0; j < 4; j++){
+				 BufferedImage next = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
+				 Graphics2D g = next.createGraphics();
+				 g.drawImage(sheet, 0, 0, size, size, i*size, j*size, size, size, null);
+				 playerImgs.add(next);
+			 }
+		 }
 		
 	}
 
