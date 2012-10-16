@@ -24,11 +24,12 @@ public class Clock extends Thread
 	{
 		while(true)
 		{
-			
-			if (window != null)
+			if (window != null && window.hasGame() )
 				window.repaint(); //calls game.run(); immediately before painting, as we can't guarantee when the game will be repainted.
 			else
+			{
 				game.run();
+			}
 			try 
 			{
 				Thread.sleep(CLOCK_INTERVAL);

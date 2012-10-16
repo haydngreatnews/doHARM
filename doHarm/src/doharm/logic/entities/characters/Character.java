@@ -1,5 +1,7 @@
 package doharm.logic.entities.characters;
 
+import java.awt.Color;
+
 import doharm.logic.chat.Message;
 import doharm.logic.chat.MessagePart;
 import doharm.logic.chat.Taunts;
@@ -42,6 +44,7 @@ public abstract class Character extends AbstractEntity
 	private long spawnTime;
 	private Character attackedBy;
 	private CharacterType characterType;
+	private Color colour = Color.white;
 	
 	protected Character(CharacterType characterType) 
 	{
@@ -68,6 +71,16 @@ public abstract class Character extends AbstractEntity
 		}
 	}
 	
+	
+	public Color getColour()
+	{
+		return colour;
+	}
+	public void setColour(Color colour)
+	{
+		this.colour = colour;
+	}
+	
 
 	public Inventory getInventory()
 	{
@@ -92,7 +105,8 @@ public abstract class Character extends AbstractEntity
 		
 		health += characterClass.getAttributes().getHealthRegeneration();
 		health = Math.min(health, getMaxHealth());
-		
+		rage -= characterClass.getAttributes().getMaxRage() *0.01f;
+		if (rage < 0) rage = 0;
 		
 		state.process(this);
 		

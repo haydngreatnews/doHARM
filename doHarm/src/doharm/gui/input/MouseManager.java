@@ -21,6 +21,8 @@ public class MouseManager implements MouseListener, MouseMotionListener
 	}
 	
 	
+	
+	
 	private void hover(int x, int y) 
 	{
 		int rgb = renderer.getPickColourAt(x, y);
@@ -37,6 +39,7 @@ public class MouseManager implements MouseListener, MouseMotionListener
 	
 	private void click(int button, boolean down)
 	{
+		
 		World world = game.getWorld();
 		world.getHumanPlayer().click(button,down);
 	}

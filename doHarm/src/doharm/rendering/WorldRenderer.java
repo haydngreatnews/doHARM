@@ -14,9 +14,12 @@ import javax.imageio.ImageIO;
 
 import doharm.logic.AbstractGame;
 import doharm.logic.camera.Camera;
+import doharm.logic.entities.AbstractEntity;
+import doharm.logic.entities.EntityType;
 import doharm.logic.entities.characters.players.HumanPlayer;
 import doharm.logic.entities.characters.players.Player;
 import doharm.logic.entities.characters.players.PlayerType;
+import doharm.logic.entities.characters.Character;
 import doharm.logic.entities.items.Item;
 import doharm.logic.entities.items.misc.dragonballs.*;
 
@@ -29,6 +32,7 @@ import doharm.logic.world.Layer;
 import doharm.logic.world.World;
 import doharm.logic.world.tiles.Direction;
 import doharm.logic.world.tiles.Tile;
+import doharm.logic.world.tiles.TileType;
 import doharm.storage.TilesetLoader;
 import doharm.storage.WorldLoader;
 
@@ -237,9 +241,13 @@ public class WorldRenderer
 				//TODO
 				//Draw players on this layer
 
-				for (Player player: world.getPlayerFactory().getEntities()){
-					if(layerCount == player.getCurrentLayer().getLayerNumber()){
-						playerRenderer.redrawPlayer(cx,cy,player,graphics, fTileW, fTileH);
+				for (AbstractEntity entity: world.getEntityFactory().getEntities())
+				{
+					if (entity.getEntityType() == EntityType.CHARACTER)
+					{
+						if(layerCount == entity.getCurrentLayer().getLayerNumber()){
+							playerRenderer.redrawPlayer(cx,cy,(Character)entity,graphics, fTileW, fTileH);
+						}
 					}
 				}
 
@@ -358,6 +366,9 @@ public class WorldRenderer
 		while(checkRowCon(tiles)){
 
 			while(checkColCon(tiles)){
+				if (rowC < 0 || rowC >= tiles.length || colC < 0 || colC >= tiles[0].length)
+					break;
+				
 				Tile tile = tiles[rowC][colC];
 
 				BufferedImage image = FI[tile.getImageID()];
@@ -377,8 +388,9 @@ public class WorldRenderer
 					pickGraphics.drawImage(tile.getPickImage(), x,y,null);
 				}
 
-				if(tile.getImageID() != 2 ){
-
+				//if(tile.getImageID() != 2 ){
+				if (tile.getType() == TileType.WALL)
+				{
 					int imgID = tile.getWallImageID(Direction.UP);
 
 
@@ -420,7 +432,7 @@ public class WorldRenderer
 
 		int width = canvasSize.width;
 
-		int ans = (int)((((width/2)/fTileW)+2)*1);
+		int ans = (int)((((width/2)/fTileW)+2)*1.7f);
 
 		ans = (int) Math.hypot(ans, ans);
 

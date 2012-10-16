@@ -11,6 +11,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
@@ -37,7 +38,7 @@ public class EditorWindow extends JFrame {
 		setLayout(new BorderLayout());
 		canvas = new EditorCanvas();
 		add(canvas, BorderLayout.CENTER);
-		canvas.setWorld(EditorLogic.loadWorld("world1"));
+		canvas.setWorld(EditorLogic.loadWorld(JOptionPane.showInputDialog("Load world", "world1")));
 		JPanel editor = new JPanel(new MigLayout("wrap 2"));
 		editor.add(new JLabel("Layer:"));
 		JButton upButton, downButton;
@@ -59,9 +60,9 @@ public class EditorWindow extends JFrame {
 					else
 						delta = e.getActionCommand() + "1";
 					canvas.changeLayer(Integer.valueOf(delta));
-					System.out.println("delta=" + delta);
 					currentLayer.setText("" + canvas.getCurrentLayer());
 				}
+				canvas.requestFocusInWindow();
 			}
 		};
 		upButton.addActionListener(layerChange);
@@ -92,6 +93,7 @@ public class EditorWindow extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				canvas.changeMapSize(Integer.valueOf(xDim.getText()),
 						Integer.valueOf(yDim.getText()));
+				canvas.requestFocusInWindow();
 			}
 		});
 		JButton writeOut;
@@ -100,12 +102,20 @@ public class EditorWindow extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				canvas.writeout();
+				canvas.requestFocusInWindow();
 			}
 		});
 		add(editor, BorderLayout.EAST);
 		
 		canvas.addMouseMotionListener(listen = new EditorMouseListener(this));
+		EditorKeyListener edk;
+		canvas.addKeyListener(edk = new EditorKeyListener(canvas));
+		addKeyListener(edk);
+		editor.addKeyListener(edk);
+		upButton.addKeyListener(edk);
+		commit.addKeyListener(edk);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		canvas.requestFocusInWindow();
 		new repaintThread().start();
 	}
 

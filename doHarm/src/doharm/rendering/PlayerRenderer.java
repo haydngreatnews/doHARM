@@ -6,6 +6,8 @@ import java.awt.Graphics2D;
 import java.util.Collection;
 
 import doharm.logic.AbstractGame;
+import doharm.logic.entities.characters.Character;
+import doharm.logic.entities.characters.CharacterType;
 import doharm.logic.entities.characters.players.HumanPlayer;
 import doharm.logic.entities.characters.players.Player;
 import doharm.logic.entities.characters.players.PlayerType;
@@ -48,8 +50,8 @@ public class PlayerRenderer {
 		
 		Dimension size = player.getSize();
 		
-		int x = cx+(int)v.getX()-size.width/2;
-		int y = cy+(int)v.getY()-size.height/4;
+		int x = cx+(int)v.getX()-size.width/2;// -tileW/2;
+		int y = cy+(int)v.getY()-size.height/4;// -tileH/2;
 		
 		
 		graphics.setColor(new Color(1-player.getHealthRatio(),player.getHealthRatio(),0,1));
@@ -75,16 +77,16 @@ public class PlayerRenderer {
 		
 	}
 	Vector v = new Vector();
-	private void drawPlayer(int cx, int cy, Player player, Graphics2D graphics, int tileW, int tileH) 
+	private void drawPlayer(int cx, int cy, Character character, Graphics2D graphics, int tileW, int tileH) 
 	{
-		if (!player.isAlive())
+		if (!character.isAlive())
 			return;
 		
-		Dimension size = player.getSize();
+		Dimension size = character.getSize();
 		//Tile tile = player.getCurrentTile();
 		//Layer layer = player.getCurrentLayer();
 		//Vector relative = player.getPositionRelativeToTile();
-		Vector position = player.getPosition();
+		Vector position = character.getPosition();
 		float row = position.getY()/tileH;
 		float col = position.getX()/tileW;
 		
@@ -100,9 +102,9 @@ public class PlayerRenderer {
 			throw new UnsupportedOperationException(player.getPlayerType() + " not implemented");
 		*/
 		
-		graphics.setColor(player.getColour());
+		graphics.setColor(character.getColour());
 
-		RenderUtil.convertCoordsToIso(col, row, player.getCurrentLayer().getLayerNumber(), game.getCamera(), v);
+		RenderUtil.convertCoordsToIso(col, row, character.getCurrentLayer().getLayerNumber(), game.getCamera(), v);
 		
 	
 		
@@ -163,10 +165,10 @@ public class PlayerRenderer {
 		
 	}
 
-	public void redrawPlayer(int cx, int cy, Player player, Graphics2D graphics, int fTileW,
+	public void redrawPlayer(int cx, int cy, Character character, Graphics2D graphics, int fTileW,
 			int wTileH) {
 		// TODO Auto-generated method stub
-		drawPlayer(cx,cy,player,graphics, fTileW, wTileH);
+		drawPlayer(cx,cy,character,graphics, fTileW, wTileH);
 		
 	}
 

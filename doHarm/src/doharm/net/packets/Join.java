@@ -33,12 +33,14 @@ public class Join
 	{
 		ByteArrayOutputStream buff = new ByteArrayOutputStream();
 		
+		buff.write((byte) ClientPacket.JOIN.ordinal());
 		try
 		{
 			buff.write(Bytes.setString(name));
 			buff.write((byte)colour.getRed());
 			buff.write((byte)colour.getGreen());
 			buff.write((byte)colour.getBlue());
+			buff.write((byte)classType.ordinal());
 		}
 		catch (IOException e) { e.printStackTrace(); }
 		

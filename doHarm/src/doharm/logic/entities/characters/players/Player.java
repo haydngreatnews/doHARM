@@ -15,7 +15,7 @@ import doharm.logic.entities.characters.CharacterType;
 public abstract class Player extends Character
 {
 	private PlayerType playerType;
-	private Color colour; //the player's unique colour
+	
 	
 	
 	protected Player(PlayerType playerType)
@@ -24,15 +24,8 @@ public abstract class Player extends Character
 		this.playerType = playerType;
 	}
 
-	public Color getColour()
-	{
-		return colour;
-	}
 	
-	public void setColour(Color colour)
-	{
-		this.colour = colour;
-	}
+	
 	
 	public PlayerType getPlayerType()
 	{
