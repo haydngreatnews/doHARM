@@ -1,4 +1,4 @@
 doHARM
 ======
 
-The HARM Project
+A small, isometric top-down RPG built in Java for SWEN222
